@@ -36,8 +36,10 @@ export default {
         freezeTopRow: '冻结首行',
         sortAndFilter: '排序和筛选',
         findAndReplace: '查找替换',
+
         sum: '求和',
         autoSum: '自动求和',
+        formula:"公式",
         moreFunction: '更多函数',
         conditionalFormat: '条件格式',
         postil: '批注',
@@ -405,7 +407,7 @@ export default {
         "clip":"截断",
     },
     rotation:{
-        "none":"无选装",
+        "none":"无旋转",
         "angleup":"向上倾斜",
         "angledown":"向下倾斜",
         "vertical":"竖排文字",
@@ -470,7 +472,6 @@ export default {
         filterValueByTip:"按照值进行筛选",
         filterConform:"确 认",
         filterCancel:"取 消",
-        clearFilter:"清除筛选",
 
         conditionNone:"无",
         conditionCellIsNull:"单元格为空",

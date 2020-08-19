@@ -2,46 +2,127 @@
 <html>
 
 <head lang='zh'>
-	<meta charset='utf-8'>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="renderer" content="webkit" />
-	<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0" />
-	<title>Luckysheet</title>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="renderer" content="webkit"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0"/>
+    <title>Luckysheet</title>
 
-	<link rel='stylesheet' href='./plugins/css/pluginsCss.css' />
-	<link rel='stylesheet' href='./plugins/plugins.css' />
-	<link rel='stylesheet' href='./css/luckysheet.css' />
-	<script src="./plugins/js/plugin.js"></script>
+    <link rel='stylesheet' href='./plugins/css/pluginsCss.css'/>
+    <link rel='stylesheet' href='./plugins/plugins.css'/>
+    <link rel='stylesheet' href='./css/luckysheet.css'/>
+    <script src="./plugins/js/plugin.js"></script>
 
-	<!-- rollup luckysheet.js -->
-	<script src="./luckysheet.umd.js"></script>
+    <!-- rollup luckysheet.js -->
+    <script src="./luckysheet.umd.js"></script>
 </head>
 
 <body>
-	<div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;"></div>
-	<script type="module">
-		import sheetFormula from './demoData/sheetFormula.js'
-		import sheetCell from './demoData/sheetCell.js'
-		import sheetConditionFormat from './demoData/sheetConditionFormat.js'
-		import sheetTable from './demoData/sheetTable.js'
-		import sheetComment from './demoData/sheetComment.js'
-		import sheetPivotTableData from './demoData/sheetPivotTableData.js'
-		import sheetPivotTable from './demoData/sheetPivotTable.js'
-		import sheetSparkline from './demoData/sheetSparkline.js'
-		import sheetChart from './demoData/sheetChart.js'
-		$(function () {
+<div style="background:#fff;text-align: center;padding: 5px;position: fixed;top: 0;right: 0;z-index:99;height: 100%;width: 100px">
+    <span draggable="true" class="meData" style="display: inline-block;padding: 5px;background: #ddd;cursor: pointer;margin-bottom: 10px"
+          data-val="数据1">数据1</span>
+    <span draggable="true" class="meData" style="display: inline-block;padding: 5px;background: #ddd;cursor: pointer;margin-bottom: 10px"
+          data-val="数据2">数据2</span>
+</div>
+<div id="luckysheet" style="margin:0;padding:0px;position:absolute;height:100%;left: 0px;right:100px;top: 0px;"></div>
+<script type="module">
+    import sheetFormula from './demoData/sheetFormula.js'
+    import sheetCell from './demoData/sheetCell.js'
+    import sheetConditionFormat from './demoData/sheetConditionFormat.js'
+    import sheetTable from './demoData/sheetTable.js'
+    import sheetComment from './demoData/sheetComment.js'
+    import sheetPivotTableData from './demoData/sheetPivotTableData.js'
+    import sheetPivotTable from './demoData/sheetPivotTable.js'
+    import sheetSparkline from './demoData/sheetSparkline.js'
+    // import sheetChart from './demoData/sheetChart.js'
+    $(function () {
+        var luckysheet = window.luckysheet;
 
-			luckysheet.create({
-				container: 'luckysheet',
-				lang: 'en',
-				allowEdit:true,
-				forceCalculation:false,
-				plugins: ['chart'],
-				data: [sheetCell,sheetFormula,sheetConditionFormat,sheetTable,sheetSparkline,sheetComment,sheetPivotTableData,sheetPivotTable,sheetChart]
-			})
+        luckysheet.create({
+            container: 'luckysheet',
+            lang: 'zh',
+            allowEdit: true,
+            autoFormatw: true,
+            forceCalculation: false,
+            menu: "undo|redo|freezenrow|freezencolumn|pivot", //"undo|redo|freezenrow|freezencolumn|download|share|chart|pivot",
+            // plugins: ['chart'],
+            data: [sheetCell, sheetFormula, sheetConditionFormat, sheetTable, sheetSparkline, sheetComment, sheetPivotTableData, sheetPivotTable,
+                // sheetChart
+            ]
+        });
 
-		})
-	</script>
+        setTimeout(function () {
+            luckysheet.setcellvalue(13, 5, null);
+        }, 3000);
+
+        var mouseposition = luckysheet.mouseposition;
+        var rowLocation = luckysheet.rowLocation;
+        var colLocation = luckysheet.colLocation;
+
+        $('.meData').on('dragstart', function (event) {
+            var val = $(this).attr('data-val');
+            window.luckysheet.customO.metaData = val;
+            window.luckysheet.customO.metaDragging = true;
+            console.log('dragstart', val)
+        });
+
+        $('#luckysheet-cell-main').on('dragover', function (event) {
+            event.preventDefault();
+            if (!window.luckysheet.customO.metaDragging) return;
+
+            let mouse = mouseposition(event.pageX, event.pageY);
+
+            let scrollLeft = $("#luckysheet-cell-main").scrollLeft();
+            let scrollTop = $("#luckysheet-cell-main").scrollTop();
+
+            let x = mouse[0] + scrollLeft;
+            let y = mouse[1] + scrollTop;
+
+            let row_location = rowLocation(y),
+                row_index = row_location[2];
+            let col_location = colLocation(x),
+                col_index = col_location[2];
+
+            let conf = luckysheet.getconfig();
+            let cellMg = conf.merge[`${row_index}_${col_index}`];
+
+            // 如果选区([row_index, row_index] [col_index, col_index])被包含在某个“合并单元格”内，
+            // 则以选中这个“合并单元格”
+            if (luckysheet.validateO.hasPartMC(conf, row_index, row_index, col_index, col_index)) {
+                cellMg = luckysheet.customO.cellPartMerge;
+                row_index = cellMg.r;
+                col_index = cellMg.c;
+            }
+
+            let row_e_ind = row_index;
+            let col_e_ind = col_index;
+
+            if (cellMg) {
+                row_e_ind = row_index + cellMg.rs - 1;
+                col_e_ind = col_index + cellMg.cs - 1;
+            }
+            // 设置并更新选区
+            luckysheet.setluckysheet_select_save([{
+                row: [row_index, row_e_ind],
+                column: [col_index, col_e_ind]
+            }]);
+            luckysheet.selectHightlightShow();
+        }).on('drop', function (event) {
+            luckysheet.customO.metaDragging = false;
+            // 更新选区单元格的值
+            var selectSave = luckysheet.getluckysheet_select_save();
+
+            if (selectSave && selectSave[0] && selectSave[0].column) {
+                var cInd = selectSave[0].column[0];
+                var rInd = selectSave[0].row[0];
+                var v = luckysheet.customO.metaData;
+                luckysheet.refreshCellValue(rInd, cInd, v);
+            }
+        })
+
+
+    })
+</script>
 </body>
 
 </html>

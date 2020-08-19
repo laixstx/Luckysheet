@@ -14,28 +14,26 @@ const error = {
 
 //是否是空值
 function isRealNull(val) {
-    if(val == null || val.toString().replace(/\s/g, "") == ""){
+    if (val == null || val.toString().replace(/\s/g, "") == "") {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
 
 //是否是纯数字
 function isRealNum(val) {
-    if(val == null || val.toString().replace(/\s/g, "") === ""){
+    if (val == null || val.toString().replace(/\s/g, "") === "") {
         return false;
     }
 
-    if(typeof val == "boolean"){
+    if (typeof val == "boolean") {
         return false;
     }
 
-    if(!isNaN(val)){
+    if (!isNaN(val)) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
@@ -44,8 +42,8 @@ function isRealNum(val) {
 function valueIsError(value) {
     let isError = false;
 
-    for(let x in error){
-        if(value == error[x]){
+    for (let x in error) {
+        if (value == error[x]) {
             isError = true;
             break;
         }
@@ -57,21 +55,19 @@ function valueIsError(value) {
 //是否有中文
 function hasChinaword(s) {
     let patrn = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi;
-    
+
     if (!patrn.exec(s)) {
         return false;
-    }
-    else {
+    } else {
         return true;
     }
 }
 
 //是否为非编辑模式
 function isEditMode() {
-    if(luckysheetConfigsetting.editMode){
+    if (luckysheetConfigsetting.editMode) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
@@ -80,109 +76,96 @@ function isEditMode() {
 function hasPartMC(cfg, r1, r2, c1, c2) {
     let hasPartMC = false;
 
-    for(let x in Store.config["merge"]){
+    for (let x in Store.config["merge"]) {
         let mc = cfg["merge"][x];
 
-        if(r1 < mc.r){
-            if(r2 >= mc.r && r2 < (mc.r + mc.rs - 1)){
-                if(c1 >= mc.c && c1 <= (mc.c + mc.cs - 1)){
+        if (Store.customO)
+            Store.customO.cellPartMerge = mc;
+
+        if (r1 < mc.r) {
+            if (r2 >= mc.r && r2 < (mc.r + mc.rs - 1)) {
+                if (c1 >= mc.c && c1 <= (mc.c + mc.cs - 1)) {
+                    hasPartMC = true;
+                    break;
+                } else if (c2 >= mc.c && c2 <= (mc.c + mc.cs - 1)) {
+                    hasPartMC = true;
+                    break;
+                } else if (c1 < mc.c && c2 > (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
                 }
-                else if(c2 >= mc.c && c2 <= (mc.c + mc.cs - 1)){
+            } else if (r2 >= mc.r && r2 == (mc.r + mc.rs - 1)) {
+                if (c1 > mc.c && c1 < (mc.c + mc.cs - 1)) {
+                    hasPartMC = true;
+                    break;
+                } else if (c2 > mc.c && c2 < (mc.c + mc.cs - 1)) {
+                    hasPartMC = true;
+                    break;
+                } else if (c1 == mc.c && c2 < (mc.c + mc.cs - 1)) {
+                    hasPartMC = true;
+                    break;
+                } else if (c1 > mc.c && c2 == (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
                 }
-                else if(c1 < mc.c && c2 > (mc.c + mc.cs - 1)){
+            } else if (r2 > (mc.r + mc.rs - 1)) {
+                if (c1 > mc.c && c1 <= (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
-                }
-            }
-            else if(r2 >= mc.r && r2 == (mc.r + mc.rs - 1)){
-                if(c1 > mc.c && c1 < (mc.c + mc.cs - 1)){
+                } else if (c2 >= mc.c && c2 < (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
-                }
-                else if(c2 > mc.c && c2 < (mc.c + mc.cs - 1)){
+                } else if (c1 == mc.c && c2 < (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
-                }
-                else if(c1 == mc.c && c2 < (mc.c + mc.cs - 1)){
-                    hasPartMC = true;
-                    break;
-                }
-                else if(c1 > mc.c && c2 == (mc.c + mc.cs - 1)){
-                    hasPartMC = true;
-                    break;
-                }
-            }
-            else if(r2 > (mc.r + mc.rs - 1)){
-                if(c1 > mc.c && c1 <= (mc.c + mc.cs - 1)){
-                    hasPartMC = true;
-                    break;
-                }
-                else if(c2 >= mc.c && c2 < (mc.c + mc.cs - 1)){
-                    hasPartMC = true;
-                    break;
-                }
-                else if(c1 == mc.c && c2 < (mc.c + mc.cs - 1)){
-                    hasPartMC = true;
-                    break;
-                }
-                else if(c1 > mc.c && c2 == (mc.c + mc.cs - 1)){
+                } else if (c1 > mc.c && c2 == (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
                 }
             }
-        }
-        else if(r1 == mc.r){
-            if(r2 < (mc.r + mc.rs - 1)){
-                if(c1 >= mc.c && c1 <= (mc.c + mc.cs - 1)){
+        } else if (r1 == mc.r) {
+            if (r2 < (mc.r + mc.rs - 1)) {
+                if (c1 >= mc.c && c1 <= (mc.c + mc.cs - 1)) {
+                    hasPartMC = true;
+                    break;
+                } else if (c2 >= mc.c && c2 <= (mc.c + mc.cs - 1)) {
+                    hasPartMC = true;
+                    break;
+                } else if (c1 < mc.c && c2 > (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
                 }
-                else if(c2 >= mc.c && c2 <= (mc.c + mc.cs - 1)){
+            } else if (r2 >= (mc.r + mc.rs - 1)) {
+                if (c1 > mc.c && c1 <= (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
-                }
-                else if(c1 < mc.c && c2 > (mc.c + mc.cs - 1)){
+                } else if (c2 >= mc.c && c2 < (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
-                }
-            }
-            else if(r2 >= (mc.r + mc.rs - 1)){
-                if(c1 > mc.c && c1 <= (mc.c + mc.cs - 1)){
+                } else if (c1 == mc.c && c2 < (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
-                }
-                else if(c2 >= mc.c && c2 < (mc.c + mc.cs - 1)){
-                    hasPartMC = true;
-                    break;
-                }
-                else if(c1 == mc.c && c2 < (mc.c + mc.cs - 1)){
-                    hasPartMC = true;
-                    break;
-                }
-                else if(c1 > mc.c && c2 == (mc.c + mc.cs - 1)){
+                } else if (c1 > mc.c && c2 == (mc.c + mc.cs - 1)) {
                     hasPartMC = true;
                     break;
                 }
             }
-        }
-        else if(r1 <= (mc.r + mc.rs - 1)){
-            if(c1 >= mc.c && c1 <= (mc.c + mc.cs - 1)){
+        } else if (r1 <= (mc.r + mc.rs - 1)) {
+            if (c1 >= mc.c && c1 <= (mc.c + mc.cs - 1)) {
                 hasPartMC = true;
                 break;
-            }
-            else if(c2 >= mc.c && c2 <= (mc.c + mc.cs - 1)){
+            } else if (c2 >= mc.c && c2 <= (mc.c + mc.cs - 1)) {
                 hasPartMC = true;
                 break;
-            }
-            else if(c1 < mc.c && c2 > (mc.c + mc.cs - 1)){
+            } else if (c1 < mc.c && c2 > (mc.c + mc.cs - 1)) {
                 hasPartMC = true;
                 break;
             }
         }
+    }
+
+    if (!hasPartMC && Store.customO) {
+        Store.customO.cellPartMerge = null;
     }
 
     return hasPartMC;

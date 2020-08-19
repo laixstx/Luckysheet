@@ -453,7 +453,6 @@ export default {
        filterValueByTip:"filter By Values",
        filterConform:"Confirm",
        filterCancel:"Cancel",
-       clearFilter:"Clear filter",
 
        conditionNone:"None",
         conditionCellIsNull:"Is empty",

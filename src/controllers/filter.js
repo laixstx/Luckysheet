@@ -754,11 +754,11 @@ function initialFilterHandler(){
                     bg = checksCF["cellColor"];
                 }
     
-                if(bg.indexOf("rgb") > -1){
+                if(bg && bg.indexOf("rgb") > -1){
                     bg = rgbTohex(bg);
                 }
     
-                if(bg.length == 4){
+                if(bg && bg.length == 4){
                     bg = bg.substr(0, 1) + bg.substr(1, 1).repeat(2) + bg.substr(2, 1).repeat(2) + bg.substr(3, 1).repeat(2);
                 }
     

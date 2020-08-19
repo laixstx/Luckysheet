@@ -1,6 +1,5 @@
-
 import defaultSetting from './config.js';
-import { common_extend } from './utils/util';
+import {common_extend} from './utils/util';
 import Store from './store';
 import server from './controllers/server';
 import luckysheetConfigsetting from './controllers/luckysheetConfigsetting';
@@ -15,21 +14,25 @@ import {rowColumnOperationInitial} from './controllers/rowColumnOperation';
 import {keyboardInitial} from './controllers/keyboard';
 import {orderByInitial} from './controllers/orderBy';
 import {initPlugins} from './controllers/expendPlugins';
-import { 
-    getluckysheetfile, 
-    getluckysheet_select_save, 
-    getconfig, 
+import {
+    getluckysheetfile,
+    getluckysheet_select_save,
+    getconfig,
 } from './methods/get';
-import { 
+import {
     setluckysheet_select_save
 } from './methods/set';
-import { luckysheetrefreshgrid, jfrefreshgrid } from './global/refresh';
+import {luckysheetrefreshgrid, jfrefreshgrid} from './global/refresh';
 import functionlist from './function/functionlist';
-import { luckysheetlodingHTML } from './controllers/constant';
-import { getcellvalue, getdatabyselection } from './global/getdata';
-import { setcellvalue } from './global/setdata';
-import { selectHightlightShow } from './controllers/select';
+import {luckysheetlodingHTML} from './controllers/constant';
+import {getcellvalue, getdatabyselection} from './global/getdata';
+import {setcellvalue} from './global/setdata';
+import {selectHightlightShow} from './controllers/select';
 import method from './global/method';
+import {colLocation, mouseposition, rowLocation} from "./global/location";
+import * as validateO from "./global/validate";
+import editor from "./global/editor";
+import customLSheet from "./custom";
 
 let luckysheet = {};
 
@@ -92,13 +95,13 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.columeHeaderHeight = extendsetting.columeHeaderHeight;
 
     // Register plugins
-    initPlugins(extendsetting.plugins , extendsetting.data);
+    initPlugins(extendsetting.plugins, extendsetting.data);
 
     // Store formula information, including internationalization
     functionlist();
 
     let devicePixelRatio = extendsetting.devicePixelRatio;
-    if(devicePixelRatio == null){
+    if (devicePixelRatio == null) {
         devicePixelRatio = 1;
     }
     Store.devicePixelRatio = Math.ceil(devicePixelRatio);
@@ -111,25 +114,24 @@ luckysheet.create = function (setting) {
         sheetmanage.initialjfFile(menu, title);
         // luckysheetsizeauto();
         initialWorkBook();
-    }
-    else {
-        $.post(loadurl, {"gridKey" : server.gridKey}, function (d) {
+    } else {
+        $.post(loadurl, {"gridKey": server.gridKey}, function (d) {
             let data = eval("(" + d + ")");
             Store.luckysheetfile = data;
-            
+
             sheetmanage.initialjfFile(menu, title);
             // luckysheetsizeauto();
             initialWorkBook();
 
             //需要更新数据给后台时，建立WebSocket连接
-            if(server.allowUpdate){
-                server.openWebSocket();    
+            if (server.allowUpdate) {
+                server.openWebSocket();
             }
         });
     }
 }
 
-function initialWorkBook(){
+function initialWorkBook() {
     luckysheetHandler();//Overall dom initialization
     initialFilterHandler();//Filter initialization
     initialMatrixOperation();//Right click matrix initialization
@@ -184,17 +186,22 @@ luckysheet.selectHightlightShow = selectHightlightShow;
 // Set the worksheet to hide
 // Use the call method to change the `this` of the function to `this` of sheetmanage,
 // Prevent _this error in setSheetHide
-luckysheet.setSheetHide = function(index) {
-    return sheetmanage.setSheetHide.call(sheetmanage,index);
+luckysheet.setSheetHide = function (index) {
+    return sheetmanage.setSheetHide.call(sheetmanage, index);
 }
 
 // Set the worksheet to show
-luckysheet.setSheetShow = function(index) {
-    return sheetmanage.setSheetShow.call(sheetmanage,index);
+luckysheet.setSheetShow = function (index) {
+    return sheetmanage.setSheetShow.call(sheetmanage, index);
 }
 
 // Reset parameters after destroying the table
 luckysheet.destroy = method.destroy;
+
+/**
+ * 【自改】自定义全局属性
+ */
+customLSheet(luckysheet);
 
 export {
     luckysheet

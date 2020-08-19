@@ -883,6 +883,7 @@ export default function luckysheetHandler() {
         //event.stopImmediatePropagation();
 
     }).mouseup(function (event) {
+        // 右键
         if (event.which == "3") {
             //禁止前台编辑(只可 框选单元格、滚动查看表格)
             if (!Store.allowEdit) {
@@ -2854,6 +2855,7 @@ export default function luckysheetHandler() {
     // }
 
     //选区拖动替换
+    // div.luckysheet-cs-draghandle 是选区的四条边
     $("#luckysheet-cell-main div.luckysheet-cs-draghandle").mousedown(function (event) {
         if(isEditMode() || Store.allowEdit===false){//此模式下禁用选区拖动
             return;

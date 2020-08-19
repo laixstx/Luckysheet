@@ -136,6 +136,7 @@ const luckysheetPostil = {
         });
     },
     overshow: function(event){
+        // console.log('overshow', event);
         let _this = this;
 
         $("#luckysheet-postil-overshow").remove();

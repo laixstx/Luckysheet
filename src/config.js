@@ -2,7 +2,7 @@
  * The default luckysheet config object.
  */
 export default {
-    container: "luckysheet", //容器的ID
+    container: "afcsheet", //容器的ID
     column: 60, //空表格默认的列数量
     row: 84, //空表格默认的行数据量
     allowCopy: true, //是否允许拷贝
@@ -15,10 +15,10 @@ export default {
     pointEditZoom: 1, //编辑器表格编辑时缩放比例
     // menu: "undo|redo|freezenrow|freezencolumn|download|share|chart|pivot",
     data: [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index":0 }, { "name": "Sheet2", color: "", "status": "0", "order": "1", "data": [], "config": {}, "index":1  }, { "name": "Sheet3", color: "", "status": "0", "order": "2", "data": [], "config": {}, "index":2  }], //客户端sheet数据[shee1, sheet2, sheet3]
-    title: "Luckysheet Demo", //表格的名称
+    title: "AFC", //表格的名称
     userInfo: '<i style="font-size:16px;color:#ff6a00;" class="fa fa-taxi" aria-hidden="true"></i> rabbit', //右上角的用户信息展示样式
-    userMenuItem: [{url:"www.baidu.com", "icon":'<i class="fa fa-folder" aria-hidden="true"></i>', "name":"我的表格"}, {url:"www.baidu.com", "icon":'<i class="fa fa-sign-out" aria-hidden="true"></i>', "name":"退出登陆"}], //点击右上角的用户信息弹出的菜单
-    myFolderUrl: "www.baidu.com", //左上角<返回按钮的链接
+    userMenuItem: [{url:"/", "icon":'<i class="fa fa-folder" aria-hidden="true"></i>', "name":"我的表格"}, {url:"www.baidu.com", "icon":'<i class="fa fa-sign-out" aria-hidden="true"></i>', "name":"退出登陆"}], //点击右上角的用户信息弹出的菜单
+    myFolderUrl: "", //左上角<返回按钮的链接
     config: {}, //表格行高、列宽、合并单元格、公式等设置
     fullscreenmode: true, //是否全屏模式，非全屏模式下，标记框不会强制选中。
     devicePixelRatio: window.devicePixelRatio, //设备比例，比例越大表格分标率越高
