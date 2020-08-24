@@ -1,5 +1,5 @@
 import locale from '../locale/locale';
-import Store from '../store';
+import {rightMenuHtml} from "../customs/config";
 
 //dom variable
 const gridHTML = function () {
@@ -204,8 +204,10 @@ const columeHeader_word = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'
 //右键菜单dom
 function rightclickHTML() {
     const rightclick = locale().rightclick;
+    const {menuHtm, subMenuHtm} = rightMenuHtml();
 
     return `<div id="luckysheet-rightclick-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel">
+                ${menuHtm || ''}
                 <div id="luckysheet-copy-btn" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel luckysheet-copy-btn" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.copy}</div>
                 </div>
@@ -303,6 +305,7 @@ function rightclickHTML() {
                     </div-->
                 </div>
             </div>
+            ${subMenuHtm || ''}
             <div id="luckysheetcopyfor_sub" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-mousedown-cancel">
                 <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">

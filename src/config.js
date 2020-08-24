@@ -1,6 +1,8 @@
 /**
  * The default luckysheet config object.
  */
+import customConfig from "./customs/config";
+
 export default {
     container: "afcsheet", //容器的ID
     column: 60, //空表格默认的列数量
@@ -54,4 +56,7 @@ export default {
     forceCalculation:false,//强制刷新公式，公式较多会有性能问题，慎用
     rowHeaderWidth: 46,
     columeHeaderHeight: 20,
+
+    // 【改】自定义的配置项
+    customConfig
 }

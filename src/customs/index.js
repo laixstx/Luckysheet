@@ -1,22 +1,24 @@
-import {colLocation, mouseposition, rowLocation} from "./global/location";
-import Store from "./store";
-import * as validateO from "./global/validate";
-import editor from "./global/editor";
-import {jfrefreshgrid} from "./global/refresh";
-import {setcellvalue} from "./global/setdata";
+import {colLocation, mouseposition, rowLocation} from "../global/location";
+import Store from "../store";
+import * as validateO from "../global/validate";
+import editor from "../global/editor";
+import {jfrefreshgrid} from "../global/refresh";
+import {setcellvalue} from "../global/setdata";
+import customHandler from "./handler";
+import customStore from "./store";
 
 /**
  * 给 luckysheet 全局变量添加一些自定义的属性，方便进行自定义逻辑
  * @param luckysheet
  */
-function customLSheet(luckysheet) {
+export default function customLSheet(luckysheet) {
     luckysheet.mouseposition = mouseposition;
     luckysheet.rowLocation = rowLocation;
     luckysheet.colLocation = colLocation;
-    luckysheet.customO = Store.customO;
     luckysheet.validateO = validateO;
     luckysheet.Store = Store;
     luckysheet.editor = editor;
+    luckysheet.customStore = customStore;
 
     /**
      * 实时刷新单元格的值，并具备 redo、undo 特性。
@@ -40,4 +42,9 @@ function customLSheet(luckysheet) {
     }
 }
 
-export default customLSheet;
+/**
+ * 初始化自定义的逻辑
+ */
+export function customInitWork() {
+    customHandler(); // 事件
+}

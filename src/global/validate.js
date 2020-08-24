@@ -79,8 +79,8 @@ function hasPartMC(cfg, r1, r2, c1, c2) {
     for (let x in Store.config["merge"]) {
         let mc = cfg["merge"][x];
 
-        if (Store.customO)
-            Store.customO.cellPartMerge = mc;
+        if (Store.customStore)
+            Store.customStore.cellPartMerge = mc;
 
         if (r1 < mc.r) {
             if (r2 >= mc.r && r2 < (mc.r + mc.rs - 1)) {
@@ -164,8 +164,8 @@ function hasPartMC(cfg, r1, r2, c1, c2) {
         }
     }
 
-    if (!hasPartMC && Store.customO) {
-        Store.customO.cellPartMerge = null;
+    if (!hasPartMC && Store.customStore) {
+        Store.customStore.cellPartMerge = null;
     }
 
     return hasPartMC;

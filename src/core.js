@@ -29,10 +29,8 @@ import {getcellvalue, getdatabyselection} from './global/getdata';
 import {setcellvalue} from './global/setdata';
 import {selectHightlightShow} from './controllers/select';
 import method from './global/method';
-import {colLocation, mouseposition, rowLocation} from "./global/location";
-import * as validateO from "./global/validate";
-import editor from "./global/editor";
-import customLSheet from "./custom";
+import customLSheet, {customInitWork} from "./customs";
+import {initCustomConf} from "./customs/config";
 
 let luckysheet = {};
 
@@ -94,6 +92,9 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.rowHeaderWidth = extendsetting.rowHeaderWidth;
     luckysheetConfigsetting.columeHeaderHeight = extendsetting.columeHeaderHeight;
 
+    // 【改】初始化自定义的配置项
+    initCustomConf(setting.customConfig || {});
+
     // Register plugins
     initPlugins(extendsetting.plugins, extendsetting.data);
 
@@ -140,6 +141,8 @@ function initialWorkBook() {
     rowColumnOperationInitial();//row and coloumn operate initialization
     keyboardInitial();//Keyboard operate initialization
     orderByInitial();//menu bar orderby function initialization
+
+    customInitWork(); // 【改】初始化自定义逻辑
 }
 
 //获取所有表格数据
@@ -199,7 +202,7 @@ luckysheet.setSheetShow = function (index) {
 luckysheet.destroy = method.destroy;
 
 /**
- * 【自改】自定义全局属性
+ * 【改】自定义全局属性
  */
 customLSheet(luckysheet);
 
