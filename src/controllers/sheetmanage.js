@@ -6,6 +6,7 @@ import luckysheetcreatedom from '../global/createdom';
 import tooltip from '../global/tooltip';
 import formula from '../global/formula';
 import { luckysheetrefreshgrid, jfrefreshgrid_rhcw } from '../global/refresh';
+import rhchInit from '../global/rhchInit';
 import editor from '../global/editor';
 import { luckysheetextendtable, luckysheetdeletetable } from '../global/extend';
 import { isRealNum } from '../global/validate';
@@ -22,6 +23,8 @@ import { selectHightlightShow, selectionCopyShow } from './select';
 import Store from '../store';
 import locale from '../locale/locale';
 import { renderChartShow } from '../expendPlugins/chart/plugin';
+import {changeSheetContainerSize} from './resize';
+import {zoomNumberDomBind} from './zoom';
 
 const sheetmanage = {
     generateRandomSheetIndex: function(prefix) {
@@ -147,6 +150,22 @@ const sheetmanage = {
         let i = _this.getSheetIndex(index);
         
         return Store.luckysheetfile[i];
+    },
+    getSheetByName: function(name) {
+        let _this = this;
+
+        if(name == null){
+            return null;
+        }
+
+        for(let i=0;i<Store.luckysheetfile.length;i++){
+            let file = Store.luckysheetfile[i];
+            if(file.name==name){
+                return file;
+            }
+        }
+        
+        return null;
     },
     getCurSheetnoset: function() {
         let curindex = 0;
@@ -590,10 +609,16 @@ const sheetmanage = {
         Store.luckysheet_select_save = file["luckysheet_select_save"];
         if(Store.luckysheet_select_save == null || Store.luckysheet_select_save.length == 0){
             if(data[0] != null && data[0][0] != null && data[0][0].mc != null){
-                Store.luckysheet_select_save = [{ "row": [0, data[0][0].mc.rs - 1], "column": [0, data[0][0].mc.cs - 1] }];
+                Store.luckysheet_select_save = [{ 
+                    "row": [0, data[0][0].mc.rs - 1], 
+                    "column": [0, data[0][0].mc.cs - 1] 
+                }];
             }
             else{
-                Store.luckysheet_select_save = [{ "row": [0, 0], "column": [0, 0] }];
+                Store.luckysheet_select_save = [{ 
+                    "row": [0, 0], 
+                    "column": [0, 0] 
+                }];
             }
         }
 
@@ -687,6 +712,21 @@ const sheetmanage = {
                         Store.luckysheetcurrentisPivotTable = false;
                         $("#luckysheet-modal-dialog-slider-pivot").hide();
                         luckysheetsizeauto();
+
+                        //等待滚动条dom宽高加载完成后 初始化滚动位置
+                        if(file["scrollLeft"] != null && file["scrollLeft"] > 0){
+                            $("#luckysheet-scrollbar-x").scrollLeft(file["scrollLeft"]);
+                        }
+                        else{
+                            $("#luckysheet-scrollbar-x").scrollLeft(0);
+                        }
+                
+                        if(file["scrollTop"] != null && file["scrollTop"] > 0){
+                            $("#luckysheet-scrollbar-y").scrollTop(file["scrollTop"]);
+                        }
+                        else{
+                            $("#luckysheet-scrollbar-y").scrollTop(0);
+                        }
                     }
 
                     if(typeof luckysheetConfigsetting.beforeCreateDom == "function" ){
@@ -707,7 +747,18 @@ const sheetmanage = {
 
                 let loadSheetUrl = server.loadSheetUrl;
                 
-                if(sheetindex.length == 0 || loadSheetUrl == ""){
+                if(sheetindex.length == 0 && loadSheetUrl == ""){
+                    execF();
+                }
+                else if(sheetindex.length>0 && loadSheetUrl == ""){
+                    for(let i = 0;i<sheetindex.length;i++){
+                        let item = sheetindex[i];
+                        let otherfile = Store.luckysheetfile[_this.getSheetIndex(item)]; 
+                        if(otherfile["load"] == null || otherfile["load"] == "0"){
+                            otherfile["data"] = _this.buildGridData(otherfile);
+                            otherfile["load"] = "1";
+                        }
+                    }
                     execF();
                 }
                 else{
@@ -758,8 +809,13 @@ const sheetmanage = {
         file["luckysheet_select_save"] = $.extend(true, [], Store.luckysheet_select_save);
         file["luckysheet_selection_range"] = $.extend(true, [], Store.luckysheet_selection_range);
 
-        file["scrollLeft"] = $("#luckysheet-scrollbar-x").scrollLeft();//列标题
-        file["scrollTop"] = $("#luckysheet-scrollbar-y").scrollTop();//行标题
+        if($("#luckysheet-scrollbar-x")[0].scrollWidth > $("#luckysheet-scrollbar-x")[0].offsetWidth){
+            file["scrollLeft"] = $("#luckysheet-scrollbar-x").scrollLeft(); //横向滚动条
+        }
+
+        if($("#luckysheet-scrollbar-y")[0].scrollHeight > $("#luckysheet-scrollbar-y")[0].offsetHeight){
+            file["scrollTop"] = $("#luckysheet-scrollbar-y").scrollTop(); //纵向滚动条
+        }
 
         file["zoomRatio"] = Store.zoomRatio;
     },
@@ -777,7 +833,22 @@ const sheetmanage = {
 
         Store.config = file["config"];
 
-        Store.luckysheet_select_save = file["luckysheet_select_save"] == null ? [] : file["luckysheet_select_save"];
+        Store.luckysheet_select_save = file["luckysheet_select_save"];
+        if(Store.luckysheet_select_save == null || Store.luckysheet_select_save.length == 0){
+            if(Store.flowdata[0] != null && Store.flowdata[0][0] != null && Store.flowdata[0][0].mc != null){
+                Store.luckysheet_select_save = [{ 
+                    "row": [0, Store.flowdata[0][0].mc.rs - 1], 
+                    "column": [0, Store.flowdata[0][0].mc.cs - 1] 
+                }];
+            }
+            else{
+                Store.luckysheet_select_save = [{ 
+                    "row": [0, 0], 
+                    "column": [0, 0] 
+                }];
+            }
+        }
+
         Store.luckysheet_selection_range = file["luckysheet_selection_range"] == null ? [] : file["luckysheet_selection_range"];
 
         if(file["freezen"] == null){
@@ -789,7 +860,7 @@ const sheetmanage = {
             luckysheetFreezen.freezenverticaldata = file["freezen"].vertical == null ? null : file["freezen"].vertical.freezenverticaldata;
         }
 
-        if(file["zoomRatio"]!=null){
+        if(file["zoomRatio"] != null){
             Store.zoomRatio = file["zoomRatio"];
         }
         else{
@@ -797,27 +868,8 @@ const sheetmanage = {
         }
 
         createFilterOptions(file["filter_select"], file["filter"]);
-
-        Store.scrollRefreshSwitch = false;
-        if(file["scrollLeft"]!=null && file["scrollLeft"]>0){
-            $("#luckysheet-scrollbar-x").scrollLeft(file["scrollLeft"]*Store.zoomRatio);
-        }
-        else{
-            $("#luckysheet-scrollbar-x").scrollLeft(0);
-        }
-
-        if(file["scrollTop"]!=null && file["scrollTop"]>0){
-            $("#luckysheet-scrollbar-y").scrollTop(file["scrollTop"]*Store.zoomRatio);
-        }
-        else{
-            $("#luckysheet-scrollbar-y").scrollTop(0);
-        }
-        setTimeout(() => {
-            Store.scrollRefreshSwitch = true;
-        }, 0);
         
-
-        jfrefreshgrid_rhcw(Store.flowdata.length, Store.flowdata[0].length,false);
+        rhchInit(Store.flowdata.length, Store.flowdata[0].length);
     },
     restoreselect: function() {
         let index = this.getSheetIndex(Store.currentSheetIndex);
@@ -879,13 +931,10 @@ const sheetmanage = {
                 pivotTable.changePivotTable(index);
             }
         }
-        else if($("#luckysheet-modal-dialog-slider-pivot").is(":visible")) {
+        else{
             Store.luckysheetcurrentisPivotTable = false;
             $("#luckysheet-modal-dialog-slider-pivot").hide();
             luckysheetsizeauto(false);
-        }
-        else if(Store.luckysheetcurrentisPivotTable) {
-            Store.luckysheetcurrentisPivotTable = false;
         }
 
         let load = file["load"];
@@ -982,21 +1031,42 @@ const sheetmanage = {
     	let ret= [], cache = {};
     	ret.push(file.index);
     	cache[file.index.toString()] = 1;
-
         if(calchain != null){
+            let dataNameList = {};
         	for(let i = 0; i < calchain.length; i++){
-        		let func = calchain[i];
-        		let dataindex = func.index;
+        		let f = calchain[i];
+                let dataindex = f.index, func = f.func;
+
+                formula.functionParser(func[2], (str)=>{
+                    if(str.indexOf("!")>-1){
+                        let name = str.substr(0, str.indexOf('!'));
+                        dataNameList[name] = true;
+                    }
+                });
                 
                 if(dataindex == null){
                     continue;
                 }
-
+                
         		if(cache[dataindex.toString()] == null){
         			ret.push(dataindex);
         			cache[dataindex.toString()] = 1;
         		}
-        	}
+            }
+            
+            for(let n in dataNameList){
+                let sheet = this.getSheetByName(n);
+                if(sheet==null){
+                    continue;
+                }
+
+                let dataindex = sheet.index;
+
+                if(cache[dataindex.toString()] == null){
+        			ret.push(dataindex);
+        			cache[dataindex.toString()] = 1;
+        		}
+            }
         }
 
         if(chart != null){
@@ -1027,13 +1097,41 @@ const sheetmanage = {
     	return ret;
     },
     showSheet: function() {
+        changeSheetContainerSize();
         $("#luckysheet-cell-flow_0").css({ "width": Store.ch_width, "top": "-1px" }); //width更新
         $("#luckysheet-sheettable_0").css({ "width": Store.ch_width - 1, "height": Store.rh_height });
         $("#luckysheetrowHeader_0").css("height", Store.rh_height);
         $("#luckysheet-cols-h-cells_0").css("width", Store.ch_width); //width更新
 
         $("#luckysheet-scrollbar-x div").width(Store.ch_width);
-        $("#luckysheet-scrollbar-y div").height(Store.rh_height - 30);
+        $("#luckysheet-scrollbar-y div").height(Store.rh_height + Store.columeHeaderHeight - Store.cellMainSrollBarSize - 3);
+
+        //等待滚动条dom宽高计算完成后 初始化该表格滚动位置
+        let index = this.getSheetIndex(Store.currentSheetIndex);
+        let file = Store.luckysheetfile[index];
+
+
+        Store.scrollRefreshSwitch = false;
+        
+        if(file["scrollLeft"] != null && file["scrollLeft"] > 0){
+            $("#luckysheet-scrollbar-x").scrollLeft(file["scrollLeft"] * Store.zoomRatio);
+        }
+        else{
+            $("#luckysheet-scrollbar-x").scrollLeft(0);
+        }
+
+        if(file["scrollTop"] != null && file["scrollTop"] > 0){
+            $("#luckysheet-scrollbar-y").scrollTop(file["scrollTop"] * Store.zoomRatio);
+        }
+        else{
+            $("#luckysheet-scrollbar-y").scrollTop(0);
+        }
+
+        setTimeout(() => {
+            Store.scrollRefreshSwitch = true;
+        }, 0);
+
+        zoomNumberDomBind(Store.zoomRatio);
     },
     setCurSheet: function(index) {
         for (let i = 0; i < Store.luckysheetfile.length; i++) {
