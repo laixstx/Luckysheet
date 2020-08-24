@@ -135,17 +135,17 @@ export default function luckysheetHandler() {
         let scrollNum = event.deltaFactor<40?1:(event.deltaFactor<80?2:3);
         //一次滚动三行或三列
         if(event.deltaY != 0){
-            let row_ed;
-
+            let row_ed,step=Math.round(scrollNum/Store.zoomRatio);
+            step = step<1?1:step;
             if(event.deltaY < 0){
-                row_ed = row_st + scrollNum;
+                row_ed = row_st + step;
                 
                 if(row_ed >= visibledatarow_c.length){
                     row_ed = visibledatarow_c.length - 1;
                 }
             }
             else{
-                row_ed = row_st - scrollNum;
+                row_ed = row_st - step;
                 
                 if(row_ed < 0){
                     row_ed = 0;
@@ -161,31 +161,30 @@ export default function luckysheetHandler() {
             
             // if((isMac && event.deltaX >0 ) || (!isMac && event.deltaX < 0)){
             if(event.deltaX >0){
-                col_ed = col_st + scrollNum;
+                scrollLeft = scrollLeft + 20*Store.zoomRatio;
                 
-                if(col_ed >= visibledatacolumn_c.length){
-                    col_ed = visibledatacolumn_c.length - 1;
-                }
+                // if(col_ed >= visibledatacolumn_c.length){
+                //     col_ed = visibledatacolumn_c.length - 1;
+                // }
             }
             else{
-                col_ed = col_st - scrollNum;
+                scrollLeft = scrollLeft - 20*Store.zoomRatio;
                 
-                if(col_ed < 0){
-                    col_ed = 0;
-                }
+                // if(col_ed < 0){
+                //     col_ed = 0;
+                // }
             }
 
-            colscroll = col_ed == 0 ? 0 : visibledatacolumn_c[col_ed - 1];
+            // colscroll = col_ed == 0 ? 0 : visibledatacolumn_c[col_ed - 1];
 
-            $("#luckysheet-scrollbar-x").scrollLeft(colscroll);
+            $("#luckysheet-scrollbar-x").scrollLeft(scrollLeft);
         }
     });
 
     $("#luckysheet-scrollbar-x").scroll(function(){
         // setTimeout(function(){
             luckysheetscrollevent();
-        // },10); 
-
+        // },10);
     })
     .mousewheel(function (event, delta) {
         event.preventDefault();
@@ -3420,6 +3419,9 @@ export default function luckysheetHandler() {
     //冻结行列
     $("#luckysheet-freezen-btn-horizontal").click(function () {
         if ($.trim($(this).text()) == locale().freezen.freezenCancel) {
+
+            luckysheetFreezen.saveFrozen("freezenCancel");
+
             if (luckysheetFreezen.freezenverticaldata != null) {
                 luckysheetFreezen.cancelFreezenVertical();
                 luckysheetFreezen.createAssistCanvas();
@@ -3435,6 +3437,9 @@ export default function luckysheetHandler() {
             luckysheetFreezen.scrollAdapt();
         }
         else {
+
+            luckysheetFreezen.saveFrozen("freezenRow");
+
             if (luckysheetFreezen.freezenverticaldata != null) {
                 luckysheetFreezen.cancelFreezenVertical();
                 luckysheetFreezen.createAssistCanvas();
@@ -3450,10 +3455,16 @@ export default function luckysheetHandler() {
 
     $("#luckysheet-freezen-btn-vertical").click(function () {
         if (luckysheetFreezen.freezenverticaldata != null) {
+
+            luckysheetFreezen.saveFrozen("freezenCancel");
+
             luckysheetFreezen.cancelFreezenVertical();
             luckysheetrefreshgrid();
         }
         else {
+
+            luckysheetFreezen.saveFrozen("freezenColumn");
+
             luckysheetFreezen.createFreezenVertical();
         }
         luckysheetFreezen.createAssistCanvas();

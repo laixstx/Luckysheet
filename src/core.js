@@ -1,19 +1,19 @@
 import defaultSetting from './config.js';
-import {common_extend} from './utils/util';
+import { common_extend } from './utils/util';
 import Store from './store';
 import server from './controllers/server';
 import luckysheetConfigsetting from './controllers/luckysheetConfigsetting';
 import sheetmanage from './controllers/sheetmanage';
 import luckysheetsizeauto from './controllers/resize';
 import luckysheetHandler from './controllers/handler';
-import {initialFilterHandler} from './controllers/filter';
-import {initialMatrixOperation} from './controllers/matrixOperation';
-import {initialSheetBar} from './controllers/sheetBar';
-import {formulaBarInitial} from './controllers/formulaBar';
-import {rowColumnOperationInitial} from './controllers/rowColumnOperation';
-import {keyboardInitial} from './controllers/keyboard';
-import {orderByInitial} from './controllers/orderBy';
-import {initPlugins} from './controllers/expendPlugins';
+import { initialFilterHandler } from './controllers/filter';
+import { initialMatrixOperation } from './controllers/matrixOperation';
+import { initialSheetBar } from './controllers/sheetBar';
+import { formulaBarInitial } from './controllers/formulaBar';
+import { rowColumnOperationInitial } from './controllers/rowColumnOperation';
+import { keyboardInitial } from './controllers/keyboard';
+import { orderByInitial } from './controllers/orderBy';
+import { initPlugins } from './controllers/expendPlugins';
 import {
     getluckysheetfile,
     getluckysheet_select_save,
@@ -22,15 +22,16 @@ import {
 import {
     setluckysheet_select_save
 } from './methods/set';
-import {luckysheetrefreshgrid, jfrefreshgrid} from './global/refresh';
+import { luckysheetrefreshgrid, jfrefreshgrid } from './global/refresh';
 import functionlist from './function/functionlist';
-import {luckysheetlodingHTML} from './controllers/constant';
-import {getcellvalue, getdatabyselection} from './global/getdata';
-import {setcellvalue} from './global/setdata';
-import {selectHightlightShow} from './controllers/select';
+import { luckysheetlodingHTML } from './controllers/constant';
+import { getcellvalue, getdatabyselection } from './global/getdata';
+import { setcellvalue } from './global/setdata';
+import { selectHightlightShow } from './controllers/select';
+import {zoomInitial} from './controllers/zoom';
 import method from './global/method';
-import customLSheet, {customInitWork} from "./customs";
-import {initCustomConf} from "./customs/config";
+import customLSheet, { customInitWork } from "./customs";
+import { initCustomConf } from "./customs/config";
 
 let luckysheet = {};
 
@@ -116,7 +117,7 @@ luckysheet.create = function (setting) {
         // luckysheetsizeauto();
         initialWorkBook();
     } else {
-        $.post(loadurl, {"gridKey": server.gridKey}, function (d) {
+        $.post(loadurl, { "gridKey": server.gridKey }, function (d) {
             let data = eval("(" + d + ")");
             Store.luckysheetfile = data;
 
@@ -141,6 +142,7 @@ function initialWorkBook() {
     rowColumnOperationInitial();//row and coloumn operate initialization
     keyboardInitial();//Keyboard operate initialization
     orderByInitial();//menu bar orderby function initialization
+    zoomInitial();//zoom method initialization
 
     customInitWork(); // 【改】初始化自定义逻辑
 }

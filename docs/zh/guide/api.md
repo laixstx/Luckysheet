@@ -3,23 +3,21 @@
 Luckysheet针对常用的数据操作需求，开放了主要功能的API，开发者可以根据需要进行任意对接开发。
 
 使用注意：
-1. 所有方法均挂载到window.luckysheet对象下面，可以在浏览器控制台打印看到
+1. script全局引入时，所有API均挂载到window.luckysheet对象下面，可以在浏览器控制台打印看到；npm引入时，API也全部挂载在luckysheet对象下
 2. `success`回调函数第一个参数为API方法的返回值
 3. 需要新的API请到github [Issues](https://github.com/mengshukeji/Luckysheet/issues/new/choose)中提交，根据点赞数决定是否开放新API
-3. ⚠️新的API正在整理，旧API可能随时变动，请谨慎使用并随时关注官网更新！
 
 ## 单元格操作
 
-### getCellValue(row, column [,setting])
+### getCellValue(row, column [,setting])<div id='getCellValue'></div>
 
 - **参数**：
-	
+
 	- {Number} [row]: 单元格所在行数；从0开始的整数，0表示第一行
 	- {Number} [column]: 单元格所在列数；从0开始的整数，0表示第一列
 	- {PlainObject} [setting]: 可选参数
-		+ {String} [type]: 单元格的值，可以设置为"v"：原始值 或者"m"：显示值；默认值为'v',表示获取单元格的实际值
+		+ {String} [type]: 单元格的值类型，可以设置为原始值"v"或者显示值"m"；默认值为'v',表示获取单元格的实际值
     	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-        + {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
@@ -41,32 +39,34 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 ### setCellValue(row, column, value [,setting])
 
-- **参数**：
-    - {Number} [row]: 单元格所在行数；从0开始的整数，0表示第一行
-    - {Number} [column]: 单元格所在列数；从0开始的整数，0表示第一列
-    - {Object | String | Number} [value]: 要设置的值；可以为字符串或数字，或为符合Luckysheet单元格格式的对象，参考 [单元格属性表](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)
-    - {PlainObject} [setting]: 可选参数
-        + {Number} [order]: 工作表索引；默认值为当前工作表索引
-        + {Function} [success]: 操作结束的回调函数
+- **参数**：
 
-- **说明**：
+	- {Number} [row]: 单元格所在行数；从0开始的整数，0表示第一行
+	- {Number} [column]: 单元格所在列数；从0开始的整数，0表示第一列
+	- {Object | String | Number} [value]: 要设置的值；可以为字符串或数字，或为符合Luckysheet单元格格式的对象，参考 [单元格属性表](/zh/guide/cell.html)
+	- {PlainObject} [setting]: 可选参数
+		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
+		+ {Function} [success]: 操作结束的回调函数
 
-    设置某个单元格的值，也可以设置整个单元格对象，用于同时设置多个单元格属性
+- **说明**：
 
-- **示例**:
+	设置某个单元格的值，也可以设置整个单元格对象，用于同时设置多个单元格属性
 
-    - 设置当前工作表"A1"单元格的值为"abc"
-    `luckysheet.setCellValue(0, 0, 'abc');`
+- **示例**:
+
+	- 设置当前工作表"A1"单元格的值为"abc"
+    	`luckysheet.setCellValue(0, 0, 'abc');`
 
 ------------
 
 ### setCellFormat(row, column, attr, value [,setting])
 
 - **参数**：
+	
 	- {Number} [row]: 单元格所在行数；从0开始的整数，0表示第一行
 	- {Number} [column]: 单元格所在列数；从0开始的整数，0表示第一列
-    - {String} [attr]: 属性类型，参考 [单元格属性表](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)的属性值
-	- {String | Number | Object} [value]: 具体的设置值，一个属性会对应多个值，参考 [单元格属性表](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)的值示例，特殊情况：如果属性类型`attr`是单元格格式`ct`，则设置值`value`应提供`ct.fa`，比如设置A1单元格的格式为百分比格式：
+    - {String} [attr]: 属性类型，参考 [单元格属性表](/zh/guide/cell.html)的属性值
+	- {String | Number | Object} [value]: 具体的设置值，一个属性会对应多个值，参考 [单元格属性表](/zh/guide/cell.html)的值示例，特殊情况：如果属性类型`attr`是单元格格式`ct`，则设置值`value`应提供`ct.fa`，比如设置A1单元格的格式为百分比格式：
 	  
   	  `luckysheet.setCellFormat(0, 0, "ct", "0.00%")`
 
@@ -111,11 +111,15 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 		+ {Boolean} [isWholeWord]: 是否整词匹配；默认为 `false`
 		+ {Boolean} [isCaseSensitive]: 是否区分大小写匹配；默认为 `false`
     	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-        + {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
 	查找一个工作表中的指定内容，返回查找到的内容组成的单元格一位数组，数据格式同`celldata`。
+
+- **示例**:
+
+   - 当前工作表查找`"value"`字符串
+   		`luckysheet.find("value")`
 
 ------------
 
@@ -136,6 +140,11 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	查找一个工作表中的指定内容并替换成新的内容，返回替换后的内容组成的单元格一位数组，数据格式同`celldata`。
 
+- **示例**:
+
+   - 当前工作表查找`"value"`字符串并替换为`"out"`
+   		`luckysheet.replaces("value", "out)`
+
 ------------
 
 ## 行和列操作
@@ -143,13 +152,14 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 ### setHorizontalFrozen(isRange [,setting])
 
 - **参数**：
+	
 	- {Boolean} [isRange]: 是否冻结行到选区
 		`isRange`可能的值有：
 		
 		+ `"false"`: 冻结首行
 		+ `"true"`: 冻结行到选区
 	- {PlainObject} [setting]: 可选参数
-    	+ {Array | Object | String} [range]: `isRange`为`true`的时候设置，开启冻结的选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
+    	+ {Array | Object | String} [range]: `isRange`为`true`的时候设置，开启冻结的单元格位置，格式为`{ row_focus:0, column_focus:0 }`，意为当前激活的单元格的行数和列数；默认从当前选区最后的一个选区中取得
     	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
         + {Function} [success]: 操作结束的回调函数
 
@@ -157,20 +167,31 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	冻结行操作
 
-	特别注意，只有在`isRange`设置为`true`的时候，才需要设置`setting`中的`range`。
+	特别注意，只有在`isRange`设置为`true`的时候，才需要设置`setting`中的`range`，且与一般的range格式不同。
+
+- **示例**:
+
+   - 冻结首行
+
+		`luckysheet.setHorizontalFrozen(false)`
+
+   - 冻结到`B5`选区
+
+		`luckysheet.setHorizontalFrozen(true, { range: 'B5' })`
 
 ------------
 
 ### setVerticalFrozen(isRange [,setting])
 
 - **参数**：
+	
 	- {Boolean} [isRange]: 是否冻结列到选区
 		`isRange`可能的值有：
 		
 		+ `"false"`: 冻结首列
 		+ `"true"`: 冻结列到选区
 	- {PlainObject} [setting]: 可选参数
-    	+ {Array | Object | String} [range]: `isRange`为`true`的时候设置，开启冻结的选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
+    	+ {Array | Object | String} [range]: `isRange`为`true`的时候设置，开启冻结的单元格位置，格式为`{ row_focus:0, column_focus:0 }`，意为当前激活的单元格的行数和列数；默认从当前选区最后的一个选区中取得
     	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
         + {Function} [success]: 操作结束的回调函数
 
@@ -178,20 +199,27 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	冻结列操作
 
-	特别注意，只有在`isRange`设置为`true`的时候，才需要设置`setting`中的`range`。
+	特别注意，只有在`isRange`设置为`true`的时候，才需要设置`setting`中的`range`，且与一般的range格式不同。
+
+- **示例**:
+
+   - 冻结首列
+
+		`luckysheet.setVerticalFrozen(false)`
 
 ------------
 
 ### setBothFrozen(isRange [,setting])
 
 - **参数**：
+	
 	- {Boolean} [isRange]: 是否冻结行列到选区
 		`isRange`可能的值有：
 		
 		+ `"false"`: 冻结行列
 		+ `"true"`: 冻结行列到选区
 	- {PlainObject} [setting]: 可选参数
-    	+ {Array | Object | String} [range]: `isRange`为`true`的时候设置，开启冻结的选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
+    	+ {Array | Object | String} [range]: `isRange`为`true`的时候设置，开启冻结的单元格位置，格式为`{ row_focus:0, column_focus:0 }`，意为当前激活的单元格的行数和列数；默认从当前选区最后的一个选区中取得
     	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
         + {Function} [success]: 操作结束的回调函数
 
@@ -199,7 +227,13 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	冻结行列操作
 
-	特别注意，只有在`isRange`设置为`true`的时候，才需要设置`setting`中的`range`。
+	特别注意，只有在`isRange`设置为`true`的时候，才需要设置`setting`中的`range`，且与一般的range格式不同。
+
+- **示例**:
+
+   - 冻结行列
+
+		`luckysheet.setBothFrozen(false)`
 
 ------------
 
@@ -215,13 +249,19 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	取消冻结操作
 
+- **示例**:
+
+   - 取消冻结
+
+		`luckysheet.cancelFrozen()`
+
 ------------
 
-### insertRow( row [,setting])
+### insertRow(row [,setting])
 
 - **参数**：
 
-	- {Number} [row]: 在第几行插入空白行
+	- {Number} [row]: 在第几行插入空白行，从0开始
 
 	- {PlainObject} [setting]: 可选参数
 		+ {Number} [number]: 插入的空白行数；默认为 1
@@ -231,6 +271,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 - **说明**：
 	
 	在第`row`行的位置，插入`number`行空白行
+
+- **示例**:
+
+   - 在第2行的位置插入1行空白行
+
+		`luckysheet.insertRow(1)`
 
 ------------
 
@@ -249,6 +295,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	在第`column`列的位置，插入`number`列空白列
 
+- **示例**:
+
+   - 在第1列的位置插入3行空白行
+
+		`luckysheet.insertRow(0, { number: 3 })`
+
 ------------
 
 ### deleteRow(rowStart, rowEnd [,setting])
@@ -266,7 +318,13 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	删除指定的行
 
-	特别提醒，删除行之后，行的序号并不会变化，注意观察数据是否被正确删除即可。
+	特别提醒，删除行之后，行的序号并不会变化，下面的行会补充到上面，注意观察数据是否被正确删除即可。
+
+- **示例**:
+
+   - 删除2-4行
+
+		`luckysheet.deleteRow(1, 3)`
 
 ------------
 
@@ -285,7 +343,13 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	删除指定的列
 
-	特别提醒，删除列之后，列的序号并不会变化，注意观察数据是否被正确删除即可。
+	特别提醒，删除列之后，列的序号并不会变化，右边的列会补充到左边，注意观察数据是否被正确删除即可。
+
+- **示例**:
+
+   - 删除2-4列
+
+		`luckysheet.deleteColumn(1, 3)`
 
 ------------
 
@@ -306,6 +370,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 	特别提醒，隐藏行之后，行的序号会变化。
 
+- **示例**:
+
+   - 隐藏2-4行
+
+		`luckysheet.hideRow(1, 3)`
+
 ------------
 
 ### hideColumn(columnStart, columnEnd [,setting])(TODO)
@@ -325,6 +395,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 	特别提醒，隐藏列之后，列的序号会变化。
 
+- **示例**:
+
+   - 隐藏2-4列
+
+		`luckysheet.hideColumn(1, 3)`
+
 ------------
 
 ### showRow(rowStart, rowEnd [,setting])
@@ -341,6 +417,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 - **说明**：
 	
 	显示指定的行
+
+- **示例**:
+
+   - 显示2-4行
+
+		`luckysheet.showRow(1, 3)`
 
 ------------
 
@@ -359,9 +441,42 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	显示指定的列
 
+- **示例**:
+
+   - 显示2-4列
+
+		`luckysheet.showColumn(1, 3)`
+
 ------------
 
 ## 选区操作
+
+### getRange([setting])
+
+- **参数**：
+
+	- {PlainObject} [setting]: 可选参数
+		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
+
+- **说明**：
+
+	返回当前选区对象的数组，可能存在多个选区。每个选区的格式为row/column信息组成的对象`{row:[0,1],column:[0,1]}`
+
+- **示例**:
+
+	- 当前选区为"A1:B2"和"B4:C5"，执行
+		
+		`luckysheet.getRange()`
+		
+		则返回结果为：
+		```json
+		[
+			{ "row": [0,1], "column": [0,1] },
+			{ "row": [3,4], "column": [1,2] }
+		]
+		```
+
+------------
 
 ### getRangeValue([setting])
 
@@ -370,13 +485,80 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	- {PlainObject} [setting]: 可选参数
 		+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
 		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-		+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
 	返回指定工作表指定范围的单元格二维数组数据，每个单元格为一个对象。
 
-	[单元格对象格式参考](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)
+	[单元格对象格式参考](/zh/guide/cell.html)
+
+- **示例**:
+
+	- 当前选区为"A1:B2"，执行
+		
+		`luckysheet.getRangeValue()`
+		
+		则返回结果为：
+		```json
+		[
+			[
+				{
+					"v": "vaule1",
+					"ct": { "fa": "General", "t": "g" },
+					"m": "vaule1",
+					"bg": "rgba(255,255,255)",
+					"bl": 0,
+					"it": 0,
+					"ff": 1,
+					"fs": 11,
+					"fc": "rgb(51, 51, 51)",
+					"ht": 1,
+					"vt": 0
+				},
+				{
+					"v": "value3",
+					"ct": { "fa": "General", "t": "g" },
+					"m": "value3",
+					"bg": "rgba(255,255,255)",
+					"bl": 0,
+					"it": 0,
+					"ff": 1,
+					"fs": 11,
+					"fc": "rgb(51, 51, 51)",
+					"ht": 1,
+					"vt": 0
+				}
+			],
+			[
+				{
+					"v": "vaule2",
+					"ct": { "fa": "General", "t": "g" },
+					"m": "vaule2",
+					"bg": "rgba(255,255,255)",
+					"bl": 0,
+					"it": 0,
+					"ff": 1,
+					"fs": 11,
+					"fc": "rgb(51, 51, 51)",
+					"ht": 1,
+					"vt": 0
+				},
+				{
+					"v": "value4",
+					"ct": { "fa": "General", "t": "g" },
+					"m": "value4",
+					"bg": "rgba(255,255,255)",
+					"bl": 0,
+					"it": 0,
+					"ff": 1,
+					"fs": 11,
+					"fc": "rgb(51, 51, 51)",
+					"ht": 1,
+					"vt": 0
+				}
+			]
+		]
+		```
 
 ------------
 
@@ -387,13 +569,44 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	- {PlainObject} [setting]: 可选参数
     	+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，允许多个选区组成的数组；默认为当前选区
     	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-        + {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
 	复制指定工作表指定单元格区域的数据，返回包含`<table>`html格式的数据，可用于粘贴到excel中保持单元格样式。
 	
 	特别注意，如果复制多个选区，这几个选区必须有相同的行或者相同的列才能复制，复制出的结果也会自动合并成衔接的数组，比如，多选`"C18:C20"` / `"E18:E20"` / `"G18:H20"`是允许的，但是多选`"C18:C20"` / `"E18:E21"`是不允许的
+
+- **示例**:
+
+	- 当前选区为"A1:B2"，执行
+		
+		`luckysheet.getRangeHtml()`
+		
+		则返回结果为：
+		```html
+		<table data-type="luckysheet_copy_action_table">
+			<colgroup width="72px">
+			</colgroup>
+			<colgroup width="72px">
+			</colgroup>
+			<tr>
+				<td style="height:19px;">
+					value1
+				</td>
+				<td style="">
+					value3
+				</td>
+			</tr>
+			<tr>
+				<td style="height:19px;">
+					value2
+				</td>
+				<td style="">
+					value4
+				</td>
+			</tr>
+		</table>
+		```
 
 ------------
 
@@ -410,11 +623,35 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	- {PlainObject} [setting]: 可选参数
 		+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
 		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-		+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
-	
+
 	复制指定工作表指定单元格区域的数据，返回`json`格式的数据
+
+- **示例**:
+
+	- 当前选区为"A1:B2"，首行为标题取得json
+		
+		`luckysheet.getRangeJson(true)`
+		
+		则返回结果为：
+		```json
+		[
+			{ "A": "value1", "B": "value3" },
+			{ "A": "value2", "B": "value4" }
+		]
+		```
+
+	- 当前选区为"A1:B2"，首行不为标题取得json
+		
+		`luckysheet.getRangeJson(false)`
+		
+		则返回结果为：
+		```json
+		[
+			{ "value1": "value2", "value3": "value4" }
+		]
+		```
 
 ------------
 
@@ -428,19 +665,88 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 		
 		+ `"oneDimensional"`: 一维数组
 		+ `"twoDimensional"`: 二维数组
-		+ `"custom"`: 自定义维数组
+		+ `"custom"`: 自定义行列数的二维数组
 	- {PlainObject} [setting]: 可选参数
 		+ {Number} [row]: `dimensional`为`custom`的时候设置，多维数组的行数
 		+ {Number} [column]: `dimensional`为`custom`的时候设置，多维数组的列数
 		+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
 		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-		+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
-	复制指定工作表指定单元格区域的数据，返回一维、二维或者自定义维数组格式的数据。
+	复制指定工作表指定单元格区域的数据，返回一维、二维或者自定义行列数的二维数组的数据。
 
 	特别注意，只有在`dimensional`设置为`custom`的时候，才需要设置`setting`中的`row`和`column`
+
+- **示例**:
+
+	- 当前选区为"A1:B2"，一维数组
+		
+		`luckysheet.getRangeArray('oneDimensional')`
+		
+		则返回结果为：
+		```json
+		["value1","value3","value2","value4"]
+		```
+
+	- 当前选区为"A1:B2"，二维数组
+		
+		`luckysheet.getRangeArray('twoDimensional')`
+		
+		则返回结果为：
+		```json
+		[
+			[ "value1", "value3" ],
+			[ "value2", "value4" ]
+		]
+		```
+
+	- 当前选区为"A1:C5"，由 'value1'到'value15'的值组成，得到3
+	行2列的二维数组数据
+		
+		`luckysheet.getRangeArray('custom', { row: 3, column: 2 })`
+		
+		则返回结果为：
+		```json
+		[
+			[
+				{
+					"m": "value1",
+					"ct": { "fa": "General", "t": "g" },
+					"v": "value1"
+				},
+				{
+					"ct": { "fa": "General", "t": "g" },
+					"v": "value6",
+					"m": "value6"
+				}
+			],
+			[
+				{
+					"ct": { "fa": "General", "t": "g" },
+					"v": "value11",
+					"m": "value11"
+				},
+				{
+					"m": "value2",
+					"ct": { "fa": "General", "t": "g" },
+					"v": "value2"
+				}
+			],
+			[
+				{
+					"ct": { "fa": "General", "t": "g" },
+					"v": "value7",
+					"m": "value7"
+				},
+				{
+					"ct": { "fa": "General", "t": "g" },
+					"v": "value12",
+					"m": "value12"
+				}
+			]
+		]
+		```
 
 ------------
 
@@ -453,12 +759,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 		`type`可能的值有：
 		
 		+ `"normal"`: 对角线
+		+ `"anti"`: 反对角线
 		+ `"offset"`: 对角线偏移
 	- {PlainObject} [setting]: 可选参数
 		- {Number} [column]: `type`为`offset`的时候设置，对角偏移的列数
 		+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
 		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-		+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
@@ -466,6 +772,61 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 	特别注意，只有在`type`设置为`offset`的时候，才需要设置`setting`中的`column`。
 
+- **示例**:
+
+	- 当前选区为"A1:B2"，对角线
+		
+		`luckysheet.getRangeDiagonal('normal')`
+		
+		则返回结果为：
+		```json
+		[
+			{
+				"m": "value1",
+				"ct": { "fa": "General", "t": "g" },
+				"v": "value1"
+			},
+			{
+				"m": "value4",
+				"ct": { "fa": "General", "t": "g" },
+				"v": "value4"
+			}
+		]
+		```
+
+	- 当前选区为"A1:B2"，反对角线
+		
+		`luckysheet.getRangeDiagonal('anti')`
+		
+		则返回结果为：
+		```json
+		[
+			{
+				"m": "value3",
+				"ct": { "fa": "General", "t": "g" },
+				"v": "value3"
+			},
+			{
+				"m": "value2",
+				"ct": { "fa": "General", "t": "g" },
+				"v": "value2"
+			}
+		]
+		```
+	- 当前选区为"A1:B2"，对角线偏移1列
+		
+		`luckysheet.getRangeDiagonal('offset', { column: 1 })`
+		
+		则返回结果为：
+		```json
+		[
+			{
+				"m": "value3",
+				"ct": { "fa": "General", "t": "g" },
+				"v": "value3"
+			}
+		]
+		```
 ------------
 
 ### getRangeBoolean([setting])
@@ -475,15 +836,28 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	- {PlainObject} [setting]: 可选参数
 		+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
 		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-		+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
 	复制指定工作表指定单元格区域的数据，返回布尔值的数据
 
+- **示例**:
+
+	- 当前选区为"A1:B2"
+		
+		`luckysheet.getRangeBoolean()`
+		
+		则返回结果为：
+		```json
+		[
+			[ false, false ],
+			[ false, false ]
+		]
+		```
+
 ------------
 
-### setRangeShow(range [,setting])
+### setRangeShow(range [,setting])<div id='setRangeShow'></div>
 
 - **参数**：
 
@@ -526,7 +900,7 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 - **参数**：
 
-	- {Array} [data]: 要赋值的单元格二维数组数据，每个单元格的值，可以为字符串或数字，或为符合Luckysheet格式的对象，参考 [单元格属性表](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)
+	- {Array} [data]: 要赋值的单元格二维数组数据，每个单元格的值，可以为字符串或数字，或为符合Luckysheet格式的对象，参考 [单元格属性表](/zh/guide/cell.html)
 	- {PlainObject} [setting]: 可选参数
 		+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
 		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
@@ -536,6 +910,52 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	将一个单元格数组数据赋值到指定的区域，数据格式同`getRangeValue`方法取到的数据。
 
+- **示例**:
+
+     + 赋值到当前选区
+      
+		```js
+		const data = [
+				[
+					{
+						"m": "value1",
+						"ct": {
+							"fa": "General",
+							"t": "g"
+						},
+						"v": "value1"
+					},
+					{
+						"m": "value3",
+						"ct": {
+							"fa": "General",
+							"t": "g"
+						},
+						"v": "value3"
+					}
+				],
+				[
+					{
+						"m": "value2",
+						"ct": {
+							"fa": "General",
+							"t": "g"
+						},
+						"v": "value2"
+					},
+					{
+						"m": "value4",
+						"ct": {
+							"fa": "General",
+							"t": "g"
+						},
+						"v": "value4"
+					}
+				]
+			]
+		luckysheet.setRangeValue(data)
+		```
+
 ------------
 
 ### setRangeFormat(attr, value [,setting])
@@ -543,8 +963,8 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 - **参数**：
 
     - {String} [attr]: 属性类型，
-  	参考 [单元格属性表](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)的属性值
-	- {String | Number | Object} [value]: 具体的设置值，一个属性会对应多个值，参考 [单元格属性表](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)的值示例，特殊情况：如果属性类型`attr`是单元格格式`ct`，则设置值`value`应提供`ct.fa`，比如设置`"A1:B2"`单元格的格式为百分比格式：
+  	参考 [单元格属性表](/zh/guide/cell.html)的属性值
+	- {String | Number | Object} [value]: 具体的设置值，一个属性会对应多个值，参考 [单元格属性表](/zh/guide/cell.html)的值示例，特殊情况：如果属性类型`attr`是单元格格式`ct`，则设置值`value`应提供`ct.fa`，比如设置`"A1:B2"`单元格的格式为百分比格式：
 	  
   	  `luckysheet.setRangeFormat("ct", "0.00%", {range:"A1:B2"})`
 
@@ -570,9 +990,11 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 - **示例**:
 
    - 设置当前工作表`"A1:B2"`范围的单元格文本加粗
-   `luckysheet.setRangeFormat("bl", 1, {range:"A1:B2"})`
+		
+		`luckysheet.setRangeFormat("bl", 1, {range:"A1:B2"})`
    - 设置第二个工作表的`"B2"`和`"C4:D5"`范围的单元格背景为红色
-   `luckysheet.setRangeFormat("bg", "#ff0000", {range:["B2","C4:D5"], order:1})`
+		
+		`luckysheet.setRangeFormat("bg", "#ff0000", {range:["B2","C4:D5"], order:1})`
 
 ------------
 
@@ -604,6 +1026,7 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 ### setRangeMerge(type [,setting])
 
 - **参数**：
+	
 	- {String} [type]: 合并单元格类型
 	
 		`type`可能的值有：
@@ -611,6 +1034,7 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 		+ `"all"`: 全部合并，区域内所有单元格合并成一个大的单元格
 		+ `"horizontal"`: 水平合并，区域内在同一行的单元格合并成一个单元格
 		+ `"vertical"`: 垂直合并，区域内在同一列的单元格合并成一个单元格
+	
 	- {PlainObject} [setting]: 可选参数
     	+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，允许多个选区组成的数组；默认为当前选区
     	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
@@ -619,6 +1043,36 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 - **说明**：
 	
 	为指定索引的工作表，选定的范围设定合并单元格
+
+- **示例**:
+
+	- 当前选区 'A1:B2' 设置为合并单元格，类型为全部合并
+		
+		`luckysheet.setRangeMerge("all")`
+		得到 'A1:B1' 的数据为：
+		```json
+		[
+			[
+				{
+					"m": "value1",
+					"ct": { "fa": "General", "t": "g" },
+					"v": "value1",
+					"mc": { "r": 0, "c": 0, "rs": 2, "cs": 2 }
+				},
+				{
+					"mc": { "r": 0, "c": 0 }
+				}
+			],
+			[
+				{
+					"mc": { "r": 0, "c": 0 }
+				},
+				{
+					"mc": { "r": 0, "c": 0 }
+				}
+			]
+		]
+		```
 
 ------------
 
@@ -635,6 +1089,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	为指定索引的工作表，选定的范围取消合并单元格
 
+- **示例**:
+
+	- 当前选区 'A1:B2' 已为合并单元格，现在要取消合并
+		
+		`luckysheet.cancelRangeMerge()`
+		
 ------------
 
 ### setRangeSort(type [,setting])
@@ -783,10 +1243,10 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
       `luckysheet.setRangeConditionalFormatDefault("lastPercent",{ type: 'value', content: [15] })`
 	
 	- 突出显示高于平均值的单元格
-      luckysheet.setRangeConditionalFormatDefault("AboveAverage",{ type: 'value', content: ['AboveAverage'] })`
+      `luckysheet.setRangeConditionalFormatDefault("AboveAverage",{ type: 'value', content: ['AboveAverage'] })`
 	
 	- 突出显示低于平均值的单元格
-	  luckysheet.setRangeConditionalFormatDefault("SubAverage",{ type: 'value', content: ['SubAverage'] })`
+	  `luckysheet.setRangeConditionalFormatDefault("SubAverage",{ type: 'value', content: ['SubAverage'] })`
 
 ------------
 
@@ -901,6 +1361,11 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	为指定索引的工作表，选定的范围开启条件格式，返回开启条件格式后的数据。
 
+- **示例**:
+
+    - 当前选区范围开启条件格式，显示渐变色
+      `luckysheet.setRangeConditionalFormat("dataBar", { format: ["#63c384", "#ffffff"] })`
+
 ------------
 
 ### deleteRangeConditionalFormat(itemIndex [,setting])
@@ -921,7 +1386,7 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 - **示例**:
 
     - 删除第三个条件格式规则
-      `luckysheet.editRangeConditionalFormat(2)`
+      `luckysheet.deleteRangeConditionalFormat(2)`
     
 ------------
 
@@ -938,6 +1403,11 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	清除指定工作表指定单元格区域的内容，返回清除掉的数据，不同于删除选区的功能，不需要设定单元格移动情况
 
+- **示例**:
+
+    - 清空当前选区内容
+      `luckysheet.clearRange()`
+    
 ------------
 
 ### deleteRange(move [,setting])
@@ -959,6 +1429,11 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	删除指定工作表指定单元格区域，返回删除掉的数据，同时，指定是右侧单元格左移还是下方单元格上移
 
+- **示例**:
+
+    - 删除当前选区并且在删除后，右侧单元格左移
+      `luckysheet.deleteRange('left')`
+    
 ------------
 
 ### insertRange(move [,setting])
@@ -973,7 +1448,7 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 		+ `"bottom"`: 活动单元格下移
 		
 	- {PlainObject} [setting]: 可选参数
-		+ {Array} [data]: 赋值到range区域的单元格二维数组数据，[单元格对象格式参考](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/format.html#%E5%8D%95%E5%85%83%E6%A0%BC%E5%B1%9E%E6%80%A7%E8%A1%A8)；默认值为空数组，即插入空白的区域
+		+ {Array} [data]: 赋值到range区域的单元格二维数组数据，[单元格对象格式参考](/zh/guide/cell.html)；默认值为空数组，即插入空白的区域
 		+ {Array | Object | String} [range]: 要插入的位置，选区范围，支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，默认为当前选区
     	
 			当未设置data数据时，允许多个选区组成的数组，插入的空白区域即为这些选区的区域，
@@ -987,6 +1462,11 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	在指定工作表指定单元格区域，赋值单元格数据，或者新建一块空白区域，返回data数据，同时，指定活动单元格右移或者下移
 
+- **示例**:
+
+    - 当前选区位置插入空白单元格，并且插入后当前选区单元格右移
+      `luckysheet.insertRange('right')`
+    
 ------------
 
 ### matrixOperation(type [,setting])
@@ -1016,6 +1496,20 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	指定工作表指定单元格区域的数据进行矩阵操作，返回操作成功后的结果数据
 
+- **示例**:
+
+    - 当前选区上下翻转
+    		
+		`luckysheet.matrixOperation('flipUpDown')`
+
+		原来的选区复制为二维数组：
+		
+		`[["value1","value3"],["value2","value4"]]`
+		
+		上下翻转后选区复制为二维数组：
+		
+		`[["value2","value4"],["value1","value3"]]`
+    
 ------------
 
 ### matrixCalculation(type, number [,setting])
@@ -1032,9 +1526,6 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 		+ `"power"`: 次方
 		+ `"root"`: 次方根
 		+ `"log"`: log
-		+ `"removeDuplicateByRow"`: 按行删除重复值
-		+ `"removeDuplicateByColumn"`: 按列删除重复值
-		+ `"newMatrix"`: 生产新矩阵
 	- {Number} [number]: 计算数值，如: 2
 	- {PlainObject} [setting]: 可选参数
     	+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
@@ -1045,16 +1536,25 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 	指定工作表指定单元格区域的数据进行矩阵计算，返回计算成功后的结果数据
 
+- **示例**:
+
+    - 当前选区所有单元格值加2
+    		
+		`luckysheet.matrixCalculation('plus', 2)`
+
+		原来的选区复制为二维数组：
+		
+		`[[1,2],[3,4]]`
+		
+		加2后选区复制为二维数组：
+		
+		`[[3,4],[5,6]]`
+    
 ------------
 
 ## 工作表操作
 
-### getAllSheets([setting])
-
-- **参数**：
-
-    - {PlainObject} [setting]: 可选参数
-		+ {Function} [success]: 操作结束的回调函数
+### getAllSheets()
 
 - **说明**：
 	
@@ -1069,7 +1569,7 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	
 ------------
 
-### getluckysheetfile()
+### getLuckysheetfile()
 
 - **参数**：
 
@@ -1083,8 +1583,48 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 - **示例**:
 
 	- 取得第一个工作表的所有调试信息
-	`luckysheet.getluckysheetfile()[0]`
+	`luckysheet.getLuckysheetfile()[0]`
 	
+------------
+
+### getSheetData([setting])
+
+- **参数**：
+
+    - {PlainObject} [setting]: 可选参数
+    	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
+
+- **说明**：
+
+	快捷返回指定工作表的数据，同 `luckysheetfile[i].data`
+	
+------------
+
+### getConfig([setting])
+
+- **参数**：
+
+    - {PlainObject} [setting]: 可选参数
+    	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
+
+- **说明**：
+
+	快捷返回指定工作表的config配置，同 `luckysheetfile[i].config`
+
+------------
+
+### setConfig([setting])
+
+- **参数**：
+
+    - {PlainObject} [setting]: 可选参数
+    	+ {Number} [order]: 工作表索引；默认值为当前工作表索引
+    	+ {Function} [success]: 操作结束的回调函数
+	
+- **说明**：
+
+	快捷设置当前表格config配置
+
 ------------
 
 ### setSheetAdd([setting])
@@ -1146,29 +1686,43 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 ------------
 
-### setSheetHide(hide [,setting])
+### setSheetHide([setting])
 
 - **参数**：
 
-	- {Boolean} [hide]: 是否隐藏工作表
-		
-		`hide`可能的值有的：
-		+ `ture`: 隐藏指定索引的工作表，返回被隐藏的工作表对象
-		+ `false`: 取消隐藏指定索引的工作表，返回被显示的工作表对象
     - {PlainObject} [setting]: 可选参数
     	+ {Number} [order]: 被隐藏的工作表索引；默认值为当前工作表索引
     	+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
-	隐藏或取消隐藏指定索引的工作表，返回被隐藏或取消隐藏的工作表对象
+	隐藏指定索引的工作表，返回被隐藏的工作表对象
 
 - **示例**:
 
 	- 隐藏当前工作表
 	`luckysheet.setSheetHide(true)`
+	- 隐藏第三个工作表
+	`luckysheet.setSheetHide({order:2})`
+
+------------
+
+### setSheetShow([setting])
+
+- **参数**：
+
+    - {PlainObject} [setting]: 可选参数
+    	+ {Number} [order]: 被取消隐藏的工作表索引；默认值为当前工作表索引
+    	+ {Function} [success]: 操作结束的回调函数
+
+- **说明**：
+	
+	取消隐藏指定索引的工作表，返回被取消隐藏的工作表对象
+
+- **示例**:
+
 	- 取消隐藏第三个工作表
-	`luckysheet.setSheetHide(false,{order:2})`
+	`luckysheet.setSheetShow({order:2})`
 
 ------------
 
@@ -1214,6 +1768,7 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 ### setSheetColor(color [,setting])
 
 - **参数**：
+	
 	- {String} [color]: 工作表颜色
 	- {PlainObject} [setting]: 可选参数
         + {Number} [order]: 工作表索引；默认值为当前工作表索引
@@ -1260,6 +1815,46 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 ## 工作簿操作
 
+### create(options [,setting])
+
+- **参数**：
+	
+	- {Object} [options]:表格的所有配置信息
+	- {PlainObject} [setting]: 可选参数
+		+ {Function} [success]: 表格创建成功后的回调函数
+
+- **说明**：
+	
+	初始化一个Luckysheet，可包含多个工作表，参考 [配置列表](/zh/guide/config.html)
+
+------------
+
+### refresh([setting])
+
+- **参数**：
+	
+	- {PlainObject} [setting]: 可选参数
+		+ {Function} [success]: 表格刷新成功后的回调函数
+
+- **说明**：
+	
+	刷新canvas
+
+------------
+
+### destroy([setting])
+
+- **参数**：
+	
+	- {PlainObject} [setting]: 可选参数
+		+ {Function} [success]: 表格释放成功后的回调函数
+
+- **说明**：
+	
+	删除并释放表格
+
+------------
+
 ### getScreenshot([setting])
 
 - **参数**：
@@ -1267,7 +1862,6 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
     - {PlainObject} [setting]: 可选参数
 		+ {Array | Object | String} [range]: 选区范围,支持选区的格式为`"A1:B2"`、`"sheetName!A1:B2"`或者`{row:[0,1],column:[0,1]}`，只能为单个选区；默认为当前选区
 		+ {Number} [order]: 工作表索引；默认值为当前工作表索引
-		+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
@@ -1357,14 +1951,11 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 ------------
 
-### getChart(chartId [,setting])
+### getChart(chartId)
 
 - **参数**：
 	
 	- {String} [chartId]: 指定要获取的图表id
-	
-	- {PlainObject} [setting]: 可选参数
-		+ {Function} [success]: 操作结束的回调函数
 
 - **说明**：
 	
@@ -1387,28 +1978,99 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 ------------
 
-## luckysheet.create(options)
+## 公共方法
+
+### transToCellData(data [,setting])<div id='transToCellData'></div>
+
 - **参数**：
-	- {Object} [options]:表格的所有配置信息
+	
+	- {Array} [data]: data数据
+	
+	- {PlainObject} [setting]: 可选参数
+		+ {Function} [success]: 操作结束的回调函数
+
 - **说明**：
 	
-	初始化一个luckysheet，可包含多个工作表，参考 [配置列表](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/config.html#container)
+	data => celldata ，data二维数组数据转化成 {r, c, v}格式一维数组
 
 ------------
 
-## luckysheet.getconfig()
+### transToData(celldata [,setting])<div id='transToData'></div>
+
+- **参数**：
+	
+	- {Array} [celldata]: data数据
+	
+	- {PlainObject} [setting]: 可选参数
+		+ {Function} [success]: 操作结束的回调函数
+
+- **说明**：
+	
+	celldata => data ，celldata一维数组数据转化成表格所需二维数组
+
+------------
+
+## 旧版API
+
+::: warning
+为保持兼容性，仍然支持旧版API，但是已不推荐使用。
+:::
+
+### getcellvalue([r] [,c] [,data] [,type])
+
+- **参数**：
+	- {Number} [r]:单元格所在行数；可选值；从0开始的整数，0表示第一行
+	- {Number} [c]:单元格所在列数；可选值；从0开始的整数，0表示第一列
+	- {Array} [data]:表数据，二维数组；可选值；默认值为当前表格数据
+	- {String} [type]:单元格属性值；可选值；默认值为'v',表示获取单元格的实际值
+- **说明**：
+
+	此方法为获取单元格的值。
+
+	- luckysheet.getcellvalue()：返回当前工作表的所有数据；
+	- luckysheet.getcellvalue(0)：返回当前工作表第1行数据；
+	- luckysheet.getcellvalue(null,0)：返回当前工作表第1列数据；
+	- luckysheet.getcellvalue(0,0)：返回当前工作表第1行第1列单元格的数据的v值；
+	- luckysheet.getcellvalue(1,1,null,'m'): 返回指定data数据的第2行第2列单元格的原始值。
+	
+	特殊情况：单元格格式为yyyy-MM-dd，type为'v'时会强制取'm'显示值
+
+	> 推荐使用新API： <a href='#getCellValue'>getCellValue</a>
+
+------------
+
+### getluckysheetfile()
+
+- **说明**：
+
+	返回所有表格数据结构的一维数组`luckysheetfile`
+
+	> 推荐使用新API： [getLuckysheetfile](#getLuckysheetfile())
+
+------------
+
+### getconfig()
+
 - **说明**：
 
 	快捷返回当前表格config配置，每个工作表的config信息仍然包含在luckysheetfile。
+	
+	> 推荐使用新API： [getConfig](#getConfig([setting]))
 
 ------------
-## luckysheet.getluckysheet_select_save()
+
+### getluckysheet_select_save()
+
 - **说明**：
 
 	返回当前选区对象的数组，可能存在多个选区。
 
+	> 推荐使用新API： [getRange](#getRange([setting]))
+
 ------------
-## luckysheet.getdatabyselection([range] [,sheetOrder])
+
+### getdatabyselection([range] [,sheetOrder])
+
 - **参数**：
 	- {Object} [range]：选区对象，`object: { row: [r1, r2], column: [c1, c2] }`；默认为当前第一个选区。
 	- {Number} [sheetOrder]：表格下标，从0开始的整数，0表示第一个表格；默认为当前表格下标。
@@ -1418,8 +2080,12 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	- `luckysheet.getdatabyselection()`: 返回当前工作表当前选区的数据
 	- `luckysheet.getdatabyselection(null,1)`: 返回第2个工作表的当前选区的数据
 
+	> 推荐使用新API： [getRangeValue](#getRangeValue([setting]))
+
 ------------
-## luckysheet.luckysheetrefreshgrid(scrollWidth, scrollHeight)
+
+### luckysheetrefreshgrid(scrollWidth, scrollHeight)
+
 - **参数**：
 	- {Number} [scrollWidth]：横向滚动值。默认为当前横向滚动位置。
 	- {Number} [scrollHeight]：纵向滚动值。默认为当前纵向滚动位置。
@@ -1429,13 +2095,36 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 
 ------------
 
-## luckysheet.jfrefreshgrid()
+### setcellvalue(r, c, d, v)
+
+- **参数**：
+	- {Number} [r]：单元格所在行数；从0开始的整数，0表示第一行。
+	- {Number} [c]：单元格所在列数；从0开始的整数，0表示第一列。
+	- {Array} [d]：表数据；可选值；二维数组。
+	- {Object | String | Number} [v]：要设置的值；可为对象，对象是是要符合单元格对象格式。
+- **说明**：
+
+	设置某个单元格的值。可配合`luckysheet.jfrefreshgrid()`刷新查看单元格值改变。
+
+	```js
+	luckysheet.setcellvalue(0, 0, luckysheet.flowdata(), 'abc');
+	luckysheet.jfrefreshgrid();
+	```
+
+------------
+
+### jfrefreshgrid()
+
 - **说明**：
 
 	刷新canvas
 
+	> 推荐使用新API： [refresh](#refresh([setting]))
+	
 ------------
-## luckysheet.setluckysheet_select_save(v)
+
+### setluckysheet_select_save(v)
+
 - **参数**：
 	- {Array} [v]：要设置的选区值(数组)。符合选区格式规则，如`[{ row: [r1, r2], column: [c1, c2] }]`。
 - **说明**：
@@ -1446,52 +2135,48 @@ Luckysheet针对常用的数据操作需求，开放了主要功能的API，开�
 	luckysheet.selectHightlightShow();
 	```
 
+	> 推荐使用新API：<a href='#setRangeShow'>setRangeShow</a>
+	
 ------------
-## luckysheet.selectHightlightShow()
+
+### selectHightlightShow()
+
 - **说明**：
 
 	高亮当前选区
 
-------------
-## luckysheet.setSheetHide(order)
-- **参数**：
-	- {Number} [order]：表格索引；从0开始的整数，0表示第一个表格；默认为当前表格索引。
-- **说明**：
-
-	隐藏某个表格。
+	> 推荐使用新API：<a href='#setRangeShow'>setRangeShow</a>
 
 ------------
-## luckysheet.setSheetShow(order)
-- **参数**：
-	- {Number} [order]：表格索引；从0开始的整数，0表示第一个表格；默认为当前表格索引。
-- **说明**：
 
-	显示某个表格。
+### flowdata()
 
-------------
-## luckysheet.flowdata()
 - **说明**：
 	
 	快捷获取当前表格的数据
 
+	> 推荐使用新API：[getSheetData](#getSheetData())
+
 ------------
-## luckysheet.buildGridData(file)
+
+### buildGridData(file)
+
 - **参数**：
-	- {Object} [file]：[luckysheetfile](https://mengshukeji.github.io/LuckysheetDocs/zh/guide/data.html#%E8%8E%B7%E5%8F%96%E8%A1%A8%E6%A0%BC%E6%95%B0%E6%8D%AE)
+	- {Object} [file]：[luckysheetfile](/zh/guide/sheet.html)
 - **说明**：
 	
 	生成表格可以识别的二维数组
 
+	> 推荐使用新API：<a href='#transToData'>transToData</a>
+
 ------------
-## luckysheet.getGridData(data)
+
+### getGridData(data)
+
 - **参数**：
 	- {Array} [data]：工作表的二维数组数据
 - **说明**：
 	
 	二维数组数据转化成 `{r, c, v}` 格式 一维数组
 
-------------
-## luckysheet.destroy()
-- **说明**：
-	
-	删除并释放表格
+	> 推荐使用新API：<a href='#transToCellData'>transToCellData</a>

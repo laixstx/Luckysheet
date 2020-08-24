@@ -3,12 +3,12 @@ import luckysheetFreezen from './freezen';
 import menuButton from './menuButton';
 import conditionformat from './conditionformat';
 import alternateformat from './alternateformat';
-import {chatatABC} from '../utils/util';
-import {isEditMode} from '../global/validate';
-import {getcellvalue} from '../global/getdata';
-import {valueShowEs} from '../global/format';
+import { chatatABC } from '../utils/util';
+import { isEditMode } from '../global/validate';
+import { getcellvalue } from '../global/getdata';
+import { valueShowEs } from '../global/format';
 import formula from '../global/formula';
-import {luckysheetRangeLast} from '../global/cursorPos';
+import { luckysheetRangeLast } from '../global/cursorPos';
 import cleargridelement from '../global/cleargridelement';
 import Store from '../store';
 
@@ -121,7 +121,6 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
 
         inputContentScale["transform-origin"] = leftOrigin + " " + topOrigin;
 
-
         if (!cover) {
             if (cell.f != null) {
                 value = getcellvalue(row_index, col_index, d, "f");
@@ -161,7 +160,6 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         input_postition["min-width"] = input_postition["max-width"];
     }
 
-
     if ((value == null || value.toString() == "") && !cover) {
         value = "<br/>";
     }
@@ -197,7 +195,6 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     formula.rangeResizeTo = $("#luckysheet-rich-text-editor");
     cleargridelement();
 }
-
 
 export function setCenterInputPosition(row_index, col_index, d) {
 

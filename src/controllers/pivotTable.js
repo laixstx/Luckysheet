@@ -1,4 +1,4 @@
-import {getSheetIndex, getRangetxt} from '../methods/get';
+import { getSheetIndex, getRangetxt } from '../methods/get';
 import {
     replaceHtml,
     getObjType,
@@ -8,19 +8,19 @@ import {
     showrightclickmenu,
     mouseclickposition
 } from '../utils/util';
-import {getdatabyselectionD, getcellvalue, datagridgrowth} from '../global/getdata';
-import {isdatetime, diff, isdatatypemulti, isdatatype} from '../global/datecontroll';
-import {genarate, update} from '../global/format';
-import {isRealNull, isEditMode} from '../global/validate';
-import {orderbydata1D} from '../global/sort';
-import {jfrefreshgrid, jfrefreshgridall} from '../global/refresh';
+import { getdatabyselectionD, getcellvalue, datagridgrowth } from '../global/getdata';
+import { isdatetime, diff, isdatatypemulti, isdatatype } from '../global/datecontroll';
+import { genarate, update } from '../global/format';
+import { isRealNull, isEditMode } from '../global/validate';
+import { orderbydata1D } from '../global/sort';
+import { jfrefreshgrid, jfrefreshgridall } from '../global/refresh';
 import tooltip from '../global/tooltip';
 import editor from '../global/editor';
 import cleargridelement from '../global/cleargridelement';
 import luckysheetArray from '../global/array';
 import analysis from '../global/analysis';
-import {selectHightlightShow} from './select';
-import {luckysheet_searcharray} from './sheetSearch';
+import { selectHightlightShow } from './select';
+import { luckysheet_searcharray } from './sheetSearch';
 import {
     modelHTML,
     filtermenuHTML,
@@ -798,7 +798,7 @@ const pivotTable = {
 
         let pivotTable = _this.getPivotTableData();
         delete pivotTable.pivotDatas;
-        server.saveParam("all", _this.pivotSheetIndex, pivotTable, {"k": "pivotTable"});
+        server.saveParam("all", _this.pivotSheetIndex, pivotTable, { "k": "pivotTable" });
     },
     getPivotTableData: function (dataindex) {
         if (dataindex == null) {
@@ -855,7 +855,6 @@ const pivotTable = {
         if (_this.initial) {
             _this.initial = false;
 
-
             $("body").append(luckysheetPivotTableHTML());
             $("#luckysheet-modal-dialog-slider-close").click(function () {
                 $("#luckysheet-modal-dialog-slider-pivot").hide();
@@ -870,8 +869,8 @@ const pivotTable = {
                 "botton": '<button id="luckysheet-pivotTable-selection-confirm" class="btn btn-primary">' + locale_button.confirm + '</button><button class="btn btn-default luckysheet-model-close-btn">' + locale_button.cancel + '</button>'
             }));
 
-            $("body").append(replaceHtml(filtermenuHTML(), {"menuid": "pivotTableFilter"}));
-            $("body").append(replaceHtml(filtersubmenuHTML(), {"menuid": "pivotTableFilter"}));
+            $("body").append(replaceHtml(filtermenuHTML(), { "menuid": "pivotTableFilter" }));
+            $("body").append(replaceHtml(filtersubmenuHTML(), { "menuid": "pivotTableFilter" }));
             $("body").append(pivottableconfigHTML());
             $("body").append(pivottablesumHTML());
 
@@ -1150,7 +1149,7 @@ const pivotTable = {
                     mheight = toffset.top - 20;
                 }
 
-                $menu.css({"top": top, "left": left, "height": mheight}).show();
+                $menu.css({ "top": top, "left": left, "height": mheight }).show();
                 clearTimeout(hidefilersubmenu);
             });
 
@@ -1780,10 +1779,10 @@ const pivotTable = {
                     }
                     sheetmanage.changeSheetExec(_this.pivotSheetIndex);
 
-                    _this.setDatatojsfile("pivot_select_save", {"row": row, "column": col});
+                    _this.setDatatojsfile("pivot_select_save", { "row": row, "column": col });
                     _this.setDatatojsfile("pivotDataSheetIndex", sheetIndex);
 
-                    _this.getCellData(_this.pivotSheetIndex, sheetIndex, {"row": row, "column": col});
+                    _this.getCellData(_this.pivotSheetIndex, sheetIndex, { "row": row, "column": col });
 
                     _this.initialPivotManage();
 
@@ -1844,11 +1843,11 @@ const pivotTable = {
                     let row_index = luckysheet_searcharray(position, curtop);
 
                     if (row_index == -1) {
-                        $("#luckysheet-modal-dialog-config-order-help").css({"top": position[position.length - 1]});
+                        $("#luckysheet-modal-dialog-config-order-help").css({ "top": position[position.length - 1] });
                     } else if ((curtop - position[row_index - 1]) > (position[row_index] - position[row_index - 1]) / 2) {
-                        $("#luckysheet-modal-dialog-config-order-help").css({"top": position[row_index]});
+                        $("#luckysheet-modal-dialog-config-order-help").css({ "top": position[row_index] });
                     } else {
-                        $("#luckysheet-modal-dialog-config-order-help").css({"top": position[row_index - 1]});
+                        $("#luckysheet-modal-dialog-config-order-help").css({ "top": position[row_index - 1] });
                     }
                 }
             }).mouseleave(function () {
@@ -2408,7 +2407,7 @@ const pivotTable = {
                 if (name == locale_pivotTable.valueSum) {
                     stasticarr.push(name);
                 } else {
-                    stasticarr.push({"name": name, "issum": true});
+                    stasticarr.push({ "name": name, "issum": true });
                 }
 
             } else {
@@ -2522,7 +2521,6 @@ const pivotTable = {
         const _locale = locale();
         const locale_filter = _locale.filter;
         const locale_pivotTable = _locale.pivotTable;
-
 
         if (showType == null) {
             showType = "column";
@@ -2980,7 +2978,7 @@ const pivotTable = {
             }
         }
 
-        Store.luckysheet_select_save = [{"row": [0, rowArr.length], "column": [0, _this.celldata[0].length - 1]}];
+        Store.luckysheet_select_save = [{ "row": [0, rowArr.length], "column": [0, _this.celldata[0].length - 1] }];
 
         Store.clearjfundo = false;
         jfrefreshgrid(d, Store.luckysheet_select_save);

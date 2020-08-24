@@ -1,12 +1,12 @@
-import {seriesLoadScripts, loadLinks, $$} from '../../utils/util'
-import {generateRandomKey, replaceHtml} from '../../utils/chartUtil'
-import {getdatabyselection, getcellvalue} from '../../global/getdata';
+import { seriesLoadScripts, loadLinks, $$ } from '../../utils/util'
+import { generateRandomKey, replaceHtml } from '../../utils/chartUtil'
+import { getdatabyselection, getcellvalue } from '../../global/getdata';
 import chartInfo from '../../store'
 import formula from '../../global/formula';
-import {luckysheet_getcelldata} from '../../function/func';
-import {getSheetIndex, getRangetxt, getvisibledatacolumn, getvisibledatarow} from '../../methods/get'
-import {rowLocation, colLocation, mouseposition} from '../../global/location'
-import {setluckysheet_scroll_status} from '../../methods/set'
+import { luckysheet_getcelldata } from '../../function/func';
+import { getSheetIndex, getRangetxt, getvisibledatacolumn, getvisibledatarow } from '../../methods/get'
+import { rowLocation, colLocation, mouseposition } from '../../global/location'
+import { setluckysheet_scroll_status } from '../../methods/set'
 import {
     luckysheetMoveHighlightCell,
     luckysheetMoveHighlightCell2,
@@ -14,7 +14,7 @@ import {
     luckysheetMoveHighlightRange2,
     luckysheetMoveEndCell
 } from '../../controllers/sheetMove';
-import {isEditMode} from '../../global/validate';
+import { isEditMode } from '../../global/validate';
 import luckysheetsizeauto from '../../controllers/resize';
 
 let _rowLocation = rowLocation
@@ -44,7 +44,7 @@ function chart(data, isDemo) {
         const store = new Vuex.Store()
         console.info('chartmix::', chartmix.default)
 
-        Vue.use(chartmix.default, {store})
+        Vue.use(chartmix.default, { store })
         let outDom = document.getElementsByTagName('body')[0]
         chartmix.default.initChart(outDom, chartInfo.lang)
 
@@ -69,7 +69,6 @@ function chart(data, isDemo) {
             'padding-left': '30px',
             display: 'none'
         })
-
 
         chartInfo.createChart = chartmix.default.createChart
         chartInfo.highlightChart = chartmix.default.highlightChart
@@ -107,7 +106,7 @@ function renderCharts(chartLists, isDemo) {
         let chart = chartLists[i]
 
         if (isDemo) {
-            chartInfo.chartparam.insertToStore({chart_id: chart.chart_id, chartOptions: chart.chartOptions})
+            chartInfo.chartparam.insertToStore({ chart_id: chart.chart_id, chartOptions: chart.chartOptions })
         }
 
         let chart_id = chart.chart_id
@@ -128,11 +127,10 @@ function renderCharts(chartLists, isDemo) {
 
         let container = document.getElementById(chart_id_c)
 
-
         let chart_json
         chart_json = chartInfo.chartparam.getChartJson(chart.chart_id)
 
-        chartInfo.chartparam.renderChart({chart_id: chart.chart_id, chartOptions: chart_json})
+        chartInfo.chartparam.renderChart({ chart_id: chart.chart_id, chartOptions: chart_json })
         chartInfo.currentChart = chart_json
 
         //处理区域高亮框参数，当前页中，只有当前的图表的needRangShow为true,其他为false
@@ -253,7 +251,6 @@ function renderCharts(chartLists, isDemo) {
 
                 }
             })
-
 
         let width = chart.width
         let height = chart.height
@@ -539,7 +536,7 @@ function chart_selection() {
 
                 //更新
                 if (rangeRowCheck.exits && rangeColCheck.exits) {
-                    chart_json.rangeArray = [{row: [st_r, row_e], column: [st_c, col_e]}]
+                    chart_json.rangeArray = [{ row: [st_r, row_e], column: [st_c, col_e] }]
                     chart_json.rangeSplitArray.range = {
                         row: [st_r, row_e],
                         column: [st_c, col_e]
@@ -560,7 +557,7 @@ function chart_selection() {
                         column: chart_json.rangeSplitArray.coltitle.column
                     }
                 } else if (rangeRowCheck.exits) {
-                    chart_json.rangeArray = [{row: [st_r, row_e], column: [col_s, col_e]}]
+                    chart_json.rangeArray = [{ row: [st_r, row_e], column: [col_s, col_e] }]
                     chart_json.rangeSplitArray.range = {
                         row: [st_r, row_e],
                         column: [col_s, col_e]
@@ -571,7 +568,7 @@ function chart_selection() {
                         column: chart_json.rangeSplitArray.content.column
                     }
                 } else if (rangeColCheck.exits) {
-                    chart_json.rangeArray = [{row: [row_s, row_e], column: [st_c, col_e]}]
+                    chart_json.rangeArray = [{ row: [row_s, row_e], column: [st_c, col_e] }]
                     chart_json.rangeSplitArray.range = {
                         row: [row_s, row_e],
                         column: [st_c, col_e]
@@ -583,7 +580,7 @@ function chart_selection() {
                     }
                 } else {
                     chart_json.rangeArray = [
-                        {row: [row_s, row_e], column: [col_s, col_e]}
+                        { row: [row_s, row_e], column: [col_s, col_e] }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: [row_s, row_e],
@@ -624,7 +621,7 @@ function chart_selection() {
                 //更新
                 if (rangeColCheck.exits) {
                     chart_json.rangeArray = [
-                        {row: chart_json.rangeArray[0].row, column: [st_c, col_e]}
+                        { row: chart_json.rangeArray[0].row, column: [st_c, col_e] }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: chart_json.rangeArray[0].row,
@@ -641,7 +638,7 @@ function chart_selection() {
                     }
                 } else {
                     chart_json.rangeArray = [
-                        {row: chart_json.rangeArray[0].row, column: [col_s, col_e]}
+                        { row: chart_json.rangeArray[0].row, column: [col_s, col_e] }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: chart_json.rangeArray[0].row,
@@ -681,7 +678,7 @@ function chart_selection() {
 
                 if (rangeRowCheck.exits) {
                     chart_json.rangeArray = [
-                        {row: [st_r, row_e], column: chart_json.rangeArray[0].column}
+                        { row: [st_r, row_e], column: chart_json.rangeArray[0].column }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: [st_r, row_e],
@@ -698,7 +695,7 @@ function chart_selection() {
                     }
                 } else {
                     chart_json.rangeArray = [
-                        {row: [row_s, row_e], column: chart_json.rangeArray[0].column}
+                        { row: [row_s, row_e], column: chart_json.rangeArray[0].column }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: [row_s, row_e],
@@ -847,7 +844,7 @@ function chart_selection() {
 
                 if (!rangeRowCheck.exits && !rangeColCheck.exits) {
                     chart_json.rangeArray = [
-                        {row: [obj_r1, obj_r2], column: [obj_c1, obj_c2]}
+                        { row: [obj_r1, obj_r2], column: [obj_c1, obj_c2] }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: [obj_r1, obj_r2],
@@ -855,7 +852,7 @@ function chart_selection() {
                     }
                 } else {
                     chart_json.rangeArray = [
-                        {row: [st_r, obj_r2], column: [st_c, obj_c2]}
+                        { row: [st_r, obj_r2], column: [st_c, obj_c2] }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: [st_r, obj_r2],
@@ -930,7 +927,7 @@ function chart_selection() {
                 //更新
                 if (!rangeColCheck.exits) {
                     chart_json.rangeArray = [
-                        {row: chart_json.rangeArray[0].row, column: [obj_c1, obj_c2]}
+                        { row: chart_json.rangeArray[0].row, column: [obj_c1, obj_c2] }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: chart_json.rangeArray[0].row,
@@ -938,7 +935,7 @@ function chart_selection() {
                     }
                 } else {
                     chart_json.rangeArray = [
-                        {row: chart_json.rangeArray[0].row, column: [st_c, obj_c2]}
+                        { row: chart_json.rangeArray[0].row, column: [st_c, obj_c2] }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: chart_json.rangeArray[0].row,
@@ -1003,7 +1000,7 @@ function chart_selection() {
                 //更新
                 if (!rangeRowCheck.exits) {
                     chart_json.rangeArray = [
-                        {row: [obj_r1, obj_r2], column: chart_json.rangeArray[0].column}
+                        { row: [obj_r1, obj_r2], column: chart_json.rangeArray[0].column }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: [obj_r1, obj_r2],
@@ -1011,7 +1008,7 @@ function chart_selection() {
                     }
                 } else {
                     chart_json.rangeArray = [
-                        {row: [st_r, obj_r2], column: chart_json.rangeArray[0].column}
+                        { row: [st_r, obj_r2], column: chart_json.rangeArray[0].column }
                     ]
                     chart_json.rangeSplitArray.range = {
                         row: [st_r, obj_r2],
@@ -1145,7 +1142,6 @@ function createLuckyChart(width, height, left, top) {
 
     var rangeTxt = getRangetxt(chartInfo.currentSheetIndex, rangeArray[0], chartInfo.currentSheetIndex)
 
-
     let chartData = getdatabyselection()
     console.dir(chartData)
 
@@ -1167,7 +1163,7 @@ function createLuckyChart(width, height, left, top) {
 
     let container = document.getElementById(chart_id_c)
 
-    let {render, chart_json} = chartInfo.createChart ? chartInfo.createChart($(`#${chart_id_c}`).children('.luckysheet-modal-dialog-content')[0], chartData, chart_id, rangeArray, rangeTxt) : {};
+    let { render, chart_json } = chartInfo.createChart ? chartInfo.createChart($(`#${chart_id_c}`).children('.luckysheet-modal-dialog-content')[0], chartData, chart_id, rangeArray, rangeTxt) : {};
     // chartInfo.currentChart = chart_json.chartOptions
     console.dir(JSON.stringify(chart_json))
 
@@ -1509,4 +1505,4 @@ function renderChartShow(index) {
 
 }
 
-export {chart, createLuckyChart, hideAllNeedRangeShow, renderChartShow}
+export { chart, createLuckyChart, hideAllNeedRangeShow, renderChartShow }

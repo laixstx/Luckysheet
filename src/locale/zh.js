@@ -36,7 +36,6 @@ export default {
         freezeTopRow: '冻结首行',
         sortAndFilter: '排序和筛选',
         findAndReplace: '查找替换',
-
         sum: '求和',
         autoSum: '自动求和',
         formula:"公式",
@@ -502,6 +501,7 @@ export default {
         filterDateFormatTip:"日期格式",
 
         valueBlank:"(空白)",
+        mergeError:"筛选选区有合并单元格，无法执行此操作！",
     },
     rightclick: {
         copy: '复制',

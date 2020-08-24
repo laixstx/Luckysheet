@@ -1,34 +1,34 @@
-import {selectionCopyShow, selectIsOverlap} from './select';
-import {luckyColor} from './constant';
+import { selectionCopyShow, selectIsOverlap } from './select';
+import { luckyColor } from './constant';
 import luckysheetMoreFormat from './moreFormat';
 import alternateformat from './alternateformat';
 import conditionformat from './conditionformat';
 import server from './server';
-import {luckysheet_searcharray} from './sheetSearch';
+import { luckysheet_searcharray } from './sheetSearch';
 import luckysheetFreezen from './freezen';
 import luckysheetsizeauto from './resize';
-import {createFilter} from './filter';
+import { createFilter } from './filter';
 import luckysheetSearchReplace from './searchReplace';
 import luckysheetLocationCell from './locationCell';
 import ifFormulaGenerator from './ifFormulaGenerator';
-import {luckysheetupdateCell} from './updateCell';
+import { luckysheetupdateCell } from './updateCell';
 import insertFormula from './insertFormula';
 import sheetmanage from './sheetmanage';
 import luckysheetPostil from './postil';
-import {isRealNum, isRealNull, isEditMode, hasPartMC} from '../global/validate';
+import { isRealNum, isRealNull, isEditMode, hasPartMC } from '../global/validate';
 import tooltip from '../global/tooltip';
 import editor from '../global/editor';
-import {genarate, update, is_date} from '../global/format';
-import {jfrefreshgrid, luckysheetrefreshgrid} from '../global/refresh';
-import {sortSelection} from '../global/sort';
+import { genarate, update, is_date } from '../global/format';
+import { jfrefreshgrid, luckysheetrefreshgrid } from '../global/refresh';
+import { sortSelection } from '../global/sort';
 import luckysheetformula from '../global/formula';
-import {rowLocationByIndex, colLocationByIndex} from '../global/location';
-import {isdatatypemulti} from '../global/datecontroll';
-import {rowlenByRange, getCellTextSplitArr} from '../global/getRowlen';
-import {setcellvalue} from '../global/setdata';
-import {countfunc} from '../global/count';
-import {getSheetIndex, getRangetxt, getluckysheetfile} from '../methods/get';
-import {setluckysheetfile} from '../methods/set';
+import { rowLocationByIndex, colLocationByIndex } from '../global/location';
+import { isdatatypemulti } from '../global/datecontroll';
+import { rowlenByRange, getCellTextSplitArr } from '../global/getRowlen';
+import { setcellvalue } from '../global/setdata';
+import { countfunc } from '../global/count';
+import { getSheetIndex, getRangetxt, getluckysheetfile } from '../methods/get';
+import { setluckysheetfile } from '../methods/set';
 import {
     replaceHtml,
     getObjType,
@@ -399,7 +399,6 @@ const menuButton = {
                 }
             }
 
-
             _this.updateFormat(d, "ct", fmt);
         });
 
@@ -418,12 +417,12 @@ const menuButton = {
                 let itemset = _this.createButtonMenu(itemdata);
 
                 // luckysheet-menuButton-sub
-                let menu = replaceHtml(_this.menu, {"id": "fmt-other", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "fmt-other", "item": itemset, "subclass": "", "sub": "" });
 
                 let subitemdata = [
-                    {"text": locale_format.moreCurrency + "...", "value": "morecurrency", "example": ""},
-                    {"text": locale_format.moreDateTime + "...", "value": "moredatetime", "example": ""},
-                    {"text": locale_format.moreNumber + "...", "value": "moredigit", "example": ""}
+                    { "text": locale_format.moreCurrency + "...", "value": "morecurrency", "example": "" },
+                    { "text": locale_format.moreDateTime + "...", "value": "moredatetime", "example": "" },
+                    { "text": locale_format.moreNumber + "...", "value": "moredigit", "example": "" }
                 ];
                 let subitemset = _this.createButtonMenu(subitemdata);
                 let submenu = replaceHtml(_this.menu, {
@@ -495,7 +494,7 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "font-family", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "font-family", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(200);
@@ -822,7 +821,6 @@ const menuButton = {
             }, 1);
         });
 
-
         //字体大小
         let luckysheet_fs_setTimeout = null;
         $("#luckysheet-icon-font-size").click(function () {
@@ -831,26 +829,26 @@ const menuButton = {
 
             if ($menuButton.length == 0) {
                 let itemdata = [
-                    {"text": "9", "value": "9", "example": ""},
-                    {"text": "10", "value": "10", "example": ""},
-                    {"text": "11", "value": "11", "example": ""},
-                    {"text": "12", "value": "12", "example": ""},
-                    {"text": "14", "value": "14", "example": ""},
-                    {"text": "16", "value": "16", "example": ""},
-                    {"text": "18", "value": "18", "example": ""},
-                    {"text": "20", "value": "20", "example": ""},
-                    {"text": "22", "value": "22", "example": ""},
-                    {"text": "24", "value": "24", "example": ""},
-                    {"text": "26", "value": "26", "example": ""},
-                    {"text": "28", "value": "28", "example": ""},
-                    {"text": "36", "value": "36", "example": ""},
-                    {"text": "48", "value": "48", "example": ""},
-                    {"text": "72", "value": "72", "example": ""}
+                    { "text": "9", "value": "9", "example": "" },
+                    { "text": "10", "value": "10", "example": "" },
+                    { "text": "11", "value": "11", "example": "" },
+                    { "text": "12", "value": "12", "example": "" },
+                    { "text": "14", "value": "14", "example": "" },
+                    { "text": "16", "value": "16", "example": "" },
+                    { "text": "18", "value": "18", "example": "" },
+                    { "text": "20", "value": "20", "example": "" },
+                    { "text": "22", "value": "22", "example": "" },
+                    { "text": "24", "value": "24", "example": "" },
+                    { "text": "26", "value": "26", "example": "" },
+                    { "text": "28", "value": "28", "example": "" },
+                    { "text": "36", "value": "36", "example": "" },
+                    { "text": "48", "value": "48", "example": "" },
+                    { "text": "72", "value": "72", "example": "" }
                 ];
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "font-size", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "font-size", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(150);
@@ -958,7 +956,7 @@ const menuButton = {
                 Store.jfredo.push(redo);
             }
 
-            server.saveParam("cg", Store.currentSheetIndex, cfg["borderInfo"], {"k": "borderInfo"});
+            server.saveParam("cg", Store.currentSheetIndex, cfg["borderInfo"], { "k": "borderInfo" });
 
             Store.config = cfg;
             Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
@@ -999,7 +997,7 @@ const menuButton = {
                         "value": "border-right",
                         "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-right" style="user-select: none;"> </div> </div>'
                     },
-                    {"text": "", "value": "split", "example": ""},
+                    { "text": "", "value": "split", "example": "" },
                     {
                         "text": locale_border.borderNone,
                         "value": "border-none",
@@ -1015,7 +1013,7 @@ const menuButton = {
                         "value": "border-outside",
                         "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-outside" style="user-select: none;"> </div> </div>'
                     },
-                    {"text": "", "value": "split", "example": ""},
+                    { "text": "", "value": "split", "example": "" },
                     {
                         "text": locale_border.borderInside,
                         "value": "border-inside",
@@ -1031,7 +1029,7 @@ const menuButton = {
                         "value": "border-vertical",
                         "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-vertical" style="user-select: none;"> </div> </div>'
                     },
-                    {"text": "", "value": "split", "example": ""},
+                    { "text": "", "value": "split", "example": "" },
                     {
                         "text": "<span id='luckysheet-icon-borderColor-linecolor' class='luckysheet-mousedown-cancel' style='border-bottom:3px solid #000;'>" + locale_border.borderColor + "</span>",
                         "value": "borderColor",
@@ -1046,10 +1044,10 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "border-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "border-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 let subitemdata = [
-                    {"text": locale_border.borderNone, "value": "0", "example": ""},
+                    { "text": locale_border.borderNone, "value": "0", "example": "" },
                     {
                         "text": "<canvas type='Thin' class='border-Thin' width=" + canvasW + " height=" + canvasH + " style='width:" + canvasW + "px;height:" + canvasH + "px;position:static;'></canvas>",
                         "value": "1",
@@ -1210,7 +1208,7 @@ const menuButton = {
                         Store.jfredo.push(redo);
                     }
 
-                    server.saveParam("cg", Store.currentSheetIndex, cfg["borderInfo"], {"k": "borderInfo"});
+                    server.saveParam("cg", Store.currentSheetIndex, cfg["borderInfo"], { "k": "borderInfo" });
 
                     Store.config = cfg;
                     Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].config = Store.config;
@@ -1341,15 +1339,15 @@ const menuButton = {
                 const locale_merge = _locale.merge;
 
                 let itemdata = [
-                    {"text": locale_merge.mergeAll, "value": "mergeAll", "example": ""},
-                    {"text": locale_merge.mergeV, "value": "mergeV", "example": ""},
-                    {"text": locale_merge.mergeH, "value": "mergeH", "example": ""},
-                    {"text": locale_merge.mergeCancel, "value": "mergeCancel", "example": ""}
+                    { "text": locale_merge.mergeAll, "value": "mergeAll", "example": "" },
+                    { "text": locale_merge.mergeV, "value": "mergeV", "example": "" },
+                    { "text": locale_merge.mergeH, "value": "mergeH", "example": "" },
+                    { "text": locale_merge.mergeCancel, "value": "mergeCancel", "example": "" }
                 ];
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "merge-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "merge-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(110);
@@ -1450,7 +1448,7 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "align-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "align-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(120);
@@ -1518,7 +1516,7 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "valign-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "valign-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(120);
@@ -1577,7 +1575,12 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "textwrap-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, {
+                    "id": "textwrap-menu",
+                    "item": itemset,
+                    "subclass": "",
+                    "sub": ""
+                });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(120);
@@ -1651,7 +1654,12 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "rotation-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, {
+                    "id": "rotation-menu",
+                    "item": itemset,
+                    "subclass": "",
+                    "sub": ""
+                });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(150);
@@ -1691,20 +1699,25 @@ const menuButton = {
                 const _locale = locale();
                 const locale_freezen = _locale.freezen;
                 let itemdata = [
-                    {"text": locale_freezen.freezenRow, "value": "freezenRow", "example": ''},
-                    {"text": locale_freezen.freezenColumn, "value": "freezenColumn", "example": ''},
-                    {"text": locale_freezen.freezenRC, "value": "freezenRC", "example": ''},
-                    {"text": "", "value": "split", "example": ""},
-                    {"text": locale_freezen.freezenRowRange, "value": "freezenRowRange", "example": ''},
-                    {"text": locale_freezen.freezenColumnRange, "value": "freezenColumnRange", "example": ''},
-                    {"text": locale_freezen.freezenRCRange, "value": "freezenRCRange", "example": ''},
-                    {"text": "", "value": "split", "example": ""},
-                    {"text": locale_freezen.freezenCancel, "value": "freezenCancel", "example": ''}
+                    { "text": locale_freezen.freezenRow, "value": "freezenRow", "example": '' },
+                    { "text": locale_freezen.freezenColumn, "value": "freezenColumn", "example": '' },
+                    { "text": locale_freezen.freezenRC, "value": "freezenRC", "example": '' },
+                    { "text": "", "value": "split", "example": "" },
+                    { "text": locale_freezen.freezenRowRange, "value": "freezenRowRange", "example": '' },
+                    { "text": locale_freezen.freezenColumnRange, "value": "freezenColumnRange", "example": '' },
+                    { "text": locale_freezen.freezenRCRange, "value": "freezenRCRange", "example": '' },
+                    { "text": "", "value": "split", "example": "" },
+                    { "text": locale_freezen.freezenCancel, "value": "freezenCancel", "example": '' }
                 ];
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "freezen-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, {
+                    "id": "freezen-menu",
+                    "item": itemset,
+                    "subclass": "",
+                    "sub": ""
+                });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(170);
@@ -1964,7 +1977,7 @@ const menuButton = {
                         "value": "diysort",
                         "example": '<i style="font-size:14px;" class="fa fa-sort" aria-hidden="true"></i>'
                     },
-                    {"text": "", "value": "split", "example": ""},
+                    { "text": "", "value": "split", "example": "" },
                     {
                         "text": locale_filter.filter,
                         "value": "filter",
@@ -1979,7 +1992,7 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "autofilter", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "autofilter", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(150);
@@ -2041,7 +2054,7 @@ const menuButton = {
                         "value": "goto",
                         "example": '<i style="font-size:14px;" class="fa fa-arrow-right" aria-hidden="true"></i>'
                     },
-                    {"text": "", "value": "split", "example": ""},
+                    { "text": "", "value": "split", "example": "" },
                     {
                         "text": locale_findAndReplace.location + " ...",
                         "value": "location",
@@ -2091,7 +2104,7 @@ const menuButton = {
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "seachmore", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, { "id": "seachmore", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(180);
@@ -2198,19 +2211,24 @@ const menuButton = {
 
             if ($menuButton.length == 0) {
                 let itemdata = [
-                    {"text": locale_formula.sum, "value": "SUM", "example": 'SUM'},
-                    {"text": locale_formula.average, "value": "AVERAGE", "example": 'AVERAGE'},
-                    {"text": locale_formula.count, "value": "COUNT", "example": 'COUNT'},
-                    {"text": locale_formula.max, "value": "MAX", "example": 'MAX'},
-                    {"text": locale_formula.min, "value": "MIN", "example": 'MIN'},
-                    {"text": "", "value": "split", "example": ""},
-                    {"text": locale_formula.ifGenerate, "value": "if", "example": 'IF'},
-                    {"text": locale_formula.find + " ...", "value": "formula", "example": ""}
+                    { "text": locale_formula.sum, "value": "SUM", "example": 'SUM' },
+                    { "text": locale_formula.average, "value": "AVERAGE", "example": 'AVERAGE' },
+                    { "text": locale_formula.count, "value": "COUNT", "example": 'COUNT' },
+                    { "text": locale_formula.max, "value": "MAX", "example": 'MAX' },
+                    { "text": locale_formula.min, "value": "MIN", "example": 'MIN' },
+                    { "text": "", "value": "split", "example": "" },
+                    { "text": locale_formula.ifGenerate, "value": "if", "example": 'IF' },
+                    { "text": locale_formula.find + " ...", "value": "formula", "example": "" }
                 ];
 
                 let itemset = _this.createButtonMenu(itemdata);
 
-                let menu = replaceHtml(_this.menu, {"id": "function-menu", "item": itemset, "subclass": "", "sub": ""});
+                let menu = replaceHtml(_this.menu, {
+                    "id": "function-menu",
+                    "item": itemset,
+                    "subclass": "",
+                    "sub": ""
+                });
 
                 $("body").append(menu);
                 $menuButton = $("#" + menuButtonId).width(180);
@@ -2357,15 +2375,23 @@ const menuButton = {
 
             if ($menuButton.length == 0) {
                 let itemdata = [
-                    {"text": conditionformat_text.highlightCellRules, "value": "highlightCellRule", "example": "more"},
-                    {"text": conditionformat_text.itemSelectionRules, "value": "projectSelectRule", "example": "more"},
-                    {"text": conditionformat_text.dataBar, "value": "dataBar", "example": "more"},
-                    {"text": conditionformat_text.colorGradation, "value": "colorGradation", "example": "more"},
-                    {"text": conditionformat_text.icons, "value": "icons", "example": ""},
-                    {"text": "", "value": "split", "example": ""},
-                    {"text": conditionformat_text.newRule, "value": "newRule", "example": ""},
-                    {"text": conditionformat_text.deleteRule, "value": "deleteRule", "example": "more"},
-                    {"text": conditionformat_text.manageRules, "value": "administerRule", "example": ""}
+                    {
+                        "text": conditionformat_text.highlightCellRules,
+                        "value": "highlightCellRule",
+                        "example": "more"
+                    },
+                    {
+                        "text": conditionformat_text.itemSelectionRules,
+                        "value": "projectSelectRule",
+                        "example": "more"
+                    },
+                    { "text": conditionformat_text.dataBar, "value": "dataBar", "example": "more" },
+                    { "text": conditionformat_text.colorGradation, "value": "colorGradation", "example": "more" },
+                    { "text": conditionformat_text.icons, "value": "icons", "example": "" },
+                    { "text": "", "value": "split", "example": "" },
+                    { "text": conditionformat_text.newRule, "value": "newRule", "example": "" },
+                    { "text": conditionformat_text.deleteRule, "value": "deleteRule", "example": "more" },
+                    { "text": conditionformat_text.manageRules, "value": "administerRule", "example": "" }
                 ];
                 let itemset = _this.createButtonMenu(itemdata);
                 let menu = replaceHtml(_this.menu, {
@@ -2377,17 +2403,17 @@ const menuButton = {
 
                 //突出显示单元格规则子菜单
                 let subitemdata = [
-                    {"text": conditionformat_text.greaterThan, "value": "greaterThan", "example": ">"},
-                    {"text": conditionformat_text.lessThan, "value": "lessThan", "example": "<"},
-                    {"text": conditionformat_text.between, "value": "betweenness", "example": "[]"},
-                    {"text": conditionformat_text.equal, "value": "equal", "example": "="},
-                    {"text": conditionformat_text.textContains, "value": "textContains", "example": "()"},
+                    { "text": conditionformat_text.greaterThan, "value": "greaterThan", "example": ">" },
+                    { "text": conditionformat_text.lessThan, "value": "lessThan", "example": "<" },
+                    { "text": conditionformat_text.between, "value": "betweenness", "example": "[]" },
+                    { "text": conditionformat_text.equal, "value": "equal", "example": "=" },
+                    { "text": conditionformat_text.textContains, "value": "textContains", "example": "()" },
                     {
                         "text": conditionformat_text.occurrence,
                         "value": "occurrenceDate",
                         "example": conditionformat_text.yesterday
                     },
-                    {"text": conditionformat_text.duplicateValue, "value": "duplicateValue", "example": "##"}
+                    { "text": conditionformat_text.duplicateValue, "value": "duplicateValue", "example": "##" }
                 ];
                 let subitemset = _this.createButtonMenu(subitemdata);
                 let submenu = replaceHtml(_this.menu, {
@@ -2398,13 +2424,13 @@ const menuButton = {
 
                 //项目选取规则子菜单
                 let subitemdata2 = [
-                    {"text": conditionformat_text.top10, "value": "top10", "example": conditionformat_text.top10},
+                    { "text": conditionformat_text.top10, "value": "top10", "example": conditionformat_text.top10 },
                     {
                         "text": conditionformat_text.top10_percent,
                         "value": "top10%",
                         "example": conditionformat_text.top10_percent
                     },
-                    {"text": conditionformat_text.last10, "value": "last10", "example": conditionformat_text.last10},
+                    { "text": conditionformat_text.last10, "value": "last10", "example": conditionformat_text.last10 },
                     {
                         "text": conditionformat_text.last10_percent,
                         "value": "last10%",
@@ -2510,7 +2536,7 @@ const menuButton = {
 
                 //清除规则子菜单
                 let subitemdata6 = [
-                    {"text": conditionformat_text.deleteSheetRule, "value": "delSheet", "example": ""}
+                    { "text": conditionformat_text.deleteSheetRule, "value": "delSheet", "example": "" }
                 ];
                 let subitemset6 = _this.createButtonMenu(subitemdata6);
                 let submenu6 = replaceHtml(_this.menu, {
@@ -2900,22 +2926,22 @@ const menuButton = {
             let itemdata;
             if (Store.flowdata[row_index][col_index] != null && Store.flowdata[row_index][col_index].ps != null) {
                 itemdata = [
-                    {"text": locale_comment.edit, "value": "editPs", "example": ""},
-                    {"text": locale_comment.delete, "value": "delPs", "example": ""},
-                    {"text": "", "value": "split", "example": ""},
-                    {"text": locale_comment.showOne, "value": "showHidePs", "example": ""},
-                    {"text": locale_comment.showAll, "value": "showHideAllPs", "example": ""}
+                    { "text": locale_comment.edit, "value": "editPs", "example": "" },
+                    { "text": locale_comment.delete, "value": "delPs", "example": "" },
+                    { "text": "", "value": "split", "example": "" },
+                    { "text": locale_comment.showOne, "value": "showHidePs", "example": "" },
+                    { "text": locale_comment.showAll, "value": "showHideAllPs", "example": "" }
                 ];
             } else {
                 itemdata = [
-                    {"text": locale_comment.insert, "value": "newPs", "example": ""},
-                    {"text": "", "value": "split", "example": ""},
-                    {"text": locale_comment.showAll, "value": "showHideAllPs", "example": ""}
+                    { "text": locale_comment.insert, "value": "newPs", "example": "" },
+                    { "text": "", "value": "split", "example": "" },
+                    { "text": locale_comment.showAll, "value": "showHideAllPs", "example": "" }
                 ];
             }
 
             let itemset = _this.createButtonMenu(itemdata);
-            let menu = replaceHtml(_this.menu, {"id": "postil", "item": itemset, "subclass": "", "sub": ""});
+            let menu = replaceHtml(_this.menu, { "id": "postil", "item": itemset, "subclass": "", "sub": "" });
 
             $("body").append(menu);
             $menuButton = $("#" + menuButtonId).width(150);
@@ -2969,7 +2995,7 @@ const menuButton = {
                     top = winH - attrH;
                 }
 
-                $attr.css({"top": top, "left": left}).show();
+                $attr.css({ "top": top, "left": left }).show();
                 _this.rightclickmenu = $t;
             } else {
                 _this.submenuhide = setTimeout(function () {
@@ -3099,7 +3125,7 @@ const menuButton = {
                             d[r][c]["ct"]["fa"] = foucsStatus;
                             d[r][c]["ct"]["t"] = type;
                         } else {
-                            d[r][c] = {"ct": {"fa": foucsStatus, "t": type}, "v": value, "m": mask};
+                            d[r][c] = { "ct": { "fa": foucsStatus, "t": type }, "v": value, "m": mask };
                         }
                     }
                 }
@@ -3155,7 +3181,7 @@ const menuButton = {
                         if (getObjType(value) == "object") {
                             d[r][c][attr] = foucsStatus;
                         } else {
-                            d[r][c] = {v: value};
+                            d[r][c] = { v: value };
                             d[r][c][attr] = foucsStatus;
                         }
 
@@ -3301,14 +3327,14 @@ const menuButton = {
                                     isfirst = true;
                                 }
 
-                                d[r][c] = {"mc": {"r": r1, "c": c1}};
+                                d[r][c] = { "mc": { "r": r1, "c": c1 } };
                             }
                         }
 
                         d[r1][c1] = fv;
-                        d[r1][c1].mc = {"r": r1, "c": c1, "rs": r2 - r1 + 1, "cs": c2 - c1 + 1};
+                        d[r1][c1].mc = { "r": r1, "c": c1, "rs": r2 - r1 + 1, "cs": c2 - c1 + 1 };
 
-                        cfg["merge"][r1 + "_" + c1] = {"r": r1, "c": c1, "rs": r2 - r1 + 1, "cs": c2 - c1 + 1};
+                        cfg["merge"][r1 + "_" + c1] = { "r": r1, "c": c1, "rs": r2 - r1 + 1, "cs": c2 - c1 + 1 };
                     } else if (foucsStatus == "mergeV") {
                         for (let c = c1; c <= c2; c++) {
                             let fv = {}, isfirst = false;
@@ -3321,13 +3347,13 @@ const menuButton = {
                                     isfirst = true;
                                 }
 
-                                d[r][c] = {"mc": {"r": r1, "c": c}};
+                                d[r][c] = { "mc": { "r": r1, "c": c } };
                             }
 
                             d[r1][c] = fv;
-                            d[r1][c].mc = {"r": r1, "c": c, "rs": r2 - r1 + 1, "cs": 1};
+                            d[r1][c].mc = { "r": r1, "c": c, "rs": r2 - r1 + 1, "cs": 1 };
 
-                            cfg["merge"][r1 + "_" + c] = {"r": r1, "c": c, "rs": r2 - r1 + 1, "cs": 1};
+                            cfg["merge"][r1 + "_" + c] = { "r": r1, "c": c, "rs": r2 - r1 + 1, "cs": 1 };
                         }
                     } else if (foucsStatus == "mergeH") {
                         for (let r = r1; r <= r2; r++) {
@@ -3341,13 +3367,13 @@ const menuButton = {
                                     isfirst = true;
                                 }
 
-                                d[r][c] = {"mc": {"r": r, "c": c1}};
+                                d[r][c] = { "mc": { "r": r, "c": c1 } };
                             }
 
                             d[r][c1] = fv;
-                            d[r][c1].mc = {"r": r, "c": c1, "rs": 1, "cs": c2 - c1 + 1};
+                            d[r][c1].mc = { "r": r, "c": c1, "rs": 1, "cs": c2 - c1 + 1 };
 
-                            cfg["merge"][r + "_" + c1] = {"r": r, "c": c1, "rs": 1, "cs": c2 - c1 + 1};
+                            cfg["merge"][r + "_" + c1] = { "r": r, "c": c1, "rs": 1, "cs": c2 - c1 + 1 };
                         }
                     }
                 }
@@ -3508,7 +3534,7 @@ const menuButton = {
     },
     checkstatus: function (d, r, c, a) {
         let foucsStatus = d[r][c];
-        let tf = {"bl": 1, "it": 1, "ff": 1, "cl": 1};
+        let tf = { "bl": 1, "it": 1, "ff": 1, "cl": 1 };
 
         if (a in tf) {
             if (foucsStatus == null) {
@@ -3724,7 +3750,7 @@ const menuButton = {
             }
         }
 
-        return {"deleMC": deleMC, "insertMC": insertMC, "hasMC": hasMC};
+        return { "deleMC": deleMC, "insertMC": insertMC, "hasMC": hasMC };
     },
     getRangeInMerge: function (st_r, rlen, st_c, clen, sheetIndex) {
         let _this = this;
@@ -3990,7 +4016,7 @@ const menuButton = {
             $('<span id="luckysheetTextSizeTest" style="float:left;white-space:nowrap;visibility:hidden;margin:0;padding:0;">' + text + '</span>').appendTo($('body'));
         }
 
-        let o = $("#luckysheetTextSizeTest").text(text).css({'font': f}),
+        let o = $("#luckysheetTextSizeTest").text(text).css({ 'font': f }),
             w = o.innerWidth(),
             h = o.innerHeight();
 
@@ -4035,7 +4061,7 @@ const menuButton = {
         luckysheetformula.rangedrag_column_start = false;
         luckysheetformula.rangedrag_row_start = false;
         luckysheetformula.rangechangeindex = 0;
-        luckysheetformula.rangeSetValue({"row": rowh, "column": columnh});
+        luckysheetformula.rangeSetValue({ "row": rowh, "column": columnh });
         luckysheetformula.func_selectedrange = {
             "left": col_pre,
             "width": col - col_pre - 1,
@@ -4066,11 +4092,11 @@ const menuButton = {
             "column": columnh
         }, Store.currentSheetIndex) + ')';
         let v = luckysheetformula.execfunction(f, r, c);
-        let value = {"v": v[1], "f": v[2]};
+        let value = { "v": v[1], "f": v[2] };
         setcellvalue(r, c, d, value);
-        luckysheetformula.execFunctionExist.push({"r": r, "c": c, "i": Store.currentSheetIndex});
+        luckysheetformula.execFunctionExist.push({ "r": r, "c": c, "i": Store.currentSheetIndex });
 
-        server.historyParam(d, Store.currentSheetIndex, {"row": [r, r], "column": [c, c]});
+        server.historyParam(d, Store.currentSheetIndex, { "row": [r, r], "column": [c, c] });
     },
     checkNoNullValue: function (cell) {
         let v = cell;
