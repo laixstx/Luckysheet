@@ -5,8 +5,45 @@ import {setluckysheet_select_save} from "../methods/set";
 import {selectHightlightShow} from "../controllers/select";
 import customConfig from "./config";
 import customStore from "./store";
+import {recursiveFind} from "./util";
 
 export default function customHandler() {
+
+
+    /**
+     * 点击自定义的右键菜单
+     */
+    $('.custom-submenuitem').on('click', function () {
+        // console.log('subclick')
+        /**
+         * 自定义右键菜单，支持两级
+         * @type {[{id: string, name: string, children?: [], onClick?: function()}]}
+         */
+        const rightMenu = customConfig.rightMenu || [];
+        const pId = $.trim($(this).attr('data-parent'));
+        const dataId = $.trim($(this).attr('data-id'));
+        recursiveFind(rightMenu, (mItem, mInd, pObj) => {
+            if (mItem) {
+                let isOk = false;
+
+                if (pId) {
+                    if (pObj && pId == pObj.id && mItem.id == dataId) {
+                        isOk = true;
+                    }
+
+                } else if (mItem.id == dataId) {
+                    isOk = true;
+                }
+
+                if (isOk) {
+                    if (mItem.onClick) mItem.onClick();
+                    return true;
+                }
+            }
+            return false;
+        });
+    });
+
 
     /**
      * 表格区域-拖拽移动
