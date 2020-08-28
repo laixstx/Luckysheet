@@ -9,6 +9,11 @@ const customConfig = {
      */
     rightMenu: [],
     /**
+     * 单元格切换之后的回调
+     * @type {(function(cellData: {}):void)}
+     */
+    onCellSelect: null,
+    /**
      * 拖拽元素到单元格，结束拖拽后的回调
      * @type {(function():void)}
      */

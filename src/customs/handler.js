@@ -1,11 +1,16 @@
 import {colLocation, mouseposition, rowLocation} from "../global/location";
-import {getconfig} from "../methods/get";
+import {getconfig, getluckysheet_select_save} from "../methods/get";
 import {hasPartMC} from "../global/validate";
 import {setluckysheet_select_save} from "../methods/set";
 import {selectHightlightShow} from "../controllers/select";
 import customConfig from "./config";
 import customStore from "./store";
 import {recursiveFind} from "./util";
+import {onCellSelect} from "./method";
+import Store from "../store";
+import {luckysheetContainerFocus} from "../utils/util";
+import menuButton from "../controllers/menuButton";
+import formula from "../global/formula";
 
 export default function customHandler() {
 
@@ -44,6 +49,13 @@ export default function customHandler() {
         });
     });
 
+    /**
+     * 表格 mouseup
+     *
+     */
+    $("#luckysheet-cell-main, #luckysheetTableContent").on('mouseup', function() {
+        onCellSelect();
+    });
 
     /**
      * 表格区域-拖拽移动
@@ -69,7 +81,7 @@ export default function customHandler() {
         let cellMg = conf.merge[`${rowInd}_${colInd}`];
 
         // 如果选区([rowInd, rowInd] [colInd, colInd])被包含在某个“合并单元格”内，
-        // 则以选中这个“合并单元格”
+        // 则选中这个“合并单元格”
         if (hasPartMC(conf, rowInd, rowInd, colInd, colInd)) {
             cellMg = customStore.cellPartMerge;
             rowInd = cellMg.r;
@@ -98,6 +110,21 @@ export default function customHandler() {
         if(customConfig.onCellDrop) {
             customConfig.onCellDrop();
         }
+
+        var selectSave = getluckysheet_select_save();
+
+        if (selectSave && selectSave[0] && selectSave[0].column) {
+            var colInd = selectSave[0].column[0];
+            var rowInd = selectSave[0].row[0];
+
+            //单元格格式icon对应
+            menuButton.menuButtonFocus(Store.flowdata, rowInd, colInd);
+            //函数公式显示栏
+            formula.fucntionboxshow(rowInd, colInd);
+        }
+        luckysheetContainerFocus();
+
+        onCellSelect();
     })
 
 }

@@ -74,6 +74,12 @@
                         },
                     ]
                 }],
+                /**
+                 * 单元格切换之后的回调
+                 */
+                onCellSelect: function(cellData) {
+                    console.log('onCellSelect', cellData);
+                },
                 // 结束拖拽之后的回调
                 onCellDrop: function () {
                     console.log('onCellDrop')

@@ -6,6 +6,7 @@ import menuButton from './menuButton';
 import { selectHightlightShow } from './select';
 import pivotTable from './pivotTable';
 import Store from '../store';
+import {onCellSelect} from "../customs/method";
 
 function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
     if (isScroll == null) {
@@ -622,6 +623,9 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
 
     clearTimeout(Store.countfuncTimeout);
     countfunc();
+
+    // 【改】切换选中的单元格之后，回调 customConfig.onCellSelect
+    onCellSelect();
 }
 
 //ctrl + 方向键  调整单元格
@@ -856,6 +860,9 @@ function luckysheetMoveHighlightCell2(postion, type, isScroll) {
 
     clearTimeout(Store.countfuncTimeout);
     countfunc();
+
+    // 【改】切换选中的单元格之后，回调 customConfig.onCellSelect
+    onCellSelect();
 }
 
 //shift + 方向键  调整选区
