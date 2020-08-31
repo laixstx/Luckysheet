@@ -51,7 +51,7 @@ export function getdatabyselection(range, sheetIndex) {
 }
 
 export function getdatabyselectionD(d, range) {
-    if (range == null || range["row"] == null || range["row"].length == 0) {
+    if (d == null || range == null || range["row"] == null || range["row"].length == 0) {
         return [];
     }
     

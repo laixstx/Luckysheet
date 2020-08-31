@@ -1613,25 +1613,30 @@ function luckysheet_getcelldata(txt) {
         let col = ABCatNum(rangetxt.replace(/[^A-Za-z]/g, ""));
 
         if (!isNaN(row) && !isNaN(col)) {
-            let ret = getdatabyselectionD(sheetdata, {
+            let dataBySelD = getdatabyselectionD(sheetdata, {
                 "row": [row, row],
                 "column": [col, col]
-            })[0][0];
+            });
+            if(dataBySelD && dataBySelD[0]) {
+                let ret = dataBySelD[0][0];
 
-            //范围的长宽
-            let rowl = 1;
-            let coll = 1;
-            let retAll= {
-                "sheetName": sheettxt,
-                "startCell": rangetxt,
-                "rowl": rowl,
-                "coll": coll,
-                "data": ret
-            };
+                //范围的长宽
+                let rowl = 1;
+                let coll = 1;
+                let retAll= {
+                    "sheetName": sheettxt,
+                    "startCell": rangetxt,
+                    "rowl": rowl,
+                    "coll": coll,
+                    "data": ret
+                };
 
-            window.luckysheet_getcelldata_cache[txt] = retAll;
+                window.luckysheet_getcelldata_cache[txt] = retAll;
 
-            return retAll;
+                return retAll;
+            } else {
+                return [];
+            }
         } 
         else {
             return [];

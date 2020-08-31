@@ -6,6 +6,7 @@ import {jfrefreshgrid} from "../global/refresh";
 import {setcellvalue} from "../global/setdata";
 import customHandler from "./handler";
 import customStore from "./store";
+import {ABCatNum, chatatABC} from "../utils/util";
 
 /**
  * 给 luckysheet 全局变量添加一些自定义的属性，方便进行自定义逻辑
@@ -16,9 +17,11 @@ export default function customLSheet(luckysheet) {
     luckysheet.rowLocation = rowLocation;
     luckysheet.colLocation = colLocation;
     luckysheet.validateO = validateO;
-    luckysheet.Store = Store;
-    luckysheet.editor = editor;
+    // luckysheet.Store = Store;
+    luckysheet.deepCopyFlowData = editor.deepCopyFlowData;
     luckysheet.customStore = customStore;
+    luckysheet.chatatABC = chatatABC; // 数字转字母
+    luckysheet.ABCatNum = ABCatNum; // 字母转数字。ABCatNum(startCell.replace(/[^A-Za-z]/g, ""));
 
     /**
      * 实时刷新单元格的值，并具备 redo、undo 特性。
@@ -27,7 +30,7 @@ export default function customLSheet(luckysheet) {
      * @param cInd 列索引
      * @param value 值
      */
-    luckysheet.refreshCellValue = function(rInd, cInd, value) {
+    luckysheet.refreshCellValue = function (rInd, cInd, value) {
         let oldData = Store.flowdata;
         let d = editor.deepCopyFlowData(oldData);
         // d[rInd][cInd].m = d[rInd][cInd].v = value;
@@ -37,9 +40,6 @@ export default function customLSheet(luckysheet) {
         jfrefreshgrid(d);
     };
 
-    luckysheet.refreshGridData = function () {
-
-    }
 }
 
 /**
