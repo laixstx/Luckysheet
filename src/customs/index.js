@@ -7,6 +7,7 @@ import {setcellvalue} from "../global/setdata";
 import customHandler from "./handler";
 import customStore from "./store";
 import {ABCatNum, chatatABC} from "../utils/util";
+import { getSelectedCellData } from "./method";
 
 /**
  * 给 luckysheet 全局变量添加一些自定义的属性，方便进行自定义逻辑
@@ -22,6 +23,8 @@ export default function customLSheet(luckysheet) {
     luckysheet.customStore = customStore;
     luckysheet.chatatABC = chatatABC; // 数字转字母
     luckysheet.ABCatNum = ABCatNum; // 字母转数字。ABCatNum(startCell.replace(/[^A-Za-z]/g, ""));
+
+    luckysheet.getSelectedCellData = getSelectedCellData;
 
     /**
      * 实时刷新单元格的值，并具备 redo、undo 特性。

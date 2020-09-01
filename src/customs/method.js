@@ -19,6 +19,9 @@ export function onCellSelect() {
     }
 }
 
+/**
+ * 获取当前选中单元格的数据。（多选时，值为 null)
+ */
 export function getSelectedCellData() {
     let cellData = null;
     let selSave = getluckysheet_select_save();
