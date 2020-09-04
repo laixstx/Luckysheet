@@ -23,6 +23,7 @@ import { jfrefreshgrid } from './refresh';
 import { luckysheet_compareWith, luckysheet_getarraydata, luckysheet_getcelldata, luckysheet_parseData, luckysheet_getValue, luckysheet_indirect_check, luckysheet_indirect_check_return, luckysheet_offset_check } from '../function/func';
 import Store from '../store';
 import locale from '../locale/locale';
+import {dealCellUpdate, onCellUpdate} from "../customs/method";
 
 const luckysheetformula = {
     error: {
@@ -1345,6 +1346,10 @@ const luckysheetformula = {
                 RowlChange = true;
             }
         }
+
+
+        // 【自改】自定义“更新单元格的值”的逻辑
+        dealCellUpdate(r,c,d);
         
         if(RowlChange){
             jfrefreshgrid(d, [{ "row": [r, r], "column": [c, c] }], cfg, null, RowlChange, isRunExecFunction);
@@ -1355,6 +1360,10 @@ const luckysheetformula = {
 
         // Store.luckysheetCellUpdate.length = 0; //clear array
         _this.execFunctionGroupData = null; //销毁
+
+
+        // 【自改】自定义“更新单元格的值”的逻辑
+        onCellUpdate(r,c);
     },
     cancelNormalSelected: function() {
         let _this = this;

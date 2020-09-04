@@ -59,6 +59,8 @@ import { luckysheetDrawMain } from '../global/draw';
 import locale from '../locale/locale';
 import Store from '../store';
 import { createLuckyChart, hideAllNeedRangeShow } from '../expendPlugins/chart/plugin'
+import customStore from "../customs/store";
+import {onCellPaste} from "../customs/method";
 
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
@@ -2870,6 +2872,9 @@ export default function luckysheetHandler() {
         Store.luckysheet_cell_selected_move = true;
         Store.luckysheet_scroll_status = true;
 
+        // 【自改】标识正在拖动替换单元格
+        customStore.cellSelectedMove = true;
+
         let mouse = mouseposition(event.pageX, event.pageY);
         let x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
         let y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
@@ -4079,6 +4084,9 @@ export default function luckysheetHandler() {
                     selection.pasteHandler(txtdata);
                 }
             }
+
+            // 【自改】粘贴之后的回调
+            onCellPaste();
         }
     });
 

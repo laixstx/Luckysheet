@@ -8,6 +8,8 @@ import customHandler from "./handler";
 import customStore from "./store";
 import {ABCatNum, chatatABC} from "../utils/util";
 import { getSelectedCellData } from "./method";
+import isEmpty from 'lodash/isEmpty';
+import forIn from 'lodash/forIn';
 
 /**
  * 给 luckysheet 全局变量添加一些自定义的属性，方便进行自定义逻辑
@@ -18,7 +20,7 @@ export default function customLSheet(luckysheet) {
     luckysheet.rowLocation = rowLocation;
     luckysheet.colLocation = colLocation;
     luckysheet.validateO = validateO;
-    // luckysheet.Store = Store;
+    luckysheet.Store = Store;
     luckysheet.deepCopyFlowData = editor.deepCopyFlowData;
     luckysheet.customStore = customStore;
     luckysheet.chatatABC = chatatABC; // 数字转字母
@@ -32,12 +34,19 @@ export default function customLSheet(luckysheet) {
      * @param rInd 行索引
      * @param cInd 列索引
      * @param value 值
+     * @param extraProps {{}} 单元格额外的属性值
      */
-    luckysheet.refreshCellValue = function (rInd, cInd, value) {
+    luckysheet.refreshCellValue = function (rInd, cInd, value, extraProps = {}) {
         let oldData = Store.flowdata;
         let d = editor.deepCopyFlowData(oldData);
         // d[rInd][cInd].m = d[rInd][cInd].v = value;
         setcellvalue(rInd, cInd, d, value);
+
+        if(!isEmpty(extraProps) && d[rInd][cInd]) {
+            forIn(extraProps, (v, k) => {
+                d[rInd][cInd][k] = v;
+            })
+        }
 
         Store.clearjfundo = true;
         jfrefreshgrid(d);

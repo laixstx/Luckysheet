@@ -26,6 +26,7 @@ import cleargridelement from '../global/cleargridelement';
 import tooltip from '../global/tooltip';
 import locale from '../locale/locale';
 import Store from '../store';
+import {onCellUpdate} from "../customs/method";
 
 
 let luckysheet_shiftkeydown = false;
@@ -625,12 +626,20 @@ export function keyboardInitial(){
                 else if (kcode == 90) {//Ctrl + Z  撤销
                     controlHistory.redo(event);
                     luckysheetactiveCell();
+
+                    // 【自改】
+                    onCellUpdate();
+
                     event.stopPropagation();
                     return;
                 }
                 else if (kcode == 89) {//Ctrl + Y  重做
                     controlHistory.undo(event);
                     luckysheetactiveCell();
+
+                    // 【自改】
+                    onCellUpdate();
+
                     event.stopPropagation();
                     return;
                 }

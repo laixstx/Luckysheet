@@ -34,6 +34,7 @@ import locale from '../locale/locale';
 import {getMeasureText} from '../global/getRowlen';
 import { luckysheet_searcharray } from '../controllers/sheetSearch';
 import Store from '../store';
+import {dealCellClear, onCellClear} from "../customs/method";
 
 export function rowColumnOperationInitial(){
 
@@ -1432,12 +1433,18 @@ export function rowColumnOperationInitial(){
                         else{
                             d[r][c] = null;
                         }
+
+                        // 【自改】自定义“清空单元格”逻辑
+                        dealCellClear(r,c,d);
                     }
                 }
             }
 
             jfrefreshgrid(d, Store.luckysheet_select_save);
         }
+
+        // 【自改】清空单元格之后，触发对应回调
+        onCellClear()
     });
 
     //行高列宽设置

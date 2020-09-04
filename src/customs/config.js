@@ -10,6 +10,7 @@ const customConfig = {
     rightMenu: [],
     /**
      * 单元格切换之后的回调
+     * @param cellData {{r:number,c:number,v:{}}}
      * @type {(function(cellData: {}):void)}
      */
     onCellSelect: null,
@@ -18,6 +19,42 @@ const customConfig = {
      * @type {(function():void)}
      */
     onCellDrop: null,
+
+    /**
+     * 自定义“更新单元格的值”的逻辑
+     * @param r
+     * @param c
+     * @param flowdata {[[]]} 表格的值，二位数组。直接修改这个变量即可。
+     * @type {(function(r: number, c: number, flowdata: [[]]):void)}
+     */
+    dealCellUpdate: null,
+
+    /**
+     * 更新单元格的值之后的回调
+     * @param cellData {{r:number,c:number,v:{}}}
+     * @type {(function(cellData:{}):void)}
+     */
+    onCellUpdate: null,
+
+    /**
+     * 自定义“清空单元格”的逻辑
+     * @param r
+     * @param c
+     * @param flowdata {[[]]} 表格的值，二位数组。直接修改这个变量即可。
+     * @type {(function(r: number, c: number, flowdata: [[]]):void)}
+     */
+    dealCellClear: null,
+    /**
+     * 清空单元格之后的回调
+     * @type {(function():void)}
+     */
+    onCellClear: null,
+
+    /**
+     * "粘贴"之后的回调
+     * @type {(function(cellData: {}):void)}
+     */
+    onCellPaste: null,
 };
 
 /**

@@ -53,8 +53,16 @@ export default function customHandler() {
      * 表格 mouseup
      *
      */
-    $("#luckysheet-cell-main, #luckysheetTableContent").on('mouseup', function() {
-        onCellSelect();
+    $("#luckysheet-cell-main, #luckysheetTableContent").on('mouseup', function () {
+        // 如果是正在拖动替换单元格，则延时之后再回调 onCellSelect
+        if (customStore.cellSelectedMove = true) {
+            customStore.cellSelectedMove = false;
+            setTimeout(() => {
+                onCellSelect();
+            }, 1);
+        } else {
+            onCellSelect();
+        }
     });
 
     /**
@@ -78,7 +86,7 @@ export default function customHandler() {
             colInd = colLoc[2];
 
         let conf = getconfig();
-        let cellMg = conf.merge[`${rowInd}_${colInd}`];
+        let cellMg = conf.merge ? conf.merge[`${rowInd}_${colInd}`] : null;
 
         // 如果选区([rowInd, rowInd] [colInd, colInd])被包含在某个“合并单元格”内，
         // 则选中这个“合并单元格”
@@ -107,7 +115,7 @@ export default function customHandler() {
     }).on('drop', function (event) { // 松开拖拽动作之后
         customStore.draggingEle = false;
 
-        if(customConfig.onCellDrop) {
+        if (customConfig.onCellDrop) {
             customConfig.onCellDrop();
         }
 
@@ -122,7 +130,9 @@ export default function customHandler() {
             //函数公式显示栏
             formula.fucntionboxshow(rowInd, colInd);
         }
-        luckysheetContainerFocus();
+        setTimeout(() => {
+            luckysheetContainerFocus();
+        }, 10);
 
         onCellSelect();
     })
