@@ -11,6 +11,7 @@ import formula from '../global/formula';
 import { luckysheetRangeLast } from '../global/cursorPos';
 import cleargridelement from '../global/cleargridelement';
 import Store from '../store';
+import { beforeCellEdit } from '../customs/method';
 
 export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocus) {
     if (isEditMode() || Store.allowEdit === false) {//此模式下禁用单元格编辑
@@ -33,6 +34,10 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     if (pivotTable.isPivotRange(row_index, col_index)) {
         return;
     }
+
+    
+    // 【自改】编辑单元格前的回调。如果返回 false，则阻止默认逻辑
+    if (false === beforeCellEdit(row_index, col_index)) return false;
 
     let input_postition = {
         "min-width": col - col_pre + 1 - 8,

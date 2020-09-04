@@ -7,7 +7,7 @@ import {setcellvalue} from "../global/setdata";
 import customHandler from "./handler";
 import customStore from "./store";
 import {ABCatNum, chatatABC} from "../utils/util";
-import { getSelectedCellData } from "./method";
+import { getSelectedCellData, getCellData, blurCellEdit } from "./method";
 import isEmpty from 'lodash/isEmpty';
 import forIn from 'lodash/forIn';
 
@@ -26,7 +26,9 @@ export default function customLSheet(luckysheet) {
     luckysheet.chatatABC = chatatABC; // 数字转字母
     luckysheet.ABCatNum = ABCatNum; // 字母转数字。ABCatNum(startCell.replace(/[^A-Za-z]/g, ""));
 
-    luckysheet.getSelectedCellData = getSelectedCellData;
+    luckysheet.getSelectedCellData = getSelectedCellData; // 获取当前选中单元格的数据。（多选时，值为 null)
+    luckysheet.getCellData = getCellData; // 根据行列索引获取单元格数据
+    luckysheet.blurCellEdit = blurCellEdit; // 取消单元格的编辑状态
 
     /**
      * 实时刷新单元格的值，并具备 redo、undo 特性。

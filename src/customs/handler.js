@@ -55,11 +55,15 @@ export default function customHandler() {
      */
     $("#luckysheet-cell-main, #luckysheetTableContent").on('mouseup', function () {
         // 如果是正在拖动替换单元格，则延时之后再回调 onCellSelect
-        if (customStore.cellSelectedMove = true) {
+        if (customStore.cellSelectedMove) {
             customStore.cellSelectedMove = false;
             setTimeout(() => {
                 onCellSelect();
             }, 1);
+            
+        // 如果是双击单元格，则此次不需要响应 onCellSelect
+        } else if(customStore.cellDbClick) {
+            customStore.cellDbClick = false;
         } else {
             onCellSelect();
         }

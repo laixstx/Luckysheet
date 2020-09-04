@@ -1193,6 +1193,8 @@ const luckysheetformula = {
         });
     },
     updatecell: function(r, c) {
+        if(!(r >= 0 && c >= 0)) return;
+
         let _this = this;
 
         let $input = $("#luckysheet-rich-text-editor"),
@@ -2282,9 +2284,9 @@ const luckysheetformula = {
 
                     $("#luckysheet-search-formula-parm .parmBox").eq(_this.data_parm_index).find(".val").text(" = {"+ txtArr.join(",") +"}");
                 }
-                else{
+                else {
                     //参数为单个单元格选区
-                    $("#luckysheet-search-formula-parm .parmBox").eq(_this.data_parm_index).find(".val").text(" = {"+ txtdata.v +"}");
+                    $("#luckysheet-search-formula-parm .parmBox").eq(_this.data_parm_index).find(".val").text(" = {"+ (txtdata ? txtdata.v:'') +"}");
                 }
 
                 //计算结果显示

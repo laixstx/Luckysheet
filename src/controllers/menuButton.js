@@ -39,6 +39,7 @@ import {
 } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
+import {beforeCellEdit} from '../customs/method';
 
 const menuButton = {
     "menu": '<div class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-menuButton ${subclass} luckysheet-mousedown-cancel" id="luckysheet-icon-${id}-menuButton">${item}</div>',
@@ -590,13 +591,13 @@ const menuButton = {
                     noColorSelectedText: locale_toolbar.noColorSelectedText,
                     localStorageKey: "spectrum.textcolor" + server.gridKey,
                     palette: [["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
-                        ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
-                        ["#f4cccc", "#fce5cd", "#fff2cc", "#d9ead3", "#d0e0e3", "#cfe2f3", "#d9d2e9", "#ead1dc"],
-                        ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#a2c4c9", "#9fc5e8", "#b4a7d6", "#d5a6bd"],
-                        ["#e06666", "#f6b26b", "#ffd966", "#93c47d", "#76a5af", "#6fa8dc", "#8e7cc3", "#c27ba0"],
-                        ["#c00", "#e69138", "#f1c232", "#6aa84f", "#45818e", "#3d85c6", "#674ea7", "#a64d79"],
-                        ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
-                        ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]],
+                    ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
+                    ["#f4cccc", "#fce5cd", "#fff2cc", "#d9ead3", "#d0e0e3", "#cfe2f3", "#d9d2e9", "#ead1dc"],
+                    ["#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#a2c4c9", "#9fc5e8", "#b4a7d6", "#d5a6bd"],
+                    ["#e06666", "#f6b26b", "#ffd966", "#93c47d", "#76a5af", "#6fa8dc", "#8e7cc3", "#c27ba0"],
+                    ["#c00", "#e69138", "#f1c232", "#6aa84f", "#45818e", "#3d85c6", "#674ea7", "#a64d79"],
+                    ["#900", "#b45f06", "#bf9000", "#38761d", "#134f5c", "#0b5394", "#351c75", "#741b47"],
+                    ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]],
                     change: function (color) {
                         let $input = $(this);
                         if (color != null) {
@@ -886,24 +887,24 @@ const menuButton = {
             mouseclickposition($menuButton, menuleft, $(this).offset().top + 25, "lefttop");
         })
             .find("input.luckysheet-toolbar-textinput").keyup(function (e) {
-            if (e.keyCode != 13) {//Enter
-                return;
-            }
+                if (e.keyCode != 13) {//Enter
+                    return;
+                }
 
-            let $this = $(this);
+                let $this = $(this);
 
-            let itemvalue = parseInt($this.val());
-            let $menuButton = $("#luckysheet-icon-font-size-menuButton");
-            _this.focus($menuButton, itemvalue);
+                let itemvalue = parseInt($this.val());
+                let $menuButton = $("#luckysheet-icon-font-size-menuButton");
+                _this.focus($menuButton, itemvalue);
 
-            let d = editor.deepCopyFlowData(Store.flowdata);
-            _this.updateFormat(d, "fs", itemvalue);
+                let d = editor.deepCopyFlowData(Store.flowdata);
+                _this.updateFormat(d, "fs", itemvalue);
 
-            luckysheet_fs_setTimeout = setTimeout(function () {
-                $menuButton.hide();
-                $this.blur();
-            }, 200);
-        });
+                luckysheet_fs_setTimeout = setTimeout(function () {
+                    $menuButton.hide();
+                    $this.blur();
+                }, 200);
+            });
 
         //边框设置
         $("#luckysheet-icon-border-all").click(function () {
@@ -2237,12 +2238,28 @@ const menuButton = {
                     $menuButton.hide();
                     luckysheetContainerFocus();
 
+                    // 【自改】编辑单元格前的回调。如果返回 false，则阻止默认逻辑
+                    if (Store.luckysheet_select_save.length == 0) {
+                        if (isEditMode()) {
+                            alert(locale_formula.tipSelectCell);
+                        }
+                        else {
+                            tooltip.info(locale_formula.tipSelectCell, "");
+                        }
+
+                        return;
+                    }
+                    let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+                    let r = last["row_focus"] == null ? last["row"][0] : last["row_focus"];
+                    let c = last["column_focus"] == null ? last["column"][0] : last["column_focus"];
+                    if (false === beforeCellEdit(r, c)) return false;
+
                     let $t = $(this), itemvalue = $t.attr("itemvalue");
 
                     if (itemvalue == "if") {
-                        let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
-                        let r = last["row_focus"] == null ? last["row"][0] : last["row_focus"];
-                        let c = last["column_focus"] == null ? last["column"][0] : last["column_focus"];
+                        // let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+                        // let r = last["row_focus"] == null ? last["row"][0] : last["row_focus"];
+                        // let c = last["column_focus"] == null ? last["column"][0] : last["column_focus"];
 
                         if (!!Store.flowdata[r] && !!Store.flowdata[r][c] && !!Store.flowdata[r][c]["f"]) {
                             let fp = Store.flowdata[r][c]["f"].toString();
@@ -2263,20 +2280,21 @@ const menuButton = {
 
                         ifFormulaGenerator.init();
                     } else if (itemvalue == "formula") {
-                        //点击函数查找弹出框
-                        if (Store.luckysheet_select_save.length == 0) {
-                            if (isEditMode()) {
-                                alert(locale_formula.tipSelectCell);
-                            } else {
-                                tooltip.info(locale_formula.tipSelectCell, "");
-                            }
+                        // //点击函数查找弹出框
+                        // if (Store.luckysheet_select_save.length == 0) {
+                        //     if (isEditMode()) {
+                        //         alert(locale_formula.tipSelectCell);
+                        //     } else {
+                        //         tooltip.info(locale_formula.tipSelectCell, "");
+                        //     }
 
-                            return;
-                        }
+                        //     return;
+                        // }
 
-                        let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+                        // let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
 
-                        let row_index = last["row_focus"], col_index = last["column_focus"];
+                        // let row_index = last["row_focus"], col_index = last["column_focus"];
+                        let row_index = r, col_index = c;
 
                         luckysheetupdateCell(row_index, col_index, Store.flowdata);
 

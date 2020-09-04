@@ -61,7 +61,7 @@ const Store = {
     luckysheet_cols_dbclick_timeout: null,
     luckysheet_cols_dbclick_times: 0,
 
-    luckysheetCellUpdate: [],
+    luckysheetCellUpdate: [], // 正在编辑的单元格。[rInd, cInd]
 
     luckysheet_shiftpositon: null,
 

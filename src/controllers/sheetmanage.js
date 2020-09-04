@@ -909,6 +909,11 @@ const sheetmanage = {
             return;
         }
 
+        // 【自改】
+        if(index === null || index === undefined || index < 0) {
+            return;
+        }
+
         let _this = this;
 
         if(server.allowUpdate){

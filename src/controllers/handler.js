@@ -60,7 +60,7 @@ import locale from '../locale/locale';
 import Store from '../store';
 import { createLuckyChart, hideAllNeedRangeShow } from '../expendPlugins/chart/plugin'
 import customStore from "../customs/store";
-import {onCellPaste} from "../customs/method";
+import {onCellPaste, onCellDbClick} from "../customs/method";
 
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
@@ -1023,6 +1023,10 @@ export default function luckysheetHandler() {
         let col_location = colLocation(x),
 
             col_index = col_location[2];
+
+
+        // 【自改】回调自定义的函数。如果返回 false，则阻止默认逻辑
+        if(false === onCellDbClick(row_index, col_index)) return;
 
         if (pivotTable.isPivotRange(row_index, col_index)) {
             //数据透视表没有 任何数据

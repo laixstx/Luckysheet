@@ -55,6 +55,14 @@ const customConfig = {
      * @type {(function(cellData: {}):void)}
      */
     onCellPaste: null,
+
+    /**
+     * 编辑单元格前的回调。如果返回 false，则阻止默认逻辑
+     * @param {*} r 
+     * @param {*} c 
+     * @return {undefined || boolean}
+     */
+    beforeCellEdit: null,
 };
 
 /**

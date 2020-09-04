@@ -7,6 +7,8 @@ const customStore = {
 
     cellPartMerge: null, // hasPartMC 方法返回 true 时，这个值保存 Store.config.merge 对应的对象值
     cellSelectedMove: false, // 是否正在拖动替换单元格
+
+    cellDbClick:false, // 标识是否双击单元格
 };
 
 export default customStore;

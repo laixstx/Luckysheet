@@ -12,7 +12,7 @@
     <link rel='stylesheet' href='./plugins/plugins.css'/>
     <link rel='stylesheet' href='./css/luckysheet.css'/>
     <style>
-        * {
+        .set-panel, .set-panel * {
             box-sizing: border-box;
         }
     </style>
@@ -24,7 +24,7 @@
 </head>
 
 <body>
-<div style="background:#fff;text-align: left;font-size: 12px;padding: 5px;position: fixed;top: 0;right: 0;z-index:99;height: 100%;width: 281px;border-left: 1px solid #ddd;">
+<div class="set-panel" style="background:#fff;text-align: left;font-size: 12px;padding: 5px;position: fixed;top: 0;right: 0;z-index:99;height: 100%;width: 281px;border-left: 1px solid #ddd;">
     <h3>属性配置</h3>
     <div style="margin-bottom: 10px">
         <label for="cellType">单元格类型：</label>
@@ -269,6 +269,17 @@
             console.log('onCellUpdate', cellData);
         }
 
+        /**
+         * 编辑单元格之前的回调，return false 可阻止默认逻辑
+         */
+        function beforeCellEdit(r, c) {
+            var cType = $('#cellType').val();
+            console.log('cType', cType);
+            if(cellTypes.DATASET.code === cType) { // 数据集不允许直接修改单元格的文本
+                return false;
+            }
+        }
+
         luckysheet.create({
             container: 'luckysheet',
             lang: 'zh',
@@ -293,7 +304,7 @@
                                 "fc": "rgb(51, 51, 51)", "ht": 1, "vt": 1,
                                 "m": '123', v: 123,
                                 data: {
-                                    name: 'cusName'
+                                    simpleValue: ''
                                 }
                             },
 
@@ -347,9 +358,14 @@
                 // 自定义“更新单元格的值”逻辑
                 dealCellUpdate: dealCellUpdate,
                 // 单元格更新后
-                onCellUpdate: onCellUpdate
+                onCellUpdate: onCellUpdate,
+                beforeCellEdit: beforeCellEdit,
             }
         });
+
+        $('.set-panel').on('click', function (event) {
+            luckysheet.blurCellEdit();
+        })
 
 
         /**

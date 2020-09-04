@@ -1,45 +1,53 @@
 import menuButton from './menuButton';
-import {luckysheetupdateCell} from './updateCell';
+import { luckysheetupdateCell } from './updateCell';
 import { keycode } from './constant';
-import { 
+import {
     luckysheetMoveHighlightCell,
 } from './sheetMove';
 
 import insertFormula from './insertFormula';
-import { 
-    rowLocation, 
-    colLocation, 
-    mouseposition 
+import {
+    rowLocation,
+    colLocation,
+    mouseposition
 } from '../global/location';
 import { isEditMode } from '../global/validate';
 import formula from '../global/formula';
 import tooltip from '../global/tooltip';
 import locale from '../locale/locale';
 import Store from '../store';
+import customConfig from '../customs/config'
 
-export function formulaBarInitial(){
+export function formulaBarInitial() {
     //公式栏处理
 
     const _locale = locale();
-    const locale_formula= _locale.formula;
+    const locale_formula = _locale.formula;
 
     $("#luckysheet-functionbox-cell").focus(function () {
-        if(isEditMode()){//此模式下禁用公式栏
+        if (isEditMode()) {//此模式下禁用公式栏
             return;
         }
 
-        if(Store.luckysheet_select_save.length > 0){
+        if (Store.luckysheet_select_save.length > 0) {
             let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
 
             let row_index = last["row_focus"], col_index = last["column_focus"];
-            
+
             luckysheetupdateCell(row_index, col_index, Store.flowdata, null, true);
+
+            // 【自改】不允许编辑单元格
+            if (false === customConfig.canCellEdit) return false;
+
             formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
         }
     }).keydown(function (event) {
-        if(isEditMode()){//此模式下禁用公式栏
+        if (isEditMode()) {//此模式下禁用公式栏
             return;
         }
+
+        // 【自改】不允许编辑单元格
+        if (false === customConfig.canCellEdit) return false;
 
         let ctrlKey = event.ctrlKey;
         let altKey = event.altKey;
@@ -100,9 +108,12 @@ export function formulaBarInitial(){
             formula.functionInputHanddler($("#luckysheet-rich-text-editor"), $("#luckysheet-functionbox-cell"), kcode);
         }
     }).click(function () {
-        if(isEditMode()){//此模式下禁用公式栏
+        if (isEditMode()) {//此模式下禁用公式栏
             return;
         }
+
+        // 【自改】不允许编辑单元格
+        if (false === customConfig.canCellEdit) return false;
 
         formula.rangeHightlightselected($("#luckysheet-functionbox-cell"));
     });
@@ -113,11 +124,11 @@ export function formulaBarInitial(){
             return;
         }
         //若有参数弹出框，隐藏
-        if($("#luckysheet-search-formula-parm").is(":visible")){
+        if ($("#luckysheet-search-formula-parm").is(":visible")) {
             $("#luckysheet-search-formula-parm").hide();
         }
         //若有参数选取范围弹出框，隐藏
-        if($("#luckysheet-search-formula-parm-select").is(":visible")){
+        if ($("#luckysheet-search-formula-parm-select").is(":visible")) {
             $("#luckysheet-search-formula-parm-select").hide();
         }
 
@@ -131,11 +142,11 @@ export function formulaBarInitial(){
             return;
         }
         //若有参数弹出框，隐藏
-        if($("#luckysheet-search-formula-parm").is(":visible")){
+        if ($("#luckysheet-search-formula-parm").is(":visible")) {
             $("#luckysheet-search-formula-parm").hide();
         }
         //若有参数选取范围弹出框，隐藏
-        if($("#luckysheet-search-formula-parm-select").is(":visible")){
+        if ($("#luckysheet-search-formula-parm-select").is(":visible")) {
             $("#luckysheet-search-formula-parm-select").hide();
         }
 
@@ -146,12 +157,12 @@ export function formulaBarInitial(){
     //公式栏 fx按钮
     $("#luckysheet-wa-functionbox-fx").click(function () {
         //点击函数查找弹出框
-        if(Store.luckysheet_select_save.length == 0){
-            if(isEditMode()){
+        if (Store.luckysheet_select_save.length == 0) {
+            if (isEditMode()) {
                 alert(locale_formula.tipSelectCell);
             }
-            else{
-                tooltip.info(locale_formula.tipSelectCell,"");
+            else {
+                tooltip.info(locale_formula.tipSelectCell, "");
             }
 
             return;
@@ -162,21 +173,24 @@ export function formulaBarInitial(){
         let row_index = last["row_focus"], col_index = last["column_focus"];
 
         luckysheetupdateCell(row_index, col_index, Store.flowdata);
-        
+
+        // 【自改】不允许编辑单元格
+        if (false === customConfig.canCellEdit) return false;
+
         let cell = Store.flowdata[row_index][col_index];
-        if(cell != null && cell.f != null){
+        if (cell != null && cell.f != null) {
             //单元格有计算
             let functionStr = formula.getfunctionParam(cell.f);
-            if(functionStr.fn != null){
+            if (functionStr.fn != null) {
                 //有函数公式
                 insertFormula.formulaParmDialog(functionStr.fn, functionStr.param);
             }
-            else{
+            else {
                 //无函数公式
                 insertFormula.formulaListDialog();
             }
         }
-        else{
+        else {
             //单元格无计算
             $("#luckysheet-rich-text-editor").html('<span dir="auto" class="luckysheet-formula-text-color">=</span>');
             $("#luckysheet-functionbox-cell").html($("#luckysheet-rich-text-editor").html());
@@ -192,12 +206,12 @@ export function formulaBarInitial(){
         Store.luckysheet_scroll_status = true;
         formula.rangeMoveObj = $(this).parent();
         formula.rangeMoveIndex = $(this).parent().attr("rangeindex");
-        
+
         let mouse = mouseposition(event.pageX, event.pageY);
         let x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
         let y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
         $("#luckysheet-formula-functionrange-highlight-" + formula.rangeMoveIndex).find(".luckysheet-selection-copy-hc").css("opacity", 0.13);
-        
+
         let type = $(this).data("type");
         if (type == "top") {
             y += 3;
@@ -223,15 +237,15 @@ export function formulaBarInitial(){
     $("#luckysheet-formula-functionrange").on("mousedown", ".luckysheet-highlight", function (e) {
         formula.rangeResize = $(this).data("type");//开始状态resize
         formula.rangeResizeIndex = $(this).parent().attr("rangeindex");
-        
-        let mouse = mouseposition(e.pageX, e.pageY), 
-            scrollLeft = $("#luckysheet-cell-main").scrollLeft(), 
+
+        let mouse = mouseposition(e.pageX, e.pageY),
+            scrollLeft = $("#luckysheet-cell-main").scrollLeft(),
             scrollTop = $("#luckysheet-cell-main").scrollTop();
         let x = mouse[0] + scrollLeft;
         let y = mouse[1] + scrollTop;
         formula.rangeResizeObj = $(this).parent();
         $("#luckysheet-formula-functionrange-highlight-" + formula.rangeResizeIndex).find(".luckysheet-selection-copy-hc").css("opacity", 0.13);
-        
+
         if (formula.rangeResize == "lt") {
             x += 3;
             y += 3;
@@ -249,22 +263,22 @@ export function formulaBarInitial(){
             y -= 3;
         }
 
-        let row_location = rowLocation(y), 
-            row = row_location[1], 
-            row_pre = row_location[0], 
+        let row_location = rowLocation(y),
+            row = row_location[1],
+            row_pre = row_location[0],
             row_index = row_location[2];
-        let col_location = colLocation(x), 
-            col = col_location[1], 
-            col_pre = col_location[0], 
+        let col_location = colLocation(x),
+            col = col_location[1],
+            col_pre = col_location[0],
             col_index = col_location[2];
 
         let position = formula.rangeResizeObj.position();
         formula.rangeResizexy = [
-            col_pre, 
-            row_pre, 
-            formula.rangeResizeObj.width(), 
-            formula.rangeResizeObj.height(), 
-            position.left + scrollLeft, 
+            col_pre,
+            row_pre,
+            formula.rangeResizeObj.width(),
+            formula.rangeResizeObj.height(),
+            position.left + scrollLeft,
             position.top + scrollTop, col, row
         ];
         formula.rangeResizeWinH = $("#luckysheet-cell-main")[0].scrollHeight;
