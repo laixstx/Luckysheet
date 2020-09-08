@@ -2045,16 +2045,16 @@ const menuButton = {
                         "value": "search",
                         "example": '<i style="font-size:14px;" class="fa fa-search" aria-hidden="true"></i>'
                     },
-                    {
-                        "text": locale_findAndReplace.replace + " ...",
-                        "value": "replace",
-                        "example": '<i style="font-size:14px;" class="fa fa-files-o" aria-hidden="true"></i>'
-                    },
-                    {
-                        "text": locale_findAndReplace.goto + " ...",
-                        "value": "goto",
-                        "example": '<i style="font-size:14px;" class="fa fa-arrow-right" aria-hidden="true"></i>'
-                    },
+                    // {
+                    //     "text": locale_findAndReplace.replace + " ...",
+                    //     "value": "replace",
+                    //     "example": '<i style="font-size:14px;" class="fa fa-files-o" aria-hidden="true"></i>'
+                    // },
+                    // {
+                    //     "text": locale_findAndReplace.goto + " ...",
+                    //     "value": "goto",
+                    //     "example": '<i style="font-size:14px;" class="fa fa-arrow-right" aria-hidden="true"></i>'
+                    // },
                     { "text": "", "value": "split", "example": "" },
                     {
                         "text": locale_findAndReplace.location + " ...",

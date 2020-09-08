@@ -1,18 +1,34 @@
-import {colLocation, mouseposition, rowLocation} from "../global/location";
-import {getconfig, getluckysheet_select_save} from "../methods/get";
-import {hasPartMC} from "../global/validate";
-import {setluckysheet_select_save} from "../methods/set";
-import {selectHightlightShow} from "../controllers/select";
+import { colLocation, mouseposition, rowLocation } from "../global/location";
+import { getconfig, getluckysheet_select_save } from "../methods/get";
+import { hasPartMC } from "../global/validate";
+import { setluckysheet_select_save } from "../methods/set";
+import { selectHightlightShow } from "../controllers/select";
 import customConfig from "./config";
 import customStore from "./store";
-import {recursiveFind} from "./util";
-import {onCellSelect} from "./method";
+import { recursiveFind } from "./util";
+import { onCellSelect } from "./method";
 import Store from "../store";
-import {luckysheetContainerFocus} from "../utils/util";
+import { luckysheetContainerFocus } from "../utils/util";
 import menuButton from "../controllers/menuButton";
 import formula from "../global/formula";
 
 export default function customHandler() {
+
+    /**
+     * 自定义操作栏按钮
+     */
+    $('.custom-toolbar-item').on('click', function () {
+        const toolBar = customConfig.toolBar || [];
+        const dataId = $.trim($(this).attr('data-id'));
+
+        recursiveFind(toolBar, (mItem) => {
+            if (mItem && mItem.id == dataId) {
+                if (mItem.onClick) mItem.onClick();
+                return true;
+            }
+            return false;
+        });
+    });
 
 
     /**
@@ -22,7 +38,7 @@ export default function customHandler() {
         // console.log('subclick')
         /**
          * 自定义右键菜单，支持两级
-         * @type {[{id: string, name: string, children?: [], onClick?: function()}]}
+         * @type {[{id: string, zh: string, en: string, children?: [], onClick?: function()}]}
          */
         const rightMenu = customConfig.rightMenu || [];
         const pId = $.trim($(this).attr('data-parent'));
@@ -60,9 +76,9 @@ export default function customHandler() {
             setTimeout(() => {
                 onCellSelect();
             }, 1);
-            
-        // 如果是双击单元格，则此次不需要响应 onCellSelect
-        } else if(customStore.cellDbClick) {
+
+            // 如果是双击单元格，则此次不需要响应 onCellSelect
+        } else if (customStore.cellDbClick) {
             customStore.cellDbClick = false;
         } else {
             onCellSelect();
@@ -139,6 +155,6 @@ export default function customHandler() {
         }, 10);
 
         onCellSelect();
-    })
+    });
 
 }

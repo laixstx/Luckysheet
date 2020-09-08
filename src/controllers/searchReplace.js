@@ -25,12 +25,12 @@ const luckysheetSearchReplace = {
 
         let content = '<div class="tabBox">' +
                         '<span id="searchTab">'+ locale_findAndReplace.find +'</span>' +
-                        '<span id="replaceTab">'+ locale_findAndReplace.replace +'</span>' +
+                        // '<span id="replaceTab">'+ locale_findAndReplace.replace +'</span>' +
                       '</div>' +
                       '<div class="ctBox">' +
                         '<div class="inputBox">' +
                             '<div class="textboxs" id="searchInput">'+ locale_findAndReplace.findTextbox +'：<input class="formulaInputFocus" spellcheck="false" value=""/></div>' +
-                            '<div class="textboxs" id="replaceInput">'+ locale_findAndReplace.replaceTextbox +'：<input class="formulaInputFocus" spellcheck="false" value=""/></div>' +
+                            // '<div class="textboxs" id="replaceInput">'+ locale_findAndReplace.replaceTextbox +'：<input class="formulaInputFocus" spellcheck="false" value=""/></div>' +
                             '<div class="checkboxs">' +
                                 '<div id="regCheck">' +
                                     '<input type="checkbox"/>' +
@@ -47,8 +47,8 @@ const luckysheetSearchReplace = {
                             '</div>' +
                         '</div>' +
                         '<div class="btnBox">' +
-                            '<button id="replaceAllBtn" class="btn btn-default">'+ locale_findAndReplace.allReplaceBtn +'</button>' +
-                            '<button id="replaceBtn" class="btn btn-default">'+ locale_findAndReplace.replaceBtn +'</button>' +
+                            // '<button id="replaceAllBtn" class="btn btn-default">'+ locale_findAndReplace.allReplaceBtn +'</button>' +
+                            // '<button id="replaceBtn" class="btn btn-default">'+ locale_findAndReplace.replaceBtn +'</button>' +
                             '<button id="searchAllBtn" class="btn btn-default">'+ locale_findAndReplace.allFindBtn +'</button>' +
                             '<button id="searchNextBtn" class="btn btn-default">'+ locale_findAndReplace.findBtn +'</button>' +
                         '</div>' +
@@ -72,15 +72,15 @@ const luckysheetSearchReplace = {
     
         if(source == "0"){
             $("#luckysheet-search-replace #searchTab").addClass("on").siblings().removeClass("on");
-            $("#luckysheet-search-replace #replaceInput").hide();
-            $("#luckysheet-search-replace #replaceAllBtn").hide();
-            $("#luckysheet-search-replace #replaceBtn").hide();
+            // $("#luckysheet-search-replace #replaceInput").hide();
+            // $("#luckysheet-search-replace #replaceAllBtn").hide();
+            // $("#luckysheet-search-replace #replaceBtn").hide();
         }
         else if(source == "1"){
             $("#luckysheet-search-replace #replaceTab").addClass("on").siblings().removeClass("on");
-            $("#luckysheet-search-replace #replaceInput").show();
-            $("#luckysheet-search-replace #replaceAllBtn").show();
-            $("#luckysheet-search-replace #replaceBtn").show();
+            // $("#luckysheet-search-replace #replaceInput").show();
+            // $("#luckysheet-search-replace #replaceAllBtn").show();
+            // $("#luckysheet-search-replace #replaceBtn").show();
         }
     },
     init: function(){

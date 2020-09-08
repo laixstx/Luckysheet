@@ -26,7 +26,7 @@ import cleargridelement from '../global/cleargridelement';
 import tooltip from '../global/tooltip';
 import locale from '../locale/locale';
 import Store from '../store';
-import {onCellUpdate} from "../customs/method";
+import {onCellUpdate, focusSelectCell} from "../customs/method";
 
 
 let luckysheet_shiftkeydown = false;
@@ -532,12 +532,12 @@ export function keyboardInitial(){
 
                     $("#luckysheet-search-replace #searchInput input").focus();
                 }
-                else if (kcode == 72) {//Ctrl + H  替换
-                    searchReplace.createDialog(1);
-                    searchReplace.init();
+                // else if (kcode == 72) {//Ctrl + H  替换
+                //     searchReplace.createDialog(1);
+                //     searchReplace.init();
 
-                    $("#luckysheet-search-replace #searchInput input").focus();
-                }
+                //     $("#luckysheet-search-replace #searchInput input").focus();
+                // }
                 else if (kcode == 73) {//Ctrl + I  斜体
                     $("#luckysheet-icon-italic").click();
                 }
@@ -629,6 +629,7 @@ export function keyboardInitial(){
 
                     // 【自改】
                     onCellUpdate();
+                    focusSelectCell();
 
                     event.stopPropagation();
                     return;
@@ -639,6 +640,7 @@ export function keyboardInitial(){
 
                     // 【自改】
                     onCellUpdate();
+                    focusSelectCell();
 
                     event.stopPropagation();
                     return;

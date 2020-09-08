@@ -3,16 +3,16 @@
 
 <head lang='zh'>
     <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="renderer" content="webkit"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="renderer" content="webkit" />
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0" />
     <title>Luckysheet</title>
 
-    <link rel='stylesheet' href='./plugins/css/pluginsCss.css'/>
-    <link rel='stylesheet' href='./plugins/plugins.css'/>
-    <link rel='stylesheet' href='./css/luckysheet.css'/>
+    <link rel='stylesheet' href='./plugins/css/pluginsCss.css' />
+    <link rel='stylesheet' href='./plugins/plugins.css' />
+    <link rel='stylesheet' href='./css/luckysheet.css' />
     <style>
-        .set-panel, .set-panel * {
+        * {
             box-sizing: border-box;
         }
     </style>
@@ -24,393 +24,428 @@
 </head>
 
 <body>
-<div class="set-panel" style="background:#fff;text-align: left;font-size: 12px;padding: 5px;position: fixed;top: 0;right: 0;z-index:99;height: 100%;width: 281px;border-left: 1px solid #ddd;">
-    <h3>属性配置</h3>
-    <div style="margin-bottom: 10px">
-        <label for="cellType">单元格类型：</label>
-        <select id="cellType" data-field="cellType">
-            <option value="SIMPLE">普通文本</option>
-            <option value="EXPRESSION">表达式</option>
-            <option value="DATASET">数据集</option>
-        </select>
-    </div>
-    <div id="expContain" style="margin-bottom: 10px" class="x-contain">
-        <label for="expressionValue">表达式：</label>
-        <input id="expressionValue" data-field="expressionValue" type="text" style="width: 150px;"/>
-    </div>
-
-    <div id="datasetContain" style="margin-bottom: 10px" class="x-contain">
+    <div class="set-panel"
+        style="background:#fff;text-align: left;font-size: 12px;padding: 5px;position: fixed;top: 0;right: 0;z-index:99;height: 100%;width: 281px;border-left: 1px solid #ddd;">
+        <h3>属性配置</h3>
         <div style="margin-bottom: 10px">
-            <label for="dateset">数据集：</label>
-            <select id="dateset" data-field="dateset">
-                <option value="dataset1">数据集1(dataset1)</option>
-                <option value="dataset2">数据集2(dataset2)</option>
+            <label for="cellType">单元格类型：</label>
+            <select id="cellType" data-field="cellType">
+                <option value="SIMPLE">普通文本</option>
+                <option value="EXPRESSION">表达式</option>
+                <option value="DATASET">数据集</option>
             </select>
         </div>
-        <div style="margin-bottom: 10px">
-            <label for="datesetField">数据字段：</label>
-            <select id="datesetField" data-field="datesetField">
-                <option value="user.name">用户.姓名(user.name)</option>
-                <option value="user.phone">用户.手机号(user.phone)</option>
-                <option value="goods.name">商品.名称(goods.name)</option>
-                <option value="goods.code">商品.编码(goods.code)</option>
-            </select>
+        <div id="expContain" style="margin-bottom: 10px" class="x-contain">
+            <label for="expressionValue">表达式：</label>
+            <input id="expressionValue" data-field="expressionValue" type="text" style="width: 150px;" />
         </div>
-    </div>
 
-    <hr/>
+        <div id="datasetContain" style="margin-bottom: 10px" class="x-contain">
+            <div style="margin-bottom: 10px">
+                <label for="dateset">数据集：</label>
+                <select id="dateset" data-field="dateset">
+                    <option value="dataset1">数据集1(dataset1)</option>
+                    <option value="dataset2">数据集2(dataset2)</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 10px">
+                <label for="datesetField">数据字段：</label>
+                <select id="datesetField" data-field="datesetField">
+                    <option value="user.name">用户.姓名(user.name)</option>
+                    <option value="user.phone">用户.手机号(user.phone)</option>
+                    <option value="goods.name">商品.名称(goods.name)</option>
+                    <option value="goods.code">商品.编码(goods.code)</option>
+                </select>
+            </div>
+        </div>
 
-    <h3>数据集管理</h3>
-    <ul>
-        <li style="font-size: 12px;margin-bottom: 10px">数据集1(dataset1)
-        </li>
+        <hr />
+
+        <h3>数据集管理</h3>
         <ul>
-            <li style="font-size: 12px;margin-bottom: 10px">用户(user)
-            </li>
-            <ul title="拖拽到表格">
-                <li draggable="true" class="meData"
-                    style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px"
-                    data-set="dataset1" data-code="user.name" data-name="用户.姓名">姓名(user.name)
-                </li>
-                <li draggable="true" class="meData"
-                    style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px"
-                    data-set="dataset1" data-code="user.phone" data-name="用户.手机号">手机号(user.phone)
-                </li>
-            </ul>
-            <li style="font-size: 12px;margin-bottom: 10px">商品(goods)
+            <li style="font-size: 12px;margin-bottom: 10px">数据集1(dataset1)
             </li>
             <ul>
-                <li draggable="true" class="meData"
-                    style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px"
-                    data-set="dataset1" data-code="goods.name" data-name="商品.名称">名称(goods.name)
+                <li style="font-size: 12px;margin-bottom: 10px">用户(user)
                 </li>
-                <li draggable="true" class="meData"
-                    style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px"
-                    data-set="dataset1" data-code="goods.code" data-name="商品.编码">编码(goods.code)
+                <ul title="拖拽到表格">
+                    <li draggable="true" class="meData"
+                        style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px" data-set="dataset1"
+                        data-code="user.name" data-name="用户.姓名">姓名(user.name)
+                    </li>
+                    <li draggable="true" class="meData"
+                        style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px" data-set="dataset1"
+                        data-code="user.phone" data-name="用户.手机号">手机号(user.phone)
+                    </li>
+                </ul>
+                <li style="font-size: 12px;margin-bottom: 10px">商品(goods)
                 </li>
+                <ul>
+                    <li draggable="true" class="meData"
+                        style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px" data-set="dataset1"
+                        data-code="goods.name" data-name="商品.名称">名称(goods.name)
+                    </li>
+                    <li draggable="true" class="meData"
+                        style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px" data-set="dataset1"
+                        data-code="goods.code" data-name="商品.编码">编码(goods.code)
+                    </li>
+                </ul>
             </ul>
-        </ul>
-        <li style="font-size: 12px;margin-bottom: 10px">数据集2(dataset2)
-        </li>
-        <ul>
-            <li style="font-size: 12px;margin-bottom: 10px">订单(order)
+            <li style="font-size: 12px;margin-bottom: 10px">数据集2(dataset2)
             </li>
-            <ul title="拖拽到表格">
-                <li draggable="true" class="meData"
-                    style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px"
-                    data-set="dataset2" data-code="order.code" data-name="订单.编码">编码(order.code)
+            <ul>
+                <li style="font-size: 12px;margin-bottom: 10px">订单(order)
                 </li>
+                <ul title="拖拽到表格">
+                    <li draggable="true" class="meData"
+                        style="font-size: 12px;background: #ddd;cursor: pointer;margin-bottom: 10px" data-set="dataset2"
+                        data-code="order.code" data-name="订单.编码">编码(order.code)
+                    </li>
+                </ul>
             </ul>
         </ul>
-    </ul>
-</div>
-<div id="luckysheet" style="margin:0;padding:0px;position:absolute;height:100%;left: 0px;right:283px;top: 0px;">
-</div>
-<script type="module">
-    import sheetFormula from './demoData/sheetFormula.js'
-    import sheetCell from './demoData/sheetCell.js'
-    import sheetConditionFormat from './demoData/sheetConditionFormat.js'
-    import sheetTable from './demoData/sheetTable.js'
-    import sheetComment from './demoData/sheetComment.js'
-    import sheetPivotTableData from './demoData/sheetPivotTableData.js'
-    import sheetPivotTable from './demoData/sheetPivotTable.js'
-    import sheetSparkline from './demoData/sheetSparkline.js'
-    // import sheetChart from './demoData/sheetChart.js'
+    </div>
+    <div id="luckysheet" style="margin:0;padding:0px;position:absolute;height:100%;left: 0px;right:283px;top: 0px;">
+    </div>
+    <script type="module">
+        import sheetFormula from './demoData/sheetFormula.js'
+        import sheetCell from './demoData/sheetCell.js'
+        import sheetConditionFormat from './demoData/sheetConditionFormat.js'
+        import sheetTable from './demoData/sheetTable.js'
+        import sheetComment from './demoData/sheetComment.js'
+        import sheetPivotTableData from './demoData/sheetPivotTableData.js'
+        import sheetPivotTable from './demoData/sheetPivotTable.js'
+        import sheetSparkline from './demoData/sheetSparkline.js'
+        // import sheetChart from './demoData/sheetChart.js'
 
-    $(function () {
-        var luckysheet = window.luckysheet;
-        var cellTypes = {
-            SIMPLE: {
-                code: 'SIMPLE'
-            },
-            EXPRESSION: {
-                code: 'EXPRESSION'
-            },
-            DATASET: {
-                code: 'DATASET'
-            },
-        };
-        $('.x-contain').hide();
-
-        /**
-         * 预览现有所有的单元格数据
-         */
-        function previewCellData() {
-            var cellData = luckysheet.getGridData(luckysheet.flowdata());
-            console.log('cellData', JSON.stringify(cellData));
-        }
-
-        // /**
-        //  * 根据 @c$data.cellType ，将对应的字段值更新为 @newValue
-        //  */
-        // function updateCellVal(c$data, newValue) {
-        //     if(c$data) {
-        //         var cellType = c$data.cellType;
-        //     }
-        // }
-
-        /**
-         * 自定义“更新单元格的值”逻辑。直接修改 @flowdata 参数即可
-         * @param r
-         * @param c
-         * @param flowdata {[[]]} 表格的值，二位数组。直接修改这个变量即可。
-         */
-        function dealCellUpdate(r, c, flowdata) {
-            var cell = flowdata[r][c];
-            var cellV = luckysheet.getcellvalue(r, c, flowdata);
-            console.log('dealCellUpdate cellV', cellV);
-            if (cell && cell.data) {
-                cell.data.simpleValue = `${cellV}`;
-                cell.data.expressionValue = `${cellV}`;
-            }
-        }
-
-        /**
-         * 自定义“清空单元格”的逻辑。直接修改 @flowdata 参数即可
-         * @param r
-         * @param c
-         * @param flowdata {[[]]} 表格的值，二位数组。直接修改这个变量即可。
-         */
-        function dealCellClear(r, c, flowdata) {
-            var cell = flowdata[r][c];
-
-            if (cell && cell.data) {
-                cell.data.simpleValue = '';
-                cell.data.expressionValue = '';
-                cell.data.datasetValue = {  //数据集值
-                    "code": "", //数据集code
-                    // "name": "",  //数据集名称
-                    "property": "",  //属性名
-                    "aggregate": "GROUP", //聚合方式 GROUP, CUSTOMGROUP, REGROUP, SELECT, RESELECT, SUM, AVG, MAX, MIN, COUNT
-                    "order": "DESC",  //排序方式
-                    "groupItems": [],
-                };
-            }
-        }
-
-        /**
-         * 切换选中的单元格之后 回调
-         */
-        function onCellSelect(cellData) {
-            console.log('onCellSelect', cellData);
-        }
-
-        /**
-         * 清空单元格之后的回调
-         */
-        function onCellClear() {
-            previewCellData();
-        }
-
-        /**
-         * 拖拽完成之后
-         */
-        function onCellDrop() {
-            console.log('onCellDrop')
-            // 更新选区单元格的值
-            var selectSave = luckysheet.getluckysheet_select_save();
-
-            if (selectSave && selectSave[0] && selectSave[0].column) {
-                /**
-                 * @type {{dataset:string,code: string, name: string}}
-                 */
-                var data = luckysheet.customStore.draggingData;
-
-                var cInd = selectSave[0].column[0];
-                var rInd = selectSave[0].row[0];
-
-                var fData = luckysheet.flowdata();
-                var oldC$data = fData && fData[rInd] && fData[rInd][cInd] ? fData[rInd][cInd].data : null;
-                var datasetValue = {  //数据集值
-                    "code": "", //数据集code
-                    // "name": "",  //数据集名称
-                    "property": "",  //属性名
-                    "aggregate": "GROUP", //聚合方式 GROUP, CUSTOMGROUP, REGROUP, SELECT, RESELECT, SUM, AVG, MAX, MIN, COUNT
-                    "order": "DESC",  //排序方式
-                    "groupItems": [],
-                };
-
-                if (oldC$data && oldC$data.datasetValue) {
-                    for (var k in oldC$data.datasetValue) {
-                        if (oldC$data.datasetValue.hasOwnProperty(k)) {
-                            datasetValue[k] = oldC$data.datasetValue[k];
-                        }
-                    }
-                }
-
-                var v = '';
-                if (data) {
-                    v = `${data.dataset}.${data.code}`;
-                    datasetValue.code = data.dataset || '';
-                    datasetValue.property = data.code || '';
-                }
-
-                luckysheet.refreshCellValue(rInd, cInd, v, {
-                    data: {
-                        ...(oldC$data || {}),
-                        datasetValue: datasetValue
-                    }
-                });
-            }
-        }
-
-        /**
-         * 粘贴之后的回调
-         * @param cellData
-         */
-        function onCellPaste(cellData) {
-            console.log('onCellPaste', cellData);
-        }
-
-        /**
-         * 单元格更新只有的回调
-         */
-        function onCellUpdate(cellData) {
-            console.log('onCellUpdate', cellData);
-        }
-
-        /**
-         * 编辑单元格之前的回调，return false 可阻止默认逻辑
-         */
-        function beforeCellEdit(r, c) {
-            var cType = $('#cellType').val();
-            console.log('cType', cType);
-            if(cellTypes.DATASET.code === cType) { // 数据集不允许直接修改单元格的文本
-                return false;
-            }
-        }
-
-        luckysheet.create({
-            container: 'luckysheet',
-            lang: 'zh',
-            allowEdit: true,
-            autoFormatw: true,
-            forceCalculation: false,
-            menu: "undo|redo|freezenrow|freezencolumn|pivot", //"undo|redo|freezenrow|freezencolumn|download|share|chart|pivot",
-            // plugins: ['chart'],
-            data: [
-
-                {
-                    "name": "Sheet1",
-                    color: "",
-                    "status": "1",
-                    "order": "0",
-                    "celldata": [
-                        {
-                            "r": 3,
-                            "c": 1,
-                            "v": {
-                                "bg": null, "bl": 0, "it": 0, "ff": 0, "fs": 11,
-                                "fc": "rgb(51, 51, 51)", "ht": 1, "vt": 1,
-                                "m": '123', v: 123,
-                                data: {
-                                    simpleValue: ''
-                                }
-                            },
-
-                        }
-                    ],
-                    "config": {},
-                    "index": 0
-                }
-                // sheetCell
-                // sheetFormula, sheetConditionFormat, sheetTable, sheetSparkline, sheetComment, sheetPivotTableData, sheetPivotTable,
-                // sheetChart
-            ],
-
-
-            // 自定义配置
-            customConfig: {
-                rightMenu: [{
-                    id: 'config',
-                    name: '配置',
-                    children: [
-                        {
-                            id: 'set-cross-thead',
-                            name: '交叉表头',
-                            onClick: function () {
-                                console.log('交叉表头 click')
-                            }
-                        },
-                        {
-                            id: 'clear-cross-thead',
-                            name: '清除交叉表头',
-                            onClick: function () {
-                                console.log('清除交叉表头 click')
-                            }
-                        },
-                    ]
-                }],
-                /**
-                 * 单元格切换之后的回调
-                 */
-                onCellSelect: onCellSelect,
-                /**
-                 * 结束拖拽之后的回调
-                 */
-                onCellDrop: onCellDrop,
-                // 自定义“清空单元格”的逻辑
-                dealCellClear: dealCellClear,
-                // 清空单元格之后的回调
-                onCellClear: onCellClear,
-                // 粘贴后的回调
-                onCellPaste: onCellPaste,
-                // 自定义“更新单元格的值”逻辑
-                dealCellUpdate: dealCellUpdate,
-                // 单元格更新后
-                onCellUpdate: onCellUpdate,
-                beforeCellEdit: beforeCellEdit,
-            }
-        });
-
-        $('.set-panel').on('click', function (event) {
-            luckysheet.blurCellEdit();
-        })
-
-
-        /**
-         * 单元格类型改变
-         */
-        $('#cellType').on('change', function (event) {
-            console.log(event.target.value);
-            var cType = event.target.value;
+        $(function () {
+            var luckysheet = window.luckysheet;
+            var cellTypes = {
+                SIMPLE: {
+                    code: 'SIMPLE'
+                },
+                EXPRESSION: {
+                    code: 'EXPRESSION'
+                },
+                DATASET: {
+                    code: 'DATASET'
+                },
+            };
             $('.x-contain').hide();
 
-            switch (cType) {
-                case cellTypes.EXPRESSION.code: // 表达式
-                    $('#expContain').show();
-                    break;
-                case cellTypes.DATASET.code: // 数据集
-                    $('#datasetContain').show();
-                    break;
+            /**
+             * 预览现有所有的单元格数据
+             */
+            function previewCellData() {
+                var cellData = luckysheet.getGridData(luckysheet.flowdata());
+                console.log('cellData', JSON.stringify(cellData));
             }
 
-        });
+            // /**
+            //  * 根据 @c$data.cellType ，将对应的字段值更新为 @newValue
+            //  */
+            // function updateCellVal(c$data, newValue) {
+            //     if(c$data) {
+            //         var cellType = c$data.cellType;
+            //     }
+            // }
 
-        /**
-         * 表达式输入框改变
-         */
-        $('#expInput').on('change', function (event) {
-            console.log(event.target.value);
+            /**
+             * 自定义“更新单元格的值”逻辑。直接修改 @flowdata 参数即可
+             * @param r
+             * @param c
+             * @param flowdata {[[]]} 表格的值，二位数组。直接修改这个变量即可。
+             */
+            function dealCellUpdate(r, c, flowdata) {
+                var cell = flowdata[r][c];
+                var cellV = luckysheet.getcellvalue(r, c, flowdata);
+                console.log('dealCellUpdate cellV', cellV);
+                if (cell && cell.data) {
+                    cell.data.simpleValue = `${cellV}`;
+                    cell.data.expressionValue = `${cellV}`;
+                }
+            }
 
-        });
+            /**
+             * 自定义“清空单元格”的逻辑。直接修改 @flowdata 参数即可
+             * @param r
+             * @param c
+             * @param flowdata {[[]]} 表格的值，二位数组。直接修改这个变量即可。
+             */
+            function dealCellClear(r, c, flowdata) {
+                var cell = flowdata[r][c];
 
-        /**
-         * 拖拽数据集字段
-         */
-        $('.meData').on('dragstart', function (event) {
-            var dataset = $.trim($(this).attr('data-set'));
-            var code = $.trim($(this).attr('data-code'));
-            var name = $.trim($(this).attr('data-name'));
-            luckysheet.customStore.draggingData = {
-                dataset: dataset,
-                code: code,
-                name: name
-            };
-            luckysheet.customStore.draggingEle = true;
-        });
-    })
-</script>
+                if (cell && cell.data) {
+                    cell.data.simpleValue = '';
+                    cell.data.expressionValue = '';
+                    cell.data.datasetValue = {  //数据集值
+                        "code": "", //数据集code
+                        // "name": "",  //数据集名称
+                        "property": "",  //属性名
+                        "aggregate": "GROUP", //聚合方式 GROUP, CUSTOMGROUP, REGROUP, SELECT, RESELECT, SUM, AVG, MAX, MIN, COUNT
+                        "order": "DESC",  //排序方式
+                        "groupItems": [],
+                    };
+                }
+            }
+
+            /**
+             * 切换选中的单元格之后 回调
+             */
+            function onCellSelect(cellData) {
+                console.log('onCellSelect', cellData);
+            }
+
+            /**
+             * 清空单元格之后的回调
+             */
+            function onCellClear() {
+                previewCellData();
+            }
+
+            /**
+             * 拖拽完成之后
+             */
+            function onCellDrop() {
+                console.log('onCellDrop')
+                // 更新选区单元格的值
+                var selectSave = luckysheet.getluckysheet_select_save();
+
+                if (selectSave && selectSave[0] && selectSave[0].column) {
+                    /**
+                     * @type {{dataset:string,code: string, name: string}}
+                     */
+                    var data = luckysheet.customStore.draggingData;
+
+                    var cInd = selectSave[0].column[0];
+                    var rInd = selectSave[0].row[0];
+
+                    var fData = luckysheet.flowdata();
+                    var oldC$data = fData && fData[rInd] && fData[rInd][cInd] ? fData[rInd][cInd].data : null;
+                    var datasetValue = {  //数据集值
+                        "code": "", //数据集code
+                        // "name": "",  //数据集名称
+                        "property": "",  //属性名
+                        "aggregate": "GROUP", //聚合方式 GROUP, CUSTOMGROUP, REGROUP, SELECT, RESELECT, SUM, AVG, MAX, MIN, COUNT
+                        "order": "DESC",  //排序方式
+                        "groupItems": [],
+                    };
+
+                    if (oldC$data && oldC$data.datasetValue) {
+                        for (var k in oldC$data.datasetValue) {
+                            if (oldC$data.datasetValue.hasOwnProperty(k)) {
+                                datasetValue[k] = oldC$data.datasetValue[k];
+                            }
+                        }
+                    }
+
+                    var v = '';
+                    if (data) {
+                        v = `${data.dataset}.${data.code}`;
+                        datasetValue.code = data.dataset || '';
+                        datasetValue.property = data.code || '';
+                    }
+
+                    luckysheet.refreshCellValue(rInd, cInd, v, {
+                        data: {
+                            ...(oldC$data || {}),
+                            datasetValue: datasetValue
+                        }
+                    });
+                }
+            }
+
+            /**
+             * 粘贴之后的回调
+             * @param cellData
+             */
+            function onCellPaste(cellData) {
+                console.log('onCellPaste', cellData);
+            }
+
+            /**
+             * 单元格更新只有的回调
+             */
+            function onCellUpdate(cellData) {
+                console.log('onCellUpdate', cellData);
+            }
+
+            /**
+             * 编辑单元格之前的回调，return false 可阻止默认逻辑
+             */
+            function beforeCellEdit(r, c) {
+                var cType = $('#cellType').val();
+                console.log('cType', cType);
+                if (cellTypes.DATASET.code === cType) { // 数据集不允许直接修改单元格的文本
+                    return false;
+                }
+            }
+
+            luckysheet.create({
+                container: 'luckysheet',
+                lang: 'zh',
+                allowEdit: true,
+                autoFormatw: true,
+                forceCalculation: false,
+                menu: "undo|redo|freezenrow|freezencolumn|pivot", //"undo|redo|freezenrow|freezencolumn|download|share|chart|pivot",
+                // plugins: ['chart'],
+                data: [
+
+                    {
+                        "name": "Sheet1",
+                        color: "",
+                        "status": "1",
+                        "order": "0",
+                        "celldata": [
+                            {
+                                "r": 3,
+                                "c": 1,
+                                "v": {
+                                    "bg": null, "bl": 0, "it": 0, "ff": 0, "fs": 11,
+                                    "fc": "rgb(51, 51, 51)", "ht": 1, "vt": 1,
+                                    "m": '123', v: 123,
+                                    data: {
+                                        simpleValue: ''
+                                    }
+                                },
+
+                            }
+                        ],
+                        "config": {},
+                        "index": 0
+                    }
+                    // sheetCell
+                    // sheetFormula, sheetConditionFormat, sheetTable, sheetSparkline, sheetComment, sheetPivotTableData, sheetPivotTable,
+                    // sheetChart
+                ],
+
+
+                // 自定义配置
+                customConfig: {
+                    /**
+                     * 自定义操作栏按钮
+                     */
+                    toolBar: [
+                        {
+                            id: 'open', zh: '打开', en: 'Open', iconClass: 'fa fa-folder-open-o', onClick: function () {
+                                console.log('open');
+                            }
+                        },
+                        {
+                            id: 'save', zh: '保存', en: 'Save', iconClass: 'fa fa-floppy-o', onClick: function () {
+                                console.log('save');
+                            }
+                        },
+                        {
+                            id: 'preview', zh: '预览', en: 'Preview', iconClass: 'fa fa-eye', onClick: function () {
+                                console.log('spreviewave');
+                            }
+                        },
+                        {
+                            id: 'importSetting', zh: '导入配置', en: 'Import Setting', iconClass: 'fa fa-download', onClick: function () {
+                                console.log('importSetting');
+                            }
+                        },
+                        {
+                            id: 'exportSetting', zh: '导出配置', en: 'Export Setting',  iconClass: 'fa fa-share-square-o', onClick: function () {
+                                console.log('exportSetting');
+                            }
+                        },
+
+                    ],
+                    /**
+                     * 自定义右键菜单
+                     */
+                    rightMenu: [{
+                        id: 'config',
+                        zh: '配置',
+                        children: [
+                            {
+                                id: 'set-cross-thead',
+                                zh: '交叉表头',
+                                onClick: function () {
+                                    console.log('交叉表头 click')
+                                }
+                            },
+                            {
+                                id: 'clear-cross-thead',
+                                zh: '清除交叉表头',
+                                onClick: function () {
+                                    console.log('清除交叉表头 click')
+                                }
+                            },
+                        ]
+                    }],
+                    /**
+                     * 单元格切换之后的回调
+                     */
+                    onCellSelect: onCellSelect,
+                    /**
+                     * 结束拖拽之后的回调
+                     */
+                    onCellDrop: onCellDrop,
+                    // 自定义“清空单元格”的逻辑
+                    dealCellClear: dealCellClear,
+                    // 清空单元格之后的回调
+                    onCellClear: onCellClear,
+                    // 粘贴后的回调
+                    onCellPaste: onCellPaste,
+                    // 自定义“更新单元格的值”逻辑
+                    dealCellUpdate: dealCellUpdate,
+                    // 单元格更新后
+                    onCellUpdate: onCellUpdate,
+                    beforeCellEdit: beforeCellEdit,
+                }
+            });
+
+            $('.set-panel').on('mousedown', function (event) {
+                luckysheet.blurCellEdit();
+            })
+
+
+            /**
+             * 单元格类型改变
+             */
+            $('#cellType').on('change', function (event) {
+                console.log(event.target.value);
+                var cType = event.target.value;
+                $('.x-contain').hide();
+
+                switch (cType) {
+                    case cellTypes.EXPRESSION.code: // 表达式
+                        $('#expContain').show();
+                        break;
+                    case cellTypes.DATASET.code: // 数据集
+                        $('#datasetContain').show();
+                        break;
+                }
+
+            });
+
+            /**
+             * 表达式输入框改变
+             */
+            $('#expInput').on('change', function (event) {
+                console.log(event.target.value);
+
+            });
+
+            /**
+             * 拖拽数据集字段
+             */
+            $('.meData').on('dragstart', function (event) {
+                var dataset = $.trim($(this).attr('data-set'));
+                var code = $.trim($(this).attr('data-code'));
+                var name = $.trim($(this).attr('data-name'));
+                luckysheet.customStore.draggingData = {
+                    dataset: dataset,
+                    code: code,
+                    name: name
+                };
+                luckysheet.customStore.draggingEle = true;
+            });
+        })
+    </script>
 </body>
 
 </html>

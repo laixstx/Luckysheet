@@ -7,7 +7,7 @@ import {setcellvalue} from "../global/setdata";
 import customHandler from "./handler";
 import customStore from "./store";
 import {ABCatNum, chatatABC} from "../utils/util";
-import { getSelectedCellData, getCellData, blurCellEdit } from "./method";
+import { getSelectedCellData, getCellData, blurCellEdit, focusSelectCell } from "./method";
 import isEmpty from 'lodash/isEmpty';
 import forIn from 'lodash/forIn';
 
@@ -29,6 +29,7 @@ export default function customLSheet(luckysheet) {
     luckysheet.getSelectedCellData = getSelectedCellData; // 获取当前选中单元格的数据。（多选时，值为 null)
     luckysheet.getCellData = getCellData; // 根据行列索引获取单元格数据
     luckysheet.blurCellEdit = blurCellEdit; // 取消单元格的编辑状态
+    luckysheet.focusSelectCell = focusSelectCell; // 取消单元格的编辑状态
 
     /**
      * 实时刷新单元格的值，并具备 redo、undo 特性。
@@ -41,10 +42,12 @@ export default function customLSheet(luckysheet) {
     luckysheet.refreshCellValue = function (rInd, cInd, value, extraProps = {}) {
         let oldData = Store.flowdata;
         let d = editor.deepCopyFlowData(oldData);
-        // d[rInd][cInd].m = d[rInd][cInd].v = value;
         setcellvalue(rInd, cInd, d, value);
 
-        if(!isEmpty(extraProps) && d[rInd][cInd]) {
+        if(!isEmpty(extraProps)) {
+            if(null === d[rInd][cInd] || undefined === d[rInd][cInd]) {
+                d[rInd][cInd] = {};
+            }
             forIn(extraProps, (v, k) => {
                 d[rInd][cInd][k] = v;
             })

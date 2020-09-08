@@ -13,15 +13,29 @@ import {
     luckysheetMoveHighlightCell,
 } from '../controllers/sheetMove';
 
+let preSelR, preSelC;
 /**
  * 切换选中的单元格之后，回调 customConfig.onCellSelect
  */
 export function onCellSelect() {
-    const selCellData = getSelectedCellData();
-    // console.log('表格 mouseup，selCellData', selCellData);
-    if (customConfig.onCellSelect) {
-        customConfig.onCellSelect(selCellData);
+    let selSave = getluckysheet_select_save();
+
+    if (selSave.length > 1) { // 有多个选区
+        return;
     }
+
+    let { column_focus, row_focus } = selSave[0];
+    // 此次选中与上次不同时，响应回调
+    if (preSelR != row_focus || preSelC != column_focus) {
+        const selCellData = getSelectedCellData();
+        // console.log('表格 mouseup，selCellData', selCellData);
+        if (customConfig.onCellSelect) {
+            customConfig.onCellSelect(selCellData);
+        }
+    }
+
+    preSelR = row_focus;
+    preSelC = column_focus;
 }
 
 /**
@@ -41,12 +55,19 @@ export function dealCellUpdate(r, c, flowdata) {
  * @param c
  */
 export function onCellUpdate(r, c) {
+
+    setTimeout(() => {
+        // 更新公式输入框的值
+
+    }, 10);
+
     let cellData;
     if (r >= 0 && c >= 0) {
         cellData = getCellData(r, c);
     } else {
         cellData = getSelectedCellData();
     }
+
     if (customConfig.onCellUpdate) customConfig.onCellUpdate(cellData);
 }
 
@@ -190,13 +211,20 @@ export function getCellData(r, c) {
  * 取消单元格的编辑状态
  */
 export function blurCellEdit() {
-    if(Store.luckysheetCellUpdate[0] >= 0 && Store.luckysheetCellUpdate[1] >= 0) {
+    if (Store.luckysheetCellUpdate[0] >= 0 && Store.luckysheetCellUpdate[1] >= 0) {
         formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
         Store.luckysheet_select_save = [{ "row": [Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[0]], "column": [Store.luckysheetCellUpdate[1], Store.luckysheetCellUpdate[1]], "row_focus": Store.luckysheetCellUpdate[0], "column_focus": Store.luckysheetCellUpdate[1] }];
         luckysheetMoveHighlightCell("down", 0, "rangeOfSelect");
         $("#luckysheet-functionbox-cell").blur();
-    
+
         Store.luckysheetCellUpdate = [];
         $('#luckysheet-rich-text-editor').html(''); // 清空编辑输入框的值
     }
+}
+
+/**
+ * 聚焦当前选中的单元格
+ */
+export function focusSelectCell() {
+    luckysheetMoveHighlightCell("down", 0, "rangeOfSelect");
 }

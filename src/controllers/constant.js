@@ -1,5 +1,5 @@
 import locale from '../locale/locale';
-import {rightMenuHtml} from "../customs/config";
+import {rightMenuHtml, toolBarHtml} from "../customs/render";
 
 //dom variable
 const gridHTML = function(){
@@ -28,10 +28,10 @@ const gridHTML = function(){
                             <div class="luckysheet-wa-calculate-help"> 
                                 <div class="luckysheet-wa-calculate-help-box"> 
                                     <div spellcheck="false" aria-hidden="false" id="luckysheet-helpbox">
-                                        <div id="luckysheet-helpbox-cell" class="luckysheet-helpbox-cell-input luckysheet-mousedown-cancel" tabindex="0" contenteditable="true" dir="ltr" aria-autocomplete="list"></div>
+                                        <div id="luckysheet-helpbox-cell" style="-webkit-user-modify:unset;" class="luckysheet-helpbox-cell-input luckysheet-mousedown-cancel" tabindex="0" dir="ltr" aria-autocomplete="list"></div>
                                     </div> 
                                 </div>  
-                                <div class="luckysheet-wa-calculate-help-tool">
+                                <div class="luckysheet-wa-calculate-help-tool" style="display:none;">
                                     <i class="fa fa-caret-down" aria-hidden="true" style="margin-top: 7px;"></i>
                                 </div> 
                             </div> 
@@ -614,6 +614,7 @@ function menuToolBar(menu) {
 
     return `<!-- div class="luckysheet-toolbar-left-theme">
         </div!-->
+        ${toolBarHtml()}
         <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.undo}"
         id="luckysheet-icon-undo" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
@@ -656,9 +657,7 @@ function menuToolBar(menu) {
                 </div>
             </div>
         </div>
-        <!--<div class="luckysheet-toolbar-separator luckysheet-inline-block"
-        style="user-select: none;"> </div> <div class="luckysheet-toolbar-zoom-combobox luckysheet-toolbar-combo-button luckysheet-inline-block" data-tips="缩放" id="luckysheet-icon-zoom" style="user-select: none;"> <div class="luckysheet-toolbar-combo-button-outer-box luckysheet-inline-block" style="user-select: none;"> <div class="luckysheet-toolbar-combo-button-inner-box luckysheet-inline-block" style="user-select: none;"> <div aria-posinset="4" aria-setsize="7" class="luckysheet-inline-block luckysheet-toolbar-combo-button-caption" style="user-select: none;"> <input aria-label="缩放比例" class="luckysheet-toolbar-combo-button-input luckysheet-toolbar-textinput luckysheet-mousedown-cancel" role="combobox" style="user-select: none;" tabindex="-1" type="text" value="100%"/> </div> <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block " style="user-select: none;"> </div> </div> </div> </div> -->
-        <div class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
+        <!--div class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
         </div>
         <div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.currencyFormat}"
         id="luckysheet-icon-currency" role="button" style="user-select: none;">
@@ -725,7 +724,7 @@ function menuToolBar(menu) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div-->
         <div class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
         </div>
         <div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
@@ -1075,7 +1074,7 @@ function menuToolBar(menu) {
         </div>
         <div class="luckysheet-toolbar-separator luckysheet-inline-block" style="user-select: none;">
         </div>
-        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.sortAndFilter}"
+        <!--div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.sortAndFilter}"
         id="luckysheet-icon-autofilter" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
@@ -1091,7 +1090,7 @@ function menuToolBar(menu) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div-->
         <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.findAndReplace}"
         id="luckysheet-icon-seachmore" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
@@ -1126,19 +1125,23 @@ function menuToolBar(menu) {
                     </div>
                 </div>
             </div>
-        </div -->
+        </div>
         <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
         data-tips="${toolbar.moreFunction}..." id="luckysheet-icon-function-menu" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        ${toolbar.formula}
+                    </div>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block "
                     style="user-select: none;">
                     </div>
                 </div>
             </div>
-        </div>
+        </div -->
         <!--div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.conditionalFormat}"
         id="luckysheet-icon-conditionformat" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
@@ -1162,8 +1165,9 @@ function menuToolBar(menu) {
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="user-select: none;">
-                        ${toolbar.postil}
+                    style="user-select: none;font-size: 14px;">
+                        <i class="fa fa-comment-o" aria-hidden="true" style="font-weight:bold">
+                        </i>
                     </div>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block "
                     style="user-select: none;">
@@ -1171,26 +1175,45 @@ function menuToolBar(menu) {
                 </div>
             </div>
         </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-pivot-btn-title">
+        <!--div class="luckysheetfulltoolbar" id="luckysheet-pivot-btn-title">
             <i aria-hidden="true" class="fa fa-cube">
             </i>
             ${toolbar.pivotTable}
         </div>
-        <!--div class="luckysheetfulltoolbar" id="luckysheet-chart-btn-title">
+        <div class="luckysheetfulltoolbar" id="luckysheet-chart-btn-title">
             <i class="fa fa-pie-chart">
             </i>
             ${toolbar.chart}
         </div -->
-        <div class="luckysheetfulltoolbar" id="luckysheet-chart-btn-screenshot">
-            <i class="fa fa-object-group">
-            </i>
-            ${toolbar.screenshot}
+        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.screenshot}"
+            id="luckysheet-chart-btn-screenshot" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;font-size: 14px;">
+                        <i class="fa fa-object-group" aria-hidden="true">
+                        </i>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="luckysheetfulltoolbar" id="luckysheet-splitColumn-btn-title">
-            <i class="fa fa-gg">
-            </i>
-            ${toolbar.splitColumn}
-        </div>`;
+        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.splitColumn}"
+            id="luckysheet-splitColumn-btn-title" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;font-size: 14px;">
+                        <i class="fa fa-gg" aria-hidden="true">
+                        </i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
 }
 
 

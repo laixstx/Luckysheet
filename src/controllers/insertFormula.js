@@ -321,7 +321,7 @@ const insertFormula = {
                         $("#luckysheet-search-formula-parm .parmBox").eq(index).find(".val").text(" = {"+ txtArr.join(",") +"}");
                     }
                     else{ //参数为单个单元格选区
-                        $("#luckysheet-search-formula-parm .parmBox").eq(index).find(".val").text(" = {"+ txtdata.v +"}");
+                        $("#luckysheet-search-formula-parm .parmBox").eq(index).find(".val").text(" = {"+ (txtdata ? txtdata.v:"") +"}");
                     }
                 }
                 else{ //参数不是选区
@@ -380,7 +380,7 @@ const insertFormula = {
                     $("#luckysheet-search-formula-parm .parmBox").eq(formula.data_parm_index).find(".val").text(" = {"+ txtArr.join(",") +"}");
                 }
                 else{ //参数为单个单元格选区
-                    $("#luckysheet-search-formula-parm .parmBox").eq(formula.data_parm_index).find(".val").text(" = {"+ txtdata.v +"}");
+                    $("#luckysheet-search-formula-parm .parmBox").eq(formula.data_parm_index).find(".val").text(" = {"+ (txtdata ? txtdata.v:'') +"}");
                 }
             }
             else{ //参数不是选区
