@@ -57,6 +57,22 @@
                     <option value="goods.code">商品.编码(goods.code)</option>
                 </select>
             </div>
+            <div style="margin-bottom: 10px">
+                <label for="expand">数据展开：</label>
+                <select id="expand" data-field="expand">
+                    <option value="NONE">不展开</option>
+                    <option value="DOWN">向下</option>
+                    <option value="RIGHT">向右</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 10px">
+                <label for="order">排序方向：</label>
+                <select id="order" data-field="order">
+                    <option value="">不排序</option>
+                    <option value="ASC">正序</option>
+                    <option value="DESC">倒序</option>
+                </select>
+            </div>
         </div>
 
         <hr />
@@ -215,7 +231,7 @@
                     /**
                      * @type {{dataset:string,code: string, name: string}}
                      */
-                    var data = luckysheet.customStore.draggingData;
+                    var data = luckysheet.getDraggingData(); //customStore.draggingData;
 
                     var cInd = selectSave[0].column[0];
                     var rInd = selectSave[0].row[0];
@@ -347,7 +363,7 @@
                             }
                         },
                         {
-                            id: 'exportSetting', zh: '导出配置', en: 'Export Setting',  iconClass: 'fa fa-share-square-o', onClick: function () {
+                            id: 'exportSetting', zh: '导出配置', en: 'Export Setting', iconClass: 'fa fa-share-square-o', onClick: function () {
                                 console.log('exportSetting');
                             }
                         },
@@ -403,24 +419,28 @@
             })
 
 
-            /**
-             * 单元格类型改变
-             */
-            $('#cellType').on('change', function (event) {
-                console.log(event.target.value);
-                var cType = event.target.value;
-                $('.x-contain').hide();
+            $('body').on('change', '[data-field]', function () {
+                var field = $(this).attr('data-field');
 
-                switch (cType) {
-                    case cellTypes.EXPRESSION.code: // 表达式
-                        $('#expContain').show();
-                        break;
-                    case cellTypes.DATASET.code: // 数据集
-                        $('#datasetContain').show();
-                        break;
+                if ('cellType' === field) { // 单元格类型改变
+                    var cType = $(this).val();
+                    $('.x-contain').hide();
+
+                    switch (cType) {
+                        case cellTypes.EXPRESSION.code: // 表达式
+                            $('#expContain').show();
+                            break;
+                        case cellTypes.DATASET.code: // 数据集
+                            $('#datasetContain').show();
+                            break;
+                    }
+
+                } else if ('expand' === field) { // 展开方向
+
+                } else if('order' === field) { // 排序方向
+
                 }
-
-            });
+            })
 
             /**
              * 表达式输入框改变
@@ -437,12 +457,11 @@
                 var dataset = $.trim($(this).attr('data-set'));
                 var code = $.trim($(this).attr('data-code'));
                 var name = $.trim($(this).attr('data-name'));
-                luckysheet.customStore.draggingData = {
+                luckysheet.startDragging({
                     dataset: dataset,
                     code: code,
                     name: name
-                };
-                luckysheet.customStore.draggingEle = true;
+                });
             });
         })
     </script>

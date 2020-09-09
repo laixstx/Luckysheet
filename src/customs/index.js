@@ -57,6 +57,22 @@ export default function customLSheet(luckysheet) {
         jfrefreshgrid(d);
     };
 
+    /**
+     * 开始拖拽操作
+     * @param {any} draggingData 拖拽的数据
+     */
+    luckysheet.startDragging = function(draggingData) {
+        customStore.draggingData = draggingData;
+        customStore.draggingEle = true;
+    }
+
+    /**
+     * 获取拖拽的数据
+     */
+    luckysheet.getDraggingData = function () {
+        return customStore.draggingData;
+    }
+
 }
 
 /**
