@@ -16,7 +16,7 @@ let markComStyle = {
 };
 
 let hiddenHtml = '<span title="Hidden" style="color:red">x</span>';
-let hiddenMarkClassName = 'HIDDEN_MARK';
+let hiddenMarkClassName = 'HIDDEN_MARK'; 
 
 //== 行标识 ==================================================
 /**
