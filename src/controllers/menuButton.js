@@ -114,7 +114,6 @@ const menuButton = {
 
         //格式刷
         $("#luckysheet-icon-paintformat").click(function () {
-
             let _locale = locale();
             let locale_paint = _locale.paint;
 
@@ -147,9 +146,9 @@ const menuButton = {
 
             let RowlChange = false, HasMC = false;
             for (let r = Store.luckysheet_select_save[0].row[0]; r <= Store.luckysheet_select_save[0].row[1]; r++) {
-                if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
-                    continue;
-                }
+                // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+                //     continue;
+                // }
 
                 if (Store.config["rowlen"] != null && (r in Store.config["rowlen"])) {
                     RowlChange = true;
@@ -208,9 +207,9 @@ const menuButton = {
 
             let RowlChange = false, HasMC = false;
             for (let r = Store.luckysheet_select_save[0].row[0]; r <= Store.luckysheet_select_save[0].row[1]; r++) {
-                if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
-                    continue;
-                }
+                // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+                //     continue;
+                // }
 
                 if (Store.config["rowlen"] != null && (r in Store.config["rowlen"])) {
                     RowlChange = true;
@@ -2056,41 +2055,41 @@ const menuButton = {
                     //     "example": '<i style="font-size:14px;" class="fa fa-arrow-right" aria-hidden="true"></i>'
                     // },
                     { "text": "", "value": "split", "example": "" },
-                    {
-                        "text": locale_findAndReplace.location + " ...",
-                        "value": "location",
-                        "example": '<i style="font-size:14px;" class="fa fa-location-arrow" aria-hidden="true"></i>'
-                    },
-                    {
-                        "text": locale_findAndReplace.formula,
-                        "value": "locationFormula",
-                        "example": locale_findAndReplace.locationExample
-                    },
-                    {
-                        "text": locale_findAndReplace.date,
-                        "value": "locationConstantDate",
-                        "example": locale_findAndReplace.locationExample
-                    },
-                    {
-                        "text": locale_findAndReplace.number,
-                        "value": "locationConstantNumber",
-                        "example": locale_findAndReplace.locationExample
-                    },
-                    {
-                        "text": locale_findAndReplace.string,
-                        "value": "locationConstantString",
-                        "example": locale_findAndReplace.locationExample
-                    },
-                    {
-                        "text": locale_findAndReplace.error,
-                        "value": "locationConstantError",
-                        "example": locale_findAndReplace.locationExample
-                    },
-                    {
-                        "text": locale_findAndReplace.condition,
-                        "value": "locationCF",
-                        "example": locale_findAndReplace.locationExample
-                    },
+                    // {
+                    //     "text": locale_findAndReplace.location + " ...",
+                    //     "value": "location",
+                    //     "example": '<i style="font-size:14px;" class="fa fa-location-arrow" aria-hidden="true"></i>'
+                    // },
+                    // {
+                    //     "text": locale_findAndReplace.formula,
+                    //     "value": "locationFormula",
+                    //     "example": locale_findAndReplace.locationExample
+                    // },
+                    // {
+                    //     "text": locale_findAndReplace.date,
+                    //     "value": "locationConstantDate",
+                    //     "example": locale_findAndReplace.locationExample
+                    // },
+                    // {
+                    //     "text": locale_findAndReplace.number,
+                    //     "value": "locationConstantNumber",
+                    //     "example": locale_findAndReplace.locationExample
+                    // },
+                    // {
+                    //     "text": locale_findAndReplace.string,
+                    //     "value": "locationConstantString",
+                    //     "example": locale_findAndReplace.locationExample
+                    // },
+                    // {
+                    //     "text": locale_findAndReplace.error,
+                    //     "value": "locationConstantError",
+                    //     "example": locale_findAndReplace.locationExample
+                    // },
+                    // {
+                    //     "text": locale_findAndReplace.condition,
+                    //     "value": "locationCF",
+                    //     "example": locale_findAndReplace.locationExample
+                    // },
                     {
                         "text": locale_findAndReplace.rowSpan,
                         "value": "locationStepRow",
@@ -3107,9 +3106,9 @@ const menuButton = {
 
             if (attr == "ct") {
                 for (let r = row_st; r <= row_ed; r++) {
-                    if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
-                        continue;
-                    }
+                    // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+                    //     continue;
+                    // }
 
                     for (let c = col_st; c <= col_ed; c++) {
                         let cell = d[r][c], value = null;
@@ -3189,9 +3188,9 @@ const menuButton = {
                 }
 
                 for (let r = row_st; r <= row_ed; r++) {
-                    if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
-                        continue;
-                    }
+                    // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+                    //     continue;
+                    // }
 
                     for (let c = col_st; c <= col_ed; c++) {
                         let value = d[r][c];

@@ -1,15 +1,17 @@
-import {colLocation, mouseposition, rowLocation} from "../global/location";
+import { colLocation, mouseposition, rowLocation } from "../global/location";
 import Store from "../store";
 import * as validateO from "../global/validate";
+import * as markMethod from "./markMethod";
 import editor from "../global/editor";
-import {jfrefreshgrid} from "../global/refresh";
-import {setcellvalue} from "../global/setdata";
+import { jfrefreshgrid } from "../global/refresh";
+import { setcellvalue } from "../global/setdata";
 import customHandler from "./handler";
 import customStore from "./store";
-import {ABCatNum, chatatABC} from "../utils/util";
+import { ABCatNum, chatatABC } from "../utils/util";
 import { getSelectedCellData, getCellData, blurCellEdit, focusSelectCell } from "./method";
 import isEmpty from 'lodash/isEmpty';
 import forIn from 'lodash/forIn';
+import locale from '../locale/locale';
 
 /**
  * 给 luckysheet 全局变量添加一些自定义的属性，方便进行自定义逻辑
@@ -32,6 +34,13 @@ export default function customLSheet(luckysheet) {
     luckysheet.focusSelectCell = focusSelectCell; // 取消单元格的编辑状态
 
     /**
+     * 获取字体列表
+     */
+    luckysheet.getFonts = function() {
+        return locale().fontarray;
+    };
+
+    /**
      * 实时刷新单元格的值，并具备 redo、undo 特性。
      * 默认的 luckysheet.setcellvalue 方法只是更新数据，不会马上刷新表格，且不具备 redo、undo 特性。
      * @param rInd 行索引
@@ -44,8 +53,8 @@ export default function customLSheet(luckysheet) {
         let d = editor.deepCopyFlowData(oldData);
         setcellvalue(rInd, cInd, d, value);
 
-        if(!isEmpty(extraProps)) {
-            if(null === d[rInd][cInd] || undefined === d[rInd][cInd]) {
+        if (!isEmpty(extraProps)) {
+            if (null === d[rInd][cInd] || undefined === d[rInd][cInd]) {
                 d[rInd][cInd] = {};
             }
             forIn(extraProps, (v, k) => {
@@ -61,7 +70,7 @@ export default function customLSheet(luckysheet) {
      * 开始拖拽操作
      * @param {any} draggingData 拖拽的数据
      */
-    luckysheet.startDragging = function(draggingData) {
+    luckysheet.startDragging = function (draggingData) {
         customStore.draggingData = draggingData;
         customStore.draggingEle = true;
     }
@@ -73,11 +82,22 @@ export default function customLSheet(luckysheet) {
         return customStore.draggingData;
     }
 
+    forIn(markMethod, (method, k) => {
+        luckysheet[k] = method;
+    })
+
 }
 
 /**
  * 初始化自定义的逻辑
  */
 export function customInitWork() {
+
+    setTimeout(() => {
+        markMethod.renderAllMarks(); // 标记
+        
+        $("#luckysheet-scrollbar-y").scrollTop(0); // 回到顶部
+    }, 1000);
+
     customHandler(); // 事件
 }

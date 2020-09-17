@@ -1,4 +1,3 @@
-import customStore from "../customs/store";
 
 const Store = {
     container: null,
@@ -121,8 +120,6 @@ const Store = {
 
     zoomRatio: 1,
 
-    // 【自改】自定义的数据，用来暂存自定义功能需要的临时变量
-    customStore: customStore
 };
 
 export default Store;

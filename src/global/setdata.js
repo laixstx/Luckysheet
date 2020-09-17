@@ -70,45 +70,55 @@ function setcellvalue(r, c, d, v) {
         cell.v = false;
     }
     else if(valueIsError(vupdate)){
-        cell.m = vupdate.toString();
-        cell.ct = { "fa": "General", "t": "e" };
-        cell.v = vupdate;
+        let tmpV = vupdate.toString();
+
+        if(cell.f) {
+            tmpV = cell.f;
+        }
+        cell.m = tmpV;
+        cell.ct = { "fa": "General", "t": "g" };
+        cell.v = tmpV;
+        // cell.m = vupdate.toString();
+        // cell.ct = { "fa": "General", "t": "e" };
+        // cell.v = vupdate;
     }
     else{
-        if(cell.f != null && isRealNum(vupdate) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(vupdate)){
-            cell.v = parseFloat(vupdate);
-            if(cell.ct==null){
-                cell.ct = { "fa": "General", "t": "n" };
-            }
+        //【自改】注释掉公式逻辑
+        // if(cell.f != null && isRealNum(vupdate) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(vupdate)){
+        //     cell.v = parseFloat(vupdate);
+        //     if(cell.ct==null){
+        //         cell.ct = { "fa": "General", "t": "n" };
+        //     }
 
-            if(cell.v == Infinity || cell.v == -Infinity){
-                cell.m = cell.v.toString();
-            }
-            else{
-                if(cell.v.toString().indexOf("e") > -1){
-                    let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                    if(len > 5){
-                        len = 5;
-                    }
+        //     if(cell.v == Infinity || cell.v == -Infinity){
+        //         cell.m = cell.v.toString();
+        //     }
+        //     else{
+        //         if(cell.v.toString().indexOf("e") > -1){
+        //             let len = cell.v.toString().split(".")[1].split("e")[0].length;
+        //             if(len > 5){
+        //                 len = 5;
+        //             }
 
-                    cell.m = cell.v.toExponential(len).toString();
-                }
-                else{
-                    let v_p = Math.round(cell.v * 1000000000) / 1000000000;
-                    if(cell.ct==null){
-                        let mask = genarate(v_p);
-                        cell.m = mask[0].toString(); 
-                    }
-                    else{
-                        let mask = update(cell.ct.fa, v_p);
-                        cell.m = mask.toString();
-                    }
+        //             cell.m = cell.v.toExponential(len).toString();
+        //         }
+        //         else{
+        //             let v_p = Math.round(cell.v * 1000000000) / 1000000000;
+        //             if(cell.ct==null){
+        //                 let mask = genarate(v_p);
+        //                 cell.m = mask[0].toString(); 
+        //             }
+        //             else{
+        //                 let mask = update(cell.ct.fa, v_p);
+        //                 cell.m = mask.toString();
+        //             }
 
-                    // cell.m = mask[0].toString();
-                }
-            }
-        }
-        else if(cell.ct != null && cell.ct.fa == "@"){
+        //             // cell.m = mask[0].toString();
+        //         }
+        //     }
+        // }
+        // else 
+        if(cell.ct != null && cell.ct.fa == "@"){
             cell.m = vupdate.toString();
             cell.v = vupdate;
         }

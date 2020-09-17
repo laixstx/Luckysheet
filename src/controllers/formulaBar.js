@@ -176,6 +176,8 @@ export function formulaBarInitial() {
 
         // 【自改】不允许编辑单元格
         if (false === customConfig.canCellEdit) return false;
+        if(customConfig.onClickFx) customConfig.onClickFx();
+        return;
 
         let cell = Store.flowdata[row_index][col_index];
         if (cell != null && cell.f != null) {

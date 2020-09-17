@@ -6,7 +6,9 @@ import menuButton from './menuButton';
 import { selectHightlightShow } from './select';
 import pivotTable from './pivotTable';
 import Store from '../store';
-import {onCellSelect} from "../customs/method";
+import { onCellSelect } from "../customs/method";
+
+let moveTimeout;
 
 function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
     if (isScroll == null) {
@@ -80,7 +82,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
         }
     }
 
-    let datarowlen = Store.flowdata.length, 
+    let datarowlen = Store.flowdata.length,
         datacolumnlen = Store.flowdata[0].length;
 
     let data = Store.flowdata, moveP = "", moveV = 0;
@@ -122,7 +124,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     i++;
                 }
 
-                if(p == null){
+                if (p == null) {
                     p = 0;
                 }
 
@@ -130,7 +132,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     p_pre = p;
                 }
             }
-            
+
             moveP = "down";
             moveV = p_pre - curR;
         }
@@ -157,7 +159,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     else {
                         stvalue.push(true);
                     }
-                    
+
                     if (stvalue.length > 1) {
                         if (stvalue[i] == true && stvalue[i - 1] == false) {
                             p = r;
@@ -172,7 +174,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     i++;
                 }
 
-                if(p == null){
+                if (p == null) {
                     p = data.length - 1;
                 }
 
@@ -180,7 +182,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     p_pre = p;
                 }
             }
-            
+
             moveP = "down";
             moveV = p_pre - curR;
         }
@@ -221,7 +223,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     i++;
                 }
 
-                if(p == null){
+                if (p == null) {
                     p = 0;
                 }
 
@@ -229,7 +231,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     p_pre = p;
                 }
             }
-            
+
             moveP = "right";
             moveV = p_pre - curC;
         }
@@ -271,7 +273,7 @@ function luckysheetMoveEndCell(postion, type, isScroll, terminal, onlyvalue) {
                     i++;
                 }
 
-                if(p == null){
+                if (p == null) {
                     p = data[0].length - 1;
                 }
 
@@ -343,51 +345,51 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
         postion == "down";
     }
 
-    let datarowlen = Store.flowdata.length, 
+    let datarowlen = Store.flowdata.length,
         datacolumnlen = Store.flowdata[0].length;
 
     let row, row_pre, row_index, row_index_ed;
     let col, col_pre, col_index, col_index_ed;
 
-    if(type == "rangeOfSelect"){
+    if (type == "rangeOfSelect") {
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
-        
+
         let curR;
-        if(last["row_focus"] == null){
-            curR = last["row"][0];    
+        if (last["row_focus"] == null) {
+            curR = last["row"][0];
         }
-        else{
-            curR = last["row_focus"];    
+        else {
+            curR = last["row_focus"];
         }
 
         let curC;
-        if(last["column_focus"] == null){
+        if (last["column_focus"] == null) {
             curC = last["column"][0];
         }
-        else{
-            curC = last["column_focus"];    
+        else {
+            curC = last["column_focus"];
         }
-        
+
         //focus单元格 是否是合并单元格
         let margeset = menuButton.mergeborer(Store.flowdata, curR, curC);
-        if(!!margeset){
+        if (!!margeset) {
             let str_r = margeset.row[2];
             let end_r = margeset.row[3];
 
             let str_c = margeset.column[2];
             let end_c = margeset.column[3];
 
-            if(index > 0){
-                if(postion == "down"){
+            if (index > 0) {
+                if (postion == "down") {
                     curR = end_r;
                     curC = str_c;
                 }
-                else if(postion == "right"){
+                else if (postion == "right") {
                     curR = str_r;
                     curC = end_c;
                 }
             }
-            else{
+            else {
                 curR = str_r;
                 curC = str_c;
             }
@@ -427,7 +429,7 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
 
         //移动的下一个单元格是否是合并的单元格
         let margeset2 = menuButton.mergeborer(Store.flowdata, curR, curC);
-        if(!!margeset2){
+        if (!!margeset2) {
             row = margeset2.row[1];
             row_pre = margeset2.row[0];
             row_index = margeset2.row[2];
@@ -438,13 +440,13 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
             col_index = margeset2.column[2];
             col_index_ed = margeset2.column[3];
         }
-        else{
-            row = Store.visibledatarow[moveX]; 
+        else {
+            row = Store.visibledatarow[moveX];
             row_pre = moveX - 1 == -1 ? 0 : Store.visibledatarow[moveX - 1];
             row_index = moveX;
             row_index_ed = moveX;
 
-            col = Store.visibledatacolumn[moveY]; 
+            col = Store.visibledatacolumn[moveY];
             col_pre = moveY - 1 == -1 ? 0 : Store.visibledatacolumn[moveY - 1];
             col_index = moveY;
             col_index_ed = moveY;
@@ -454,51 +456,51 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
         last["column"] = [col_index, col_index_ed];
         last["row_focus"] = row_index;
         last["column_focus"] = col_index;
-        last["moveXY"] = {"x": moveX,"y": moveY};
+        last["moveXY"] = { "x": moveX, "y": moveY };
 
         selectHightlightShow();
         pivotTable.pivotclick(row_index, col_index);
         formula.fucntionboxshow(row_index, col_index);
     }
-    else if(type == "rangeOfFormula"){
+    else if (type == "rangeOfFormula") {
         let last = formula.func_selectedrange;
-        
+
         let curR;
-        if(last["row_focus"] == null){
-            curR = last["row"][0];    
+        if (last["row_focus"] == null) {
+            curR = last["row"][0];
         }
-        else{
-            curR = last["row_focus"];    
+        else {
+            curR = last["row_focus"];
         }
 
         let curC;
-        if(last["column_focus"] == null){
+        if (last["column_focus"] == null) {
             curC = last["column"][0];
         }
-        else{
-            curC = last["column_focus"];    
+        else {
+            curC = last["column_focus"];
         }
-        
+
         //focus单元格 是否是合并单元格
         let margeset = menuButton.mergeborer(Store.flowdata, curR, curC);
-        if(!!margeset){
+        if (!!margeset) {
             let str_r = margeset.row[2];
             let end_r = margeset.row[3];
 
             let str_c = margeset.column[2];
             let end_c = margeset.column[3];
 
-            if(index > 0){
-                if(postion == "down"){
+            if (index > 0) {
+                if (postion == "down") {
                     curR = end_r;
                     curC = str_c;
                 }
-                else if(postion == "right"){
+                else if (postion == "right") {
                     curR = str_r;
                     curC = end_c;
                 }
             }
-            else{
+            else {
                 curR = str_r;
                 curC = str_c;
             }
@@ -538,7 +540,7 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
 
         //移动的下一个单元格是否是合并的单元格
         let margeset2 = menuButton.mergeborer(Store.flowdata, curR, curC);
-        if(!!margeset2){
+        if (!!margeset2) {
             row = margeset2.row[1];
             row_pre = margeset2.row[0];
             row_index = margeset2.row[2];
@@ -549,8 +551,8 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
             col_index = margeset2.column[2];
             col_index_ed = margeset2.column[3];
         }
-        else{
-            row = Store.visibledatarow[moveX]; 
+        else {
+            row = Store.visibledatarow[moveX];
             row_pre = moveX - 1 == -1 ? 0 : Store.visibledatarow[moveX - 1];
             row_index = moveX;
             row_index_ed = moveX;
@@ -574,7 +576,7 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
             "column": [col_index, col_index_ed],
             "row_focus": row_index,
             "column_focus": col_index,
-            "moveXY": {"x": moveX, "y": moveY}
+            "moveXY": { "x": moveX, "y": moveY }
         };
 
         $("#luckysheet-formula-functionrange-select").css({
@@ -625,73 +627,76 @@ function luckysheetMoveHighlightCell(postion, index, type, isScroll) {
     countfunc();
 
     // 【改】切换选中的单元格之后，回调 customConfig.onCellSelect
-    onCellSelect();
+    clearTimeout(moveTimeout);
+    moveTimeout = setTimeout(() => {
+        onCellSelect();
+    }, 200);
 }
 
 //ctrl + 方向键  调整单元格
 function luckysheetMoveHighlightCell2(postion, type, isScroll) {
-    if(!isScroll){
+    if (!isScroll) {
         isScroll = true;
     }
 
     let row, row_pre;
     let col, col_pre;
 
-    if(type == "rangeOfSelect"){
+    if (type == "rangeOfSelect") {
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let rf = last["row_focus"], cf = last["column_focus"];
 
         let focusIsMerge = false, mc = {};
-        if(Store.config["merge"] != null && (rf + "_" + cf) in Store.config["merge"]){
+        if (Store.config["merge"] != null && (rf + "_" + cf) in Store.config["merge"]) {
             focusIsMerge = true;
             mc = Store.config["merge"][rf + "_" + cf];
         }
 
-        if(postion == "down"){
-            if(rf == Store.flowdata.length - 1){
+        if (postion == "down") {
+            if (rf == Store.flowdata.length - 1) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 rf = getNextIndex("down", cf, mc.r + mc.rs - 1, Store.flowdata.length - 1);
             }
-            else{
+            else {
                 rf = getNextIndex("down", cf, rf, Store.flowdata.length - 1);
             }
         }
-        else if(postion == "up"){
-            if(rf == 0){
+        else if (postion == "up") {
+            if (rf == 0) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 rf = getNextIndex("up", cf, 0, mc.r);
             }
-            else{
+            else {
                 rf = getNextIndex("up", cf, 0, rf);
             }
         }
-        else if(postion == "right"){
-            if(cf == Store.flowdata[0].length - 1){
+        else if (postion == "right") {
+            if (cf == Store.flowdata[0].length - 1) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 cf = getNextIndex("right", rf, mc.c + mc.cs - 1, Store.flowdata[0].length - 1);
             }
-            else{
+            else {
                 cf = getNextIndex("right", rf, cf, Store.flowdata[0].length - 1);
             }
         }
-        else if(postion == "left"){
-            if(cf == 0){
+        else if (postion == "left") {
+            if (cf == 0) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 cf = getNextIndex("left", rf, 0, mc.c);
             }
-            else{
+            else {
                 cf = getNextIndex("left", rf, 0, cf);
             }
         }
@@ -705,75 +710,75 @@ function luckysheetMoveHighlightCell2(postion, type, isScroll) {
         col_pre = cf - 1 == -1 ? 0 : Store.visibledatacolumn[cf - 1];
 
         let changeparam = menuButton.mergeMoveMain(columnseleted, rowseleted, last, row_pre, row - row_pre - 1, col_pre, col - col_pre - 1);
-        if(changeparam != null){
+        if (changeparam != null) {
             columnseleted = changeparam[0];
-            rowseleted= changeparam[1];
+            rowseleted = changeparam[1];
             // top = changeparam[2];
             // height = changeparam[3];
             // left = changeparam[4];
             // width = changeparam[5];
         }
 
-        Store.luckysheet_select_save = [{"row": rowseleted, "column": columnseleted}];
+        Store.luckysheet_select_save = [{ "row": rowseleted, "column": columnseleted }];
         selectHightlightShow();
         pivotTable.pivotclick(rf, cf);
         formula.fucntionboxshow(rf, cf);
     }
-    else if(type == "rangeOfFormula"){
+    else if (type == "rangeOfFormula") {
         let last = formula.func_selectedrange;
         let rf = last["row_focus"], cf = last["column_focus"];
 
         let focusIsMerge = false, mc = {};
-        if(Store.config["merge"] != null && (rf + "_" + cf) in Store.config["merge"]){
+        if (Store.config["merge"] != null && (rf + "_" + cf) in Store.config["merge"]) {
             focusIsMerge = true;
             mc = Store.config["merge"][rf + "_" + cf];
         }
 
-        if(postion == "down"){
-            if(rf == Store.flowdata.length - 1){
+        if (postion == "down") {
+            if (rf == Store.flowdata.length - 1) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 rf = getNextIndex("down", cf, mc.r + mc.rs - 1, Store.flowdata.length - 1);
             }
-            else{
+            else {
                 rf = getNextIndex("down", cf, rf, Store.flowdata.length - 1);
             }
         }
-        else if(postion == "up"){
-            if(rf == 0){
+        else if (postion == "up") {
+            if (rf == 0) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 rf = getNextIndex("up", cf, 0, mc.r);
             }
-            else{
+            else {
                 rf = getNextIndex("up", cf, 0, rf);
             }
         }
-        else if(postion == "right"){
-            if(cf == Store.flowdata[0].length - 1){
+        else if (postion == "right") {
+            if (cf == Store.flowdata[0].length - 1) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 cf = getNextIndex("right", rf, mc.c + mc.cs - 1, Store.flowdata[0].length - 1);
             }
-            else{
+            else {
                 cf = getNextIndex("right", rf, cf, Store.flowdata[0].length - 1);
             }
         }
-        else if(postion == "left"){
-            if(cf == 0){
+        else if (postion == "left") {
+            if (cf == 0) {
                 return;
             }
 
-            if(focusIsMerge){
+            if (focusIsMerge) {
                 cf = getNextIndex("left", rf, 0, mc.c);
             }
-            else{
+            else {
                 cf = getNextIndex("left", rf, 0, cf);
             }
         }
@@ -783,16 +788,16 @@ function luckysheetMoveHighlightCell2(postion, type, isScroll) {
 
         row = Store.visibledatarow[rf];
         row_pre = rf - 1 == -1 ? 0 : Store.visibledatarow[rf - 1];
-        col = Store.visibledatacolumn[cf]; 
+        col = Store.visibledatacolumn[cf];
         col_pre = cf - 1 == -1 ? 0 : Store.visibledatacolumn[cf - 1];
 
         let top = row_pre, height = row - row_pre - 1;
         let left = col_pre, width = col - col_pre - 1;
 
         let changeparam = menuButton.mergeMoveMain(columnseleted, rowseleted, last, top, height, left, width);
-        if(changeparam != null){
+        if (changeparam != null) {
             columnseleted = changeparam[0];
-            rowseleted= changeparam[1];
+            rowseleted = changeparam[1];
             top = changeparam[2];
             height = changeparam[3];
             left = changeparam[4];
@@ -878,64 +883,64 @@ function luckysheetMoveHighlightRange(postion, index, type, isScroll) {
     let row, row_pre;
     let col, col_pre;
 
-    if(type == "rangeOfSelect"){
+    if (type == "rangeOfSelect") {
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
 
         let curR = last["row"][0], endR = last["row"][1];
         let curC = last["column"][0], endC = last["column"][1];
         let rf = last["row_focus"], cf = last["column_focus"];
 
-        let datarowlen = Store.flowdata.length, 
+        let datarowlen = Store.flowdata.length,
             datacolumnlen = Store.flowdata[0].length;
 
-        if(postion == "down"){ //选区上下变动
-            if(rowHasMerge(rf, curC, endC)){ //focus单元格所在行有合并单元格
+        if (postion == "down") { //选区上下变动
+            if (rowHasMerge(rf, curC, endC)) { //focus单元格所在行有合并单元格
                 let rfMerge = getRowMerge(rf, curC, endC);
                 let rf_str = rfMerge[0], rf_end = rfMerge[1];
 
-                if(rf_str > curR && rf_end == endR){
-                    if(index > 0 && rowHasMerge(curR, curC, endC)){
+                if (rf_str > curR && rf_end == endR) {
+                    if (index > 0 && rowHasMerge(curR, curC, endC)) {
                         curR = getRowMerge(curR, curC, endC)[1];
                     }
 
                     curR += index;
                 }
-                else if(rf_end < endR && rf_str == curR){
-                    if(index < 0 && rowHasMerge(endR, curC, endC)){
+                else if (rf_end < endR && rf_str == curR) {
+                    if (index < 0 && rowHasMerge(endR, curC, endC)) {
                         endR = getRowMerge(endR, curC, endC)[0];
                     }
 
                     endR += index;
                 }
-                else{
-                    if(index > 0){
+                else {
+                    if (index > 0) {
                         endR += index;
                     }
-                    else{
+                    else {
                         curR += index;
                     }
                 }
             }
-            else{
-                if(rf > curR && rf == endR){
-                    if(index > 0 && rowHasMerge(curR, curC, endC)){
+            else {
+                if (rf > curR && rf == endR) {
+                    if (index > 0 && rowHasMerge(curR, curC, endC)) {
                         curR = getRowMerge(curR, curC, endC)[1];
                     }
 
                     curR += index;
                 }
-                else if(rf < endR && rf == curR){
-                    if(index < 0 && rowHasMerge(endR, curC, endC)){
+                else if (rf < endR && rf == curR) {
+                    if (index < 0 && rowHasMerge(endR, curC, endC)) {
                         endR = getRowMerge(endR, curC, endC)[0];
                     }
 
                     endR += index;
                 }
-                else if(rf == curR && rf == endR){
-                    if(index > 0){
+                else if (rf == curR && rf == endR) {
+                    if (index > 0) {
                         endR += index;
                     }
-                    else{
+                    else {
                         curR += index;
                     }
                 }
@@ -957,58 +962,58 @@ function luckysheetMoveHighlightRange(postion, index, type, isScroll) {
                 curR = 0;
             }
         }
-        else{
-            if(colHasMerge(cf, curR, endR)){ //focus单元格所在列有合并单元格
+        else {
+            if (colHasMerge(cf, curR, endR)) { //focus单元格所在列有合并单元格
                 let cfMerge = getColMerge(cf, curR, endR);
                 let cf_str = cfMerge[0], cf_end = cfMerge[1];
 
-                if(cf_str > curC && cf_end == endC){
-                    if(index > 0 && colHasMerge(curC, curR, endR)){
+                if (cf_str > curC && cf_end == endC) {
+                    if (index > 0 && colHasMerge(curC, curR, endR)) {
                         curC = getColMerge(curC, curR, endR)[1];
                     }
 
                     curC += index;
                 }
-                else if(cf_end < endC && cf_str == curC){
-                    if(index < 0 && colHasMerge(endC, curR, endR)){
+                else if (cf_end < endC && cf_str == curC) {
+                    if (index < 0 && colHasMerge(endC, curR, endR)) {
                         endC = getColMerge(endC, curR, endR)[0];
                     }
 
                     endC += index;
                 }
-                else{
-                    if(index > 0){
+                else {
+                    if (index > 0) {
                         endC += index;
                     }
-                    else{
+                    else {
                         curC += index;
                     }
                 }
             }
-            else{
-                if(cf > curC && cf == endC){
-                    if(index > 0 && colHasMerge(curC, curR, endR)){
+            else {
+                if (cf > curC && cf == endC) {
+                    if (index > 0 && colHasMerge(curC, curR, endR)) {
                         curC = getColMerge(curC, curR, endR)[1];
                     }
 
                     curC += index;
                 }
-                else if(cf < endC && cf == curC){
-                    if(index < 0 && colHasMerge(endC, curR, endR)){
+                else if (cf < endC && cf == curC) {
+                    if (index < 0 && colHasMerge(endC, curR, endR)) {
                         endC = getColMerge(endC, curR, endR)[0];
                     }
 
                     endC += index;
                 }
-                else if(cf == curC && cf == endC){
-                    if(index > 0){
+                else if (cf == curC && cf == endC) {
+                    if (index > 0) {
                         endC += index;
                     }
-                    else{
+                    else {
                         curC += index;
                     }
                 }
-            } 
+            }
 
             if (endC >= datacolumnlen) {
                 endC = datacolumnlen - 1;
@@ -1030,15 +1035,15 @@ function luckysheetMoveHighlightRange(postion, index, type, isScroll) {
         let rowseleted = [curR, endR];
         let columnseleted = [curC, endC];
 
-        row = Store.visibledatarow[endR]; 
+        row = Store.visibledatarow[endR];
         row_pre = curR - 1 == -1 ? 0 : Store.visibledatarow[curR - 1];
-        col = Store.visibledatacolumn[endC]; 
+        col = Store.visibledatacolumn[endC];
         col_pre = curC - 1 == -1 ? 0 : Store.visibledatacolumn[curC - 1];
 
         let changeparam = menuButton.mergeMoveMain(columnseleted, rowseleted, last, row_pre, row - row_pre - 1, col_pre, col - col_pre - 1);
-        if(changeparam != null){
+        if (changeparam != null) {
             columnseleted = changeparam[0];
-            rowseleted= changeparam[1];
+            rowseleted = changeparam[1];
             // top = changeparam[2];
             // height = changeparam[3];
             // left = changeparam[4];
@@ -1050,64 +1055,64 @@ function luckysheetMoveHighlightRange(postion, index, type, isScroll) {
 
         selectHightlightShow();
     }
-    else if(type == "rangeOfFormula"){
+    else if (type == "rangeOfFormula") {
         let last = formula.func_selectedrange;
 
         let curR = last["row"][0], endR = last["row"][1];
         let curC = last["column"][0], endC = last["column"][1];
         let rf = last["row_focus"], cf = last["column_focus"];
 
-        let datarowlen = Store.flowdata.length, 
+        let datarowlen = Store.flowdata.length,
             datacolumnlen = Store.flowdata[0].length;
 
-        if(postion == "down"){ //选区上下变动
-            if(rowHasMerge(rf, curC, endC)){ //focus单元格所在行有合并单元格
+        if (postion == "down") { //选区上下变动
+            if (rowHasMerge(rf, curC, endC)) { //focus单元格所在行有合并单元格
                 let rfMerge = getRowMerge(rf, curC, endC);
                 let rf_str = rfMerge[0], rf_end = rfMerge[1];
 
-                if(rf_str > curR && rf_end == endR){
-                    if(index > 0 && rowHasMerge(curR, curC, endC)){
+                if (rf_str > curR && rf_end == endR) {
+                    if (index > 0 && rowHasMerge(curR, curC, endC)) {
                         curR = getRowMerge(curR, curC, endC)[1];
                     }
 
                     curR += index;
                 }
-                else if(rf_end < endR && rf_str == curR){
-                    if(index < 0 && rowHasMerge(endR, curC, endC)){
+                else if (rf_end < endR && rf_str == curR) {
+                    if (index < 0 && rowHasMerge(endR, curC, endC)) {
                         endR = getRowMerge(endR, curC, endC)[0];
                     }
 
                     endR += index;
                 }
-                else{
-                    if(index > 0){
+                else {
+                    if (index > 0) {
                         endR += index;
                     }
-                    else{
+                    else {
                         curR += index;
                     }
                 }
             }
-            else{
-                if(rf > curR && rf == endR){
-                    if(index > 0 && rowHasMerge(curR, curC, endC)){
+            else {
+                if (rf > curR && rf == endR) {
+                    if (index > 0 && rowHasMerge(curR, curC, endC)) {
                         curR = getRowMerge(curR, curC, endC)[1];
                     }
 
                     curR += index;
                 }
-                else if(rf < endR && rf == curR){
-                    if(index < 0 && rowHasMerge(endR, curC, endC)){
+                else if (rf < endR && rf == curR) {
+                    if (index < 0 && rowHasMerge(endR, curC, endC)) {
                         endR = getRowMerge(endR, curC, endC)[0];
                     }
 
                     endR += index;
                 }
-                else if(rf == curR && rf == endR){
-                    if(index > 0){
+                else if (rf == curR && rf == endR) {
+                    if (index > 0) {
                         endR += index;
                     }
-                    else{
+                    else {
                         curR += index;
                     }
                 }
@@ -1129,58 +1134,58 @@ function luckysheetMoveHighlightRange(postion, index, type, isScroll) {
                 curR = 0;
             }
         }
-        else{
-            if(colHasMerge(cf, curR, endR)){ //focus单元格所在列有合并单元格
+        else {
+            if (colHasMerge(cf, curR, endR)) { //focus单元格所在列有合并单元格
                 let cfMerge = getColMerge(cf, curR, endR);
                 let cf_str = cfMerge[0], cf_end = cfMerge[1];
 
-                if(cf_str > curC && cf_end == endC){
-                    if(index > 0 && colHasMerge(curC, curR, endR)){
+                if (cf_str > curC && cf_end == endC) {
+                    if (index > 0 && colHasMerge(curC, curR, endR)) {
                         curC = getColMerge(curC, curR, endR)[1];
                     }
 
                     curC += index;
                 }
-                else if(cf_end < endC && cf_str == curC){
-                    if(index < 0 && colHasMerge(endC, curR, endR)){
+                else if (cf_end < endC && cf_str == curC) {
+                    if (index < 0 && colHasMerge(endC, curR, endR)) {
                         endC = getColMerge(endC, curR, endR)[0];
                     }
 
                     endC += index;
                 }
-                else{
-                    if(index > 0){
+                else {
+                    if (index > 0) {
                         endC += index;
                     }
-                    else{
+                    else {
                         curC += index;
                     }
                 }
             }
-            else{
-                if(cf > curC && cf == endC){
-                    if(index > 0 && colHasMerge(curC, curR, endR)){
+            else {
+                if (cf > curC && cf == endC) {
+                    if (index > 0 && colHasMerge(curC, curR, endR)) {
                         curC = getColMerge(curC, curR, endR)[1];
                     }
 
                     curC += index;
                 }
-                else if(cf < endC && cf == curC){
-                    if(index < 0 && colHasMerge(endC, curR, endR)){
+                else if (cf < endC && cf == curC) {
+                    if (index < 0 && colHasMerge(endC, curR, endR)) {
                         endC = getColMerge(endC, curR, endR)[0];
                     }
 
                     endC += index;
                 }
-                else if(cf == curC && cf == endC){
-                    if(index > 0){
+                else if (cf == curC && cf == endC) {
+                    if (index > 0) {
                         endC += index;
                     }
-                    else{
+                    else {
                         curC += index;
                     }
                 }
-            } 
+            }
 
             if (endC >= datacolumnlen) {
                 endC = datacolumnlen - 1;
@@ -1202,18 +1207,18 @@ function luckysheetMoveHighlightRange(postion, index, type, isScroll) {
         let rowseleted = [curR, endR];
         let columnseleted = [curC, endC];
 
-        row = Store.visibledatarow[endR]; 
+        row = Store.visibledatarow[endR];
         row_pre = curR - 1 == -1 ? 0 : Store.visibledatarow[curR - 1];
-        col = Store.visibledatacolumn[endC]; 
+        col = Store.visibledatacolumn[endC];
         col_pre = curC - 1 == -1 ? 0 : Store.visibledatacolumn[curC - 1];
 
         let top = row_pre, height = row - row_pre - 1;
         let left = col_pre, width = col - col_pre - 1;
 
         let changeparam = menuButton.mergeMoveMain(columnseleted, rowseleted, last, top, height, left, width);
-        if(changeparam != null){
+        if (changeparam != null) {
             columnseleted = changeparam[0];
-            rowseleted= changeparam[1];
+            rowseleted = changeparam[1];
             top = changeparam[2];
             height = changeparam[3];
             left = changeparam[4];
@@ -1285,116 +1290,116 @@ function luckysheetMoveHighlightRange(postion, index, type, isScroll) {
 
 //ctrl + shift + 方向键  调整选区
 function luckysheetMoveHighlightRange2(postion, type, isScroll) {
-    if(!isScroll){
+    if (!isScroll) {
         isScroll = true;
     }
 
     let row, row_pre;
     let col, col_pre;
 
-    if(type == "rangeOfSelect"){
+    if (type == "rangeOfSelect") {
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let rf = last["row_focus"], cf = last["column_focus"];
 
         let r1 = last["row"][0], r2 = last["row"][1];
         let c1 = last["column"][0], c2 = last["column"][1];
 
-        if(postion == "down"){
-            if(r2 == Store.flowdata.length - 1){
+        if (postion == "down") {
+            if (r2 == Store.flowdata.length - 1) {
                 return;
             }
 
-            if(rowHasMerge(rf, c1, c2)){ //focus所在行有合并单元格
+            if (rowHasMerge(rf, c1, c2)) { //focus所在行有合并单元格
                 let rfMerge = getRowMerge(rf, c1, c2);
                 let rf_str = rfMerge[0], rf_end = rfMerge[1];
 
-                if(rf_str > r1 && rf_end == r2){
+                if (rf_str > r1 && rf_end == r2) {
                     r1 = getNextIndex("down", cf, r1, r2);
                 }
-                else{
+                else {
                     r2 = getNextIndex("down", cf, r2, Store.flowdata.length - 1);
                 }
             }
-            else{
-                if(rf > r1 && rf == r2){
+            else {
+                if (rf > r1 && rf == r2) {
                     r1 = getNextIndex("down", cf, r1, r2);
                 }
-                else{
+                else {
                     r2 = getNextIndex("down", cf, r2, Store.flowdata.length - 1);
                 }
             }
         }
-        else if(postion == "up"){
-            if(r1 == 0){
+        else if (postion == "up") {
+            if (r1 == 0) {
                 return;
             }
 
-            if(rowHasMerge(rf, c1, c2)){ //focus所在行有合并单元格
+            if (rowHasMerge(rf, c1, c2)) { //focus所在行有合并单元格
                 let rfMerge = getRowMerge(rf, c1, c2);
                 let rf_str = rfMerge[0], rf_end = rfMerge[1];
 
-                if(rf_end < r2 && rf_str == r1){
+                if (rf_end < r2 && rf_str == r1) {
                     r2 = getNextIndex("up", cf, r1, r2);
                 }
-                else{
+                else {
                     r1 = getNextIndex("up", cf, 0, r1);
                 }
             }
-            else{
-                if(rf < r2 && rf == r1){
+            else {
+                if (rf < r2 && rf == r1) {
                     r2 = getNextIndex("up", cf, r1, r2);
                 }
-                else{
+                else {
                     r1 = getNextIndex("up", cf, 0, r1);
                 }
             }
         }
-        else if(postion == "right"){
-            if(c2 == Store.flowdata[0].length - 1){
+        else if (postion == "right") {
+            if (c2 == Store.flowdata[0].length - 1) {
                 return;
             }
 
-            if(colHasMerge(cf, r1, r2)){ //focus所在行有合并单元格
+            if (colHasMerge(cf, r1, r2)) { //focus所在行有合并单元格
                 let cfMerge = getColMerge(cf, r1, r2);
                 let cf_str = cfMerge[0], cf_end = cfMerge[1];
 
-                if(cf_str > c1 && cf_end == c2){
+                if (cf_str > c1 && cf_end == c2) {
                     c1 = getNextIndex("right", rf, c1, c2);
                 }
-                else{
+                else {
                     c2 = getNextIndex("right", rf, c2, Store.flowdata[0].length - 1);
                 }
             }
-            else{
-                if(cf > c1 && cf == c2){
+            else {
+                if (cf > c1 && cf == c2) {
                     c1 = getNextIndex("right", rf, c1, c2);
                 }
-                else{
+                else {
                     c2 = getNextIndex("right", rf, c2, Store.flowdata[0].length - 1);
                 }
             }
         }
-        else if(postion == "left"){
-            if(c1 == 0){
+        else if (postion == "left") {
+            if (c1 == 0) {
                 return;
             }
 
-            if(colHasMerge(cf, r1, r2)){ //focus所在行有合并单元格
+            if (colHasMerge(cf, r1, r2)) { //focus所在行有合并单元格
                 let cfMerge = getColMerge(cf, r1, r2);
                 let cf_str = cfMerge[0], cf_end = cfMerge[1];
 
-                if(cf_end < c2 && cf_str == c1){
+                if (cf_end < c2 && cf_str == c1) {
                     c2 = getNextIndex("left", rf, c1, c2);
                 }
-                else{
+                else {
                     c1 = getNextIndex("left", rf, 0, c1);
                 }
             }
-            else{
-                if(cf < c2 && cf == c1){
+            else {
+                if (cf < c2 && cf == c1) {
                     c2 = getNextIndex("left", rf, c1, c2);
                 }
-                else{
+                else {
                     c1 = getNextIndex("left", rf, 0, c1);
                 }
             }
@@ -1403,15 +1408,15 @@ function luckysheetMoveHighlightRange2(postion, type, isScroll) {
         let rowseleted = [r1, r2];
         let columnseleted = [c1, c2];
 
-        row = Store.visibledatarow[r2]; 
+        row = Store.visibledatarow[r2];
         row_pre = r1 - 1 == -1 ? 0 : Store.visibledatarow[r1 - 1];
-        col = Store.visibledatacolumn[c2]; 
+        col = Store.visibledatacolumn[c2];
         col_pre = c1 - 1 == -1 ? 0 : Store.visibledatacolumn[c1 - 1];
 
         let changeparam = menuButton.mergeMoveMain(columnseleted, rowseleted, last, row_pre, row - row_pre - 1, col_pre, col - col_pre - 1);
-        if(changeparam != null){
+        if (changeparam != null) {
             columnseleted = changeparam[0];
-            rowseleted= changeparam[1];
+            rowseleted = changeparam[1];
             // top = changeparam[2];
             // height = changeparam[3];
             // left = changeparam[4];
@@ -1423,109 +1428,109 @@ function luckysheetMoveHighlightRange2(postion, type, isScroll) {
 
         selectHightlightShow();
     }
-    else if(type == "rangeOfFormula"){
+    else if (type == "rangeOfFormula") {
         let last = formula.func_selectedrange;
         let rf = last["row_focus"], cf = last["column_focus"];
 
         let r1 = last["row"][0], r2 = last["row"][1];
         let c1 = last["column"][0], c2 = last["column"][1];
 
-        if(postion == "down"){
-            if(r2 == Store.flowdata.length - 1){
+        if (postion == "down") {
+            if (r2 == Store.flowdata.length - 1) {
                 return;
             }
 
-            if(rowHasMerge(rf, c1, c2)){ //focus所在行有合并单元格
+            if (rowHasMerge(rf, c1, c2)) { //focus所在行有合并单元格
                 let rfMerge = getRowMerge(rf, c1, c2);
                 let rf_str = rfMerge[0], rf_end = rfMerge[1];
 
-                if(rf_str > r1 && rf_end == r2){
+                if (rf_str > r1 && rf_end == r2) {
                     r1 = getNextIndex("down", cf, r1, r2);
                 }
-                else{
+                else {
                     r2 = getNextIndex("down", cf, r2, Store.flowdata.length - 1);
                 }
             }
-            else{
-                if(rf > r1 && rf == r2){
+            else {
+                if (rf > r1 && rf == r2) {
                     r1 = getNextIndex("down", cf, r1, r2);
                 }
-                else{
+                else {
                     r2 = getNextIndex("down", cf, r2, Store.flowdata.length - 1);
                 }
             }
         }
-        else if(postion == "up"){
-            if(r1 == 0){
+        else if (postion == "up") {
+            if (r1 == 0) {
                 return;
             }
 
-            if(rowHasMerge(rf, c1, c2)){ //focus所在行有合并单元格
+            if (rowHasMerge(rf, c1, c2)) { //focus所在行有合并单元格
                 let rfMerge = getRowMerge(rf, c1, c2);
                 let rf_str = rfMerge[0], rf_end = rfMerge[1];
 
-                if(rf_end < r2 && rf_str == r1){
+                if (rf_end < r2 && rf_str == r1) {
                     r2 = getNextIndex("up", cf, r1, r2);
                 }
-                else{
+                else {
                     r1 = getNextIndex("up", cf, 0, r1);
                 }
             }
-            else{
-                if(rf < r2 && rf == r1){
+            else {
+                if (rf < r2 && rf == r1) {
                     r2 = getNextIndex("up", cf, r1, r2);
                 }
-                else{
+                else {
                     r1 = getNextIndex("up", cf, 0, r1);
                 }
             }
         }
-        else if(postion == "right"){
-            if(c2 == Store.flowdata[0].length - 1){
+        else if (postion == "right") {
+            if (c2 == Store.flowdata[0].length - 1) {
                 return;
             }
 
-            if(colHasMerge(cf, r1, r2)){ //focus所在行有合并单元格
+            if (colHasMerge(cf, r1, r2)) { //focus所在行有合并单元格
                 let cfMerge = getColMerge(cf, r1, r2);
                 let cf_str = cfMerge[0], cf_end = cfMerge[1];
 
-                if(cf_str > c1 && cf_end == c2){
+                if (cf_str > c1 && cf_end == c2) {
                     c1 = getNextIndex("right", rf, c1, c2);
                 }
-                else{
+                else {
                     c2 = getNextIndex("right", rf, c2, Store.flowdata[0].length - 1);
                 }
             }
-            else{
-                if(cf > c1 && cf == c2){
+            else {
+                if (cf > c1 && cf == c2) {
                     c1 = getNextIndex("right", rf, c1, c2);
                 }
-                else{
+                else {
                     c2 = getNextIndex("right", rf, c2, Store.flowdata[0].length - 1);
                 }
             }
         }
-        else if(postion == "left"){
-            if(c1 == 0){
+        else if (postion == "left") {
+            if (c1 == 0) {
                 return;
             }
 
-            if(colHasMerge(cf, r1, r2)){ //focus所在行有合并单元格
+            if (colHasMerge(cf, r1, r2)) { //focus所在行有合并单元格
                 let cfMerge = getColMerge(cf, r1, r2);
                 let cf_str = cfMerge[0], cf_end = cfMerge[1];
 
-                if(cf_end < c2 && cf_str == c1){
+                if (cf_end < c2 && cf_str == c1) {
                     c2 = getNextIndex("left", rf, c1, c2);
                 }
-                else{
+                else {
                     c1 = getNextIndex("left", rf, 0, c1);
                 }
             }
-            else{
-                if(cf < c2 && cf == c1){
+            else {
+                if (cf < c2 && cf == c1) {
                     c2 = getNextIndex("left", rf, c1, c2);
                 }
-                else{
+                else {
                     c1 = getNextIndex("left", rf, 0, c1);
                 }
             }
@@ -1534,18 +1539,18 @@ function luckysheetMoveHighlightRange2(postion, type, isScroll) {
         let rowseleted = [r1, r2];
         let columnseleted = [c1, c2];
 
-        row = Store.visibledatarow[r2]; 
+        row = Store.visibledatarow[r2];
         row_pre = r1 - 1 == -1 ? 0 : Store.visibledatarow[r1 - 1];
-        col = Store.visibledatacolumn[c2]; 
+        col = Store.visibledatacolumn[c2];
         col_pre = c1 - 1 == -1 ? 0 : Store.visibledatacolumn[c1 - 1];
 
         let top = row_pre, height = row - row_pre - 1;
         let left = col_pre, width = col - col_pre - 1;
 
         let changeparam = menuButton.mergeMoveMain(columnseleted, rowseleted, last, top, height, left, width);
-        if(changeparam != null){
+        if (changeparam != null) {
             columnseleted = changeparam[0];
-            rowseleted= changeparam[1];
+            rowseleted = changeparam[1];
             top = changeparam[2];
             height = changeparam[3];
             left = changeparam[4];
@@ -1616,13 +1621,13 @@ function luckysheetMoveHighlightRange2(postion, type, isScroll) {
 }
 
 //shift + 方向键 / ctrl + shift + 方向键 功能
-function rowHasMerge(r, c1, c2){
+function rowHasMerge(r, c1, c2) {
     let rowHasMerge = false;
 
-    for(let c = c1; c <= c2; c++){
+    for (let c = c1; c <= c2; c++) {
         let cell = Store.flowdata[r][c];
 
-        if(getObjType(cell) == "object" && ("mc" in cell)){
+        if (getObjType(cell) == "object" && ("mc" in cell)) {
             rowHasMerge = true;
             break;
         }
@@ -1630,13 +1635,13 @@ function rowHasMerge(r, c1, c2){
 
     return rowHasMerge;
 }
-function colHasMerge(c, r1, r2){
+function colHasMerge(c, r1, r2) {
     let colHasMerge = false;
 
-    for(let r = r1; r <= r2; r++){
+    for (let r = r1; r <= r2; r++) {
         let cell = Store.flowdata[r][c];
 
-        if(getObjType(cell) == "object" && ("mc" in cell)){
+        if (getObjType(cell) == "object" && ("mc" in cell)) {
             colHasMerge = true;
             break;
         }
@@ -1644,119 +1649,119 @@ function colHasMerge(c, r1, r2){
 
     return colHasMerge;
 }
-function getRowMerge(rIndex, c1, c2){
+function getRowMerge(rIndex, c1, c2) {
     let r1 = 0, r2 = Store.flowdata.length - 1;
 
     let str = null;
-    if(rIndex > r1){
-        for(let r = rIndex; r >= r1; r--){
-            for(let c = c1; c <= c2; c++){
+    if (rIndex > r1) {
+        for (let r = rIndex; r >= r1; r--) {
+            for (let c = c1; c <= c2; c++) {
                 let cell = Store.flowdata[r][c];
-                
-                if(getObjType(cell) == "object" && ("mc" in cell)){
+
+                if (getObjType(cell) == "object" && ("mc" in cell)) {
                     let mc = Store.config["merge"][cell["mc"].r + "_" + cell["mc"].c];
 
-                    if(str == null || mc.r < str){
+                    if (str == null || mc.r < str) {
                         str = mc.r;
                     }
-                }    
+                }
             }
 
-            if(rowHasMerge(str - 1, c1, c2) && str > r1){
+            if (rowHasMerge(str - 1, c1, c2) && str > r1) {
                 r = str - 1;
             }
-            else{
+            else {
                 break;
             }
         }
     }
-    else{
+    else {
         str = r1;
     }
 
     let end = null;
-    if(rIndex < r2){
-        for(let r = rIndex; r <= r2; r++){
-            for(let c = c1; c <= c2; c++){
+    if (rIndex < r2) {
+        for (let r = rIndex; r <= r2; r++) {
+            for (let c = c1; c <= c2; c++) {
                 let cell = Store.flowdata[r][c];
-                
-                if(getObjType(cell) == "object" && ("mc" in cell)){
+
+                if (getObjType(cell) == "object" && ("mc" in cell)) {
                     let mc = Store.config["merge"][cell["mc"].r + "_" + cell["mc"].c];
 
-                    if(end == null || (mc.r + mc.rs - 1) > end){
+                    if (end == null || (mc.r + mc.rs - 1) > end) {
                         end = mc.r + mc.rs - 1;
                     }
                 }
             }
 
-            if(rowHasMerge(end + 1, c1, c2) && end < r2){
+            if (rowHasMerge(end + 1, c1, c2) && end < r2) {
                 r = end + 1;
             }
-            else{
+            else {
                 break;
             }
         }
     }
-    else{
+    else {
         end = r2;
     }
 
     return [str, end];
 }
-function getColMerge(cIndex, r1, r2){
+function getColMerge(cIndex, r1, r2) {
     let c1 = 0, c2 = Store.flowdata[0].length - 1;
 
     let str = null;
-    if(cIndex > c1){
-        for(let c = cIndex; c >= c1; c--){
-            for(let r = r1; r <= r2; r++){
+    if (cIndex > c1) {
+        for (let c = cIndex; c >= c1; c--) {
+            for (let r = r1; r <= r2; r++) {
                 let cell = Store.flowdata[r][c];
-                
-                if(getObjType(cell) == "object" && ("mc" in cell)){
+
+                if (getObjType(cell) == "object" && ("mc" in cell)) {
                     let mc = Store.config["merge"][cell["mc"].r + "_" + cell["mc"].c];
 
-                    if(str == null || mc.c < str){
+                    if (str == null || mc.c < str) {
                         str = mc.c;
                     }
-                }    
+                }
             }
 
-            if(colHasMerge(str - 1, r1, r2) && str > c1){
+            if (colHasMerge(str - 1, r1, r2) && str > c1) {
                 c = str - 1;
             }
-            else{
+            else {
                 break;
             }
         }
     }
-    else{
+    else {
         str = c1;
     }
 
     let end = null;
-    if(cIndex < c2){
-        for(let c = cIndex; c <= c2; c++){
-            for(let r = r1; r <= r2; r++){
+    if (cIndex < c2) {
+        for (let c = cIndex; c <= c2; c++) {
+            for (let r = r1; r <= r2; r++) {
                 let cell = Store.flowdata[r][c];
-                
-                if(getObjType(cell) == "object" && ("mc" in cell)){
+
+                if (getObjType(cell) == "object" && ("mc" in cell)) {
                     let mc = Store.config["merge"][cell["mc"].r + "_" + cell["mc"].c];
 
-                    if(end == null || (mc.c + mc.cs - 1) > end){
+                    if (end == null || (mc.c + mc.cs - 1) > end) {
                         end = mc.c + mc.cs - 1;
                     }
                 }
             }
 
-            if(colHasMerge(end + 1, r1, r2) && end < c2){
+            if (colHasMerge(end + 1, r1, r2) && end < c2) {
                 c = end + 1;
             }
-            else{
+            else {
                 break;
             }
         }
     }
-    else{
+    else {
         end = c2;
     }
 
@@ -1766,222 +1771,222 @@ function getNextIndex(direction, focusIndex, strIndex, endIndex) {
     let index = null;
 
     let stNull;
-    if(direction == "down"){
+    if (direction == "down") {
         let stValue = Store.flowdata[strIndex][focusIndex];
 
-        if(getObjType(stValue) == "object" && isRealNull(stValue.v)){
+        if (getObjType(stValue) == "object" && isRealNull(stValue.v)) {
             stNull = true;
         }
-        else if(isRealNull(stValue)){
+        else if (isRealNull(stValue)) {
             stNull = true;
         }
-        else{
+        else {
             stNull = false;
         }
 
         console.log(stNull, "stNull");
 
         let cellNull = [], i = 0;
-        for(let r = strIndex + 1; r <= endIndex; r++){
+        for (let r = strIndex + 1; r <= endIndex; r++) {
             let cell = Store.flowdata[r][focusIndex];
 
-            if(getObjType(cell) == "object" && isRealNull(cell.v)){
+            if (getObjType(cell) == "object" && isRealNull(cell.v)) {
                 cellNull.push(true);
             }
-            else if(isRealNull(cell)){
+            else if (isRealNull(cell)) {
                 cellNull.push(true);
             }
-            else{
+            else {
                 cellNull.push(false);
             }
 
-            if(cellNull.length == 1 && stNull==true && cellNull[i] == false){
+            if (cellNull.length == 1 && stNull == true && cellNull[i] == false) {
                 index = strIndex + i + 1;
                 break;
             }
-            else if(cellNull.length > 1){
-                if(stNull && cellNull[i] == false){ //起始是空，找第一个有值的位置
+            else if (cellNull.length > 1) {
+                if (stNull && cellNull[i] == false) { //起始是空，找第一个有值的位置
                     index = strIndex + i + 1;
                     break;
                 }
-                else if(!stNull){ //起始有值，找一个有值的位置
-                    if(cellNull[i] == false && cellNull[i - 1] == true){ //前面为空
+                else if (!stNull) { //起始有值，找一个有值的位置
+                    if (cellNull[i] == false && cellNull[i - 1] == true) { //前面为空
                         index = strIndex + i + 1;
                         break;
                     }
-                    else if(cellNull[i] == true && cellNull[i - 1] == false){ //后面为空
+                    else if (cellNull[i] == true && cellNull[i - 1] == false) { //后面为空
                         index = strIndex + i;
                         break;
                     }
                 }
             }
 
-            if(r == endIndex){
+            if (r == endIndex) {
                 index = endIndex;
             }
 
             i++;
         }
     }
-    else if(direction == "up"){
+    else if (direction == "up") {
         let stValue = Store.flowdata[endIndex][focusIndex];
 
-        if(getObjType(stValue) == "object" && isRealNull(stValue.v)){
+        if (getObjType(stValue) == "object" && isRealNull(stValue.v)) {
             stNull = true;
         }
-        else if(isRealNull(stValue)){
+        else if (isRealNull(stValue)) {
             stNull = true;
         }
-        else{
+        else {
             stNull = false;
         }
 
         let cellNull = [], i = 0;
-        for(let r = endIndex - 1; r >= strIndex; r--){
+        for (let r = endIndex - 1; r >= strIndex; r--) {
             let cell = Store.flowdata[r][focusIndex];
 
-            if(getObjType(cell) == "object" && isRealNull(cell.v)){
+            if (getObjType(cell) == "object" && isRealNull(cell.v)) {
                 cellNull.push(true);
             }
-            else if(isRealNull(cell)){
+            else if (isRealNull(cell)) {
                 cellNull.push(true);
             }
-            else{
+            else {
                 cellNull.push(false);
             }
 
-            if(cellNull.length == 1 && stNull && cellNull[i] == false){
+            if (cellNull.length == 1 && stNull && cellNull[i] == false) {
                 index = endIndex - (i + 1);
                 break;
             }
-            else if(cellNull.length > 1){
-                if(stNull && cellNull[i] == false){ //起始是空，找第一个有值的位置
+            else if (cellNull.length > 1) {
+                if (stNull && cellNull[i] == false) { //起始是空，找第一个有值的位置
                     index = endIndex - (i + 1);
                     break;
                 }
-                else if(!stNull){ //起始有值，找一个有值的位置
-                    if(cellNull[i] == false && cellNull[i - 1] == true){ //前面为空
+                else if (!stNull) { //起始有值，找一个有值的位置
+                    if (cellNull[i] == false && cellNull[i - 1] == true) { //前面为空
                         index = endIndex - (i + 1);
                         break;
                     }
-                    else if(cellNull[i] == true && cellNull[i - 1] == false){ //后面为空
+                    else if (cellNull[i] == true && cellNull[i - 1] == false) { //后面为空
                         index = endIndex - i;
                         break;
                     }
                 }
             }
 
-            if(r == strIndex){
+            if (r == strIndex) {
                 index = strIndex;
             }
 
             i++;
         }
     }
-    else if(direction == "right"){
+    else if (direction == "right") {
         let stValue = Store.flowdata[focusIndex][strIndex];
 
-        if(getObjType(stValue) == "object" && isRealNull(stValue.v)){
+        if (getObjType(stValue) == "object" && isRealNull(stValue.v)) {
             stNull = true;
         }
-        else if(isRealNull(stValue)){
+        else if (isRealNull(stValue)) {
             stNull = true;
         }
-        else{
+        else {
             stNull = false;
         }
 
         let cellNull = [], i = 0;
-        for(let c = strIndex + 1; c <= endIndex; c++){
+        for (let c = strIndex + 1; c <= endIndex; c++) {
             let cell = Store.flowdata[focusIndex][c];
 
-            if(getObjType(cell) == "object" && isRealNull(cell.v)){
+            if (getObjType(cell) == "object" && isRealNull(cell.v)) {
                 cellNull.push(true);
             }
-            else if(isRealNull(cell)){
+            else if (isRealNull(cell)) {
                 cellNull.push(true);
             }
-            else{
+            else {
                 cellNull.push(false);
             }
 
-            if(cellNull.length == 1 && stNull && cellNull[i] == false){
+            if (cellNull.length == 1 && stNull && cellNull[i] == false) {
                 index = strIndex + i + 1;
                 break;
             }
-            else if(cellNull.length > 1){
-                if(stNull && cellNull[i] == false){ //起始是空，找第一个有值的位置
+            else if (cellNull.length > 1) {
+                if (stNull && cellNull[i] == false) { //起始是空，找第一个有值的位置
                     index = strIndex + i + 1;
                     break;
                 }
-                else if(!stNull){ //起始有值，找一个有值的位置
-                    if(cellNull[i] == false && cellNull[i - 1] == true){ //前面为空
+                else if (!stNull) { //起始有值，找一个有值的位置
+                    if (cellNull[i] == false && cellNull[i - 1] == true) { //前面为空
                         index = strIndex + i + 1;
                         break;
                     }
-                    else if(cellNull[i] == true && cellNull[i - 1] == false){ //后面为空
+                    else if (cellNull[i] == true && cellNull[i - 1] == false) { //后面为空
                         index = strIndex + i;
                         break;
                     }
                 }
             }
 
-            if(c == endIndex){
+            if (c == endIndex) {
                 index = endIndex;
             }
 
             i++;
         }
     }
-    else if(direction == "left"){
+    else if (direction == "left") {
         let stValue = Store.flowdata[focusIndex][endIndex];
 
-        if(getObjType(stValue) == "object" && isRealNull(stValue.v)){
+        if (getObjType(stValue) == "object" && isRealNull(stValue.v)) {
             stNull = true;
         }
-        else if(isRealNull(stValue)){
+        else if (isRealNull(stValue)) {
             stNull = true;
         }
-        else{
+        else {
             stNull = false;
         }
 
         let cellNull = [], i = 0;
-        for(let c = endIndex - 1; c >= strIndex; c--){
+        for (let c = endIndex - 1; c >= strIndex; c--) {
             let cell = Store.flowdata[focusIndex][c];
 
-            if(getObjType(cell) == "object" && isRealNull(cell.v)){
+            if (getObjType(cell) == "object" && isRealNull(cell.v)) {
                 cellNull.push(true);
             }
-            else if(isRealNull(cell)){
+            else if (isRealNull(cell)) {
                 cellNull.push(true);
             }
-            else{
+            else {
                 cellNull.push(false);
             }
 
-            if(cellNull.length == 1 && stNull && cellNull[i] == false){
+            if (cellNull.length == 1 && stNull && cellNull[i] == false) {
                 index = endIndex - (i + 1);
                 break;
             }
-            else if(cellNull.length > 1){
-                if(stNull && cellNull[i] == false){ //起始是空，找第一个有值的位置
+            else if (cellNull.length > 1) {
+                if (stNull && cellNull[i] == false) { //起始是空，找第一个有值的位置
                     index = endIndex - (i + 1);
                     break;
                 }
-                else if(!stNull){ //起始有值，找一个有值的位置
-                    if(cellNull[i] == false && cellNull[i - 1] == true){ //前面为空
+                else if (!stNull) { //起始有值，找一个有值的位置
+                    if (cellNull[i] == false && cellNull[i - 1] == true) { //前面为空
                         index = endIndex - (i + 1);
                         break;
                     }
-                    else if(cellNull[i] == true && cellNull[i - 1] == false){ //后面为空
+                    else if (cellNull[i] == true && cellNull[i - 1] == false) { //后面为空
                         index = endIndex - i;
                         break;
                     }
                 }
             }
 
-            if(c == strIndex){
+            if (c == strIndex) {
                 index = strIndex;
             }
 

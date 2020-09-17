@@ -4,6 +4,7 @@ import { replaceHtml } from '../utils/util';
 import {changeSheetContainerSize} from './resize';
 import { jfrefreshgrid_rhcw } from '../global/refresh';
 import server from './server';
+import { renderAllMarks } from '../customs/markMethod';
 
 
 
@@ -47,6 +48,9 @@ export function zoomRefreshView(){
 
     $scrollLeft.scrollLeft(sl+wc-wp);
     $scrollTop.scrollTop(st+hc-hp);
+
+    //【自改】更新表格的标记
+    renderAllMarks();
 }
 
 
@@ -71,8 +75,6 @@ export function zoomInitial(){
             currentRatio = 0.1;
         }
 
-        // Store.zoomRatio = currentRatio;
-        zoomChange(currentRatio);
         zoomNumberDomBind(currentRatio);
     });
 
@@ -154,6 +156,7 @@ export function zoomInitial(){
         zoomNumberDomBind(1);
     });
 
+    zoomChange(1);
     zoomNumberDomBind(Store.zoomRatio);
 }
 

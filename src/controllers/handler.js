@@ -60,7 +60,7 @@ import locale from '../locale/locale';
 import Store from '../store';
 import { createLuckyChart, hideAllNeedRangeShow } from '../expendPlugins/chart/plugin'
 import customStore from "../customs/store";
-import {onCellPaste, onCellDbClick} from "../customs/method";
+import {onCellPaste, onCellDbClick, onDropFill} from "../customs/method";
 
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
@@ -2846,6 +2846,9 @@ export default function luckysheetHandler() {
             $("#luckysheet-sheettable").css("cursor", "default");
             clearTimeout(Store.countfuncTimeout);
             Store.countfuncTimeout = setTimeout(function () { countfunc() }, 500);
+
+            // 【自改】
+            onDropFill(luckysheetDropCell.applyRange);
         }
     });
 

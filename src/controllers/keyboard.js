@@ -26,218 +26,218 @@ import cleargridelement from '../global/cleargridelement';
 import tooltip from '../global/tooltip';
 import locale from '../locale/locale';
 import Store from '../store';
-import {onCellUpdate, focusSelectCell} from "../customs/method";
+import {onCellUpdate, focusSelectCell, getFocusCell} from "../customs/method";
 
 
 let luckysheet_shiftkeydown = false;
 
 function formulaMoveEvent(dir, ctrlKey, shiftKey){
-    if ($("#luckysheet-formula-search-c").is(":visible")) {
-        let $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active").next();
-        if ($up.length == 0) {
-            $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").first();
-        }
+//     if ($("#luckysheet-formula-search-c").is(":visible")) {
+//         let $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item-active").next();
+//         if ($up.length == 0) {
+//             $up = $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").first();
+//         }
 
-        $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
-        $up.addClass("luckysheet-formula-search-item-active");
+//         $("#luckysheet-formula-search-c").find(".luckysheet-formula-search-item").removeClass("luckysheet-formula-search-item-active");
+//         $up.addClass("luckysheet-formula-search-item-active");
 
-        event.preventDefault();
-    }
-    else{
-        if($("#luckysheet-formula-functionrange-select").is(":visible")){
-            if(ctrlKey && shiftKey){
-                luckysheetMoveHighlightRange2(dir, "rangeOfFormula");
-            }
-            else if(ctrlKey){
-                luckysheetMoveHighlightCell2(dir, "rangeOfFormula");
-            }
-            else if(shiftKey){
-                let dir_n = dir, step = 1;
-                if(dir == 'up'){
-                    dir_n = 'down';
-                    step = -1;
-                }
-                if(dir == 'left'){
-                    dir_n = 'right';
-                    step = -1;
-                }
+//         event.preventDefault();
+//     }
+//     else{
+//         if($("#luckysheet-formula-functionrange-select").is(":visible")){
+//             if(ctrlKey && shiftKey){
+//                 luckysheetMoveHighlightRange2(dir, "rangeOfFormula");
+//             }
+//             else if(ctrlKey){
+//                 luckysheetMoveHighlightCell2(dir, "rangeOfFormula");
+//             }
+//             else if(shiftKey){
+//                 let dir_n = dir, step = 1;
+//                 if(dir == 'up'){
+//                     dir_n = 'down';
+//                     step = -1;
+//                 }
+//                 if(dir == 'left'){
+//                     dir_n = 'right';
+//                     step = -1;
+//                 }
 
-                luckysheetMoveHighlightRange(dir_n, step, "rangeOfFormula");
-            }
-            else{
-                let dir_n = dir, step = 1;
-                if(dir == 'up'){
-                    dir_n = 'down';
-                    step = -1;
-                }
-                if(dir == 'left'){
-                    dir_n = 'right';
-                    step = -1;
-                }
+//                 luckysheetMoveHighlightRange(dir_n, step, "rangeOfFormula");
+//             }
+//             else{
+//                 let dir_n = dir, step = 1;
+//                 if(dir == 'up'){
+//                     dir_n = 'down';
+//                     step = -1;
+//                 }
+//                 if(dir == 'left'){
+//                     dir_n = 'right';
+//                     step = -1;
+//                 }
 
-                luckysheetMoveHighlightCell(dir_n, step, "rangeOfFormula");
-            }   
-        }
-        else if(formula.israngeseleciton()){
-            let anchor = $(window.getSelection().anchorNode);
+//                 luckysheetMoveHighlightCell(dir_n, step, "rangeOfFormula");
+//             }   
+//         }
+//         else if(formula.israngeseleciton()){
+//             let anchor = $(window.getSelection().anchorNode);
             
-            if(anchor.parent().next().text() == null || anchor.parent().next().text() == ""){
-                let vText = $("#luckysheet-input-box #luckysheet-input-box-index").text();
-                let range = formula.getcellrange(vText);
+//             if(anchor.parent().next().text() == null || anchor.parent().next().text() == ""){
+//                 let vText = $("#luckysheet-input-box #luckysheet-input-box-index").text();
+//                 let range = formula.getcellrange(vText);
 
-                if(range == null){
-                    range = formula.getcellrange($("#luckysheet-input-box-index").text());
-                }
+//                 if(range == null){
+//                     range = formula.getcellrange($("#luckysheet-input-box-index").text());
+//                 }
 
-                let r1 = range["row"][0], r2 = range["row"][1];
-                let c1 = range["column"][0], c2 = range["column"][1];
+//                 let r1 = range["row"][0], r2 = range["row"][1];
+//                 let c1 = range["column"][0], c2 = range["column"][1];
 
-                let row = Store.visibledatarow[r2], 
-                    row_pre = r1 - 1 == -1 ? 0 : Store.visibledatarow[r1 - 1];
-                let col = Store.visibledatacolumn[c2], 
-                    col_pre = c1 - 1 == -1 ? 0 : Store.visibledatacolumn[c1 - 1];
+//                 let row = Store.visibledatarow[r2], 
+//                     row_pre = r1 - 1 == -1 ? 0 : Store.visibledatarow[r1 - 1];
+//                 let col = Store.visibledatacolumn[c2], 
+//                     col_pre = c1 - 1 == -1 ? 0 : Store.visibledatacolumn[c1 - 1];
 
-                formula.func_selectedrange = {
-                    "left": col_pre,
-                    "width": col - col_pre - 1,
-                    "top": row_pre,
-                    "height": row - row_pre - 1,
-                    "left_move": col_pre,
-                    "width_move": col - col_pre - 1,
-                    "top_move": row_pre,
-                    "height_move": row - row_pre - 1,
-                    "row": [r1, r2],
-                    "column": [c1, c2],
-                    "row_focus": r1,
-                    "column_focus": c1
-                };
+//                 formula.func_selectedrange = {
+//                     "left": col_pre,
+//                     "width": col - col_pre - 1,
+//                     "top": row_pre,
+//                     "height": row - row_pre - 1,
+//                     "left_move": col_pre,
+//                     "width_move": col - col_pre - 1,
+//                     "top_move": row_pre,
+//                     "height_move": row - row_pre - 1,
+//                     "row": [r1, r2],
+//                     "column": [c1, c2],
+//                     "row_focus": r1,
+//                     "column_focus": c1
+//                 };
 
-                formula.rangeSetValue({ "row": [r1, r2], "column": [c1, c2] });
+//                 formula.rangeSetValue({ "row": [r1, r2], "column": [c1, c2] });
 
-                formula.rangestart = true;
-                formula.rangedrag_column_start = false;
-                formula.rangedrag_row_start = false;
+//                 formula.rangestart = true;
+//                 formula.rangedrag_column_start = false;
+//                 formula.rangedrag_row_start = false;
                 
-                if(ctrlKey && shiftKey){
-                    luckysheetMoveHighlightRange2(dir, "rangeOfFormula");
-                }
-                else if(ctrlKey){
-                    luckysheetMoveHighlightCell2(dir, "rangeOfFormula");
-                }
-                else if(shiftKey){
-                    let dir_n = dir, step = 1;
-                    if(dir == 'up'){
-                        dir_n = 'down';
-                        step = -1;
-                    }
-                    if(dir == 'left'){
-                        dir_n = 'right';
-                        step = -1;
-                    }
+//                 if(ctrlKey && shiftKey){
+//                     luckysheetMoveHighlightRange2(dir, "rangeOfFormula");
+//                 }
+//                 else if(ctrlKey){
+//                     luckysheetMoveHighlightCell2(dir, "rangeOfFormula");
+//                 }
+//                 else if(shiftKey){
+//                     let dir_n = dir, step = 1;
+//                     if(dir == 'up'){
+//                         dir_n = 'down';
+//                         step = -1;
+//                     }
+//                     if(dir == 'left'){
+//                         dir_n = 'right';
+//                         step = -1;
+//                     }
                     
-                    luckysheetMoveHighlightRange(dir_n, step, "rangeOfFormula");
-                }
-                else{
-                    let dir_n = dir, step = 1;
-                    if(dir == 'up'){
-                        dir_n = 'down';
-                        step = -1;
-                    }
-                    if(dir == 'left'){
-                        dir_n = 'right';
-                        step = -1;
-                    }
+//                     luckysheetMoveHighlightRange(dir_n, step, "rangeOfFormula");
+//                 }
+//                 else{
+//                     let dir_n = dir, step = 1;
+//                     if(dir == 'up'){
+//                         dir_n = 'down';
+//                         step = -1;
+//                     }
+//                     if(dir == 'left'){
+//                         dir_n = 'right';
+//                         step = -1;
+//                     }
                     
-                    luckysheetMoveHighlightCell(dir_n, step, "rangeOfFormula");
-                } 
-            }
-        }
-        else if(!ctrlKey && !shiftKey){
-            let anchor = $(window.getSelection().anchorNode);
-            let anchorOffset = window.getSelection().anchorOffset;
+//                     luckysheetMoveHighlightCell(dir_n, step, "rangeOfFormula");
+//                 } 
+//             }
+//         }
+//         else if(!ctrlKey && !shiftKey){
+//             let anchor = $(window.getSelection().anchorNode);
+//             let anchorOffset = window.getSelection().anchorOffset;
 
-            if(dir == 'up'){
-                if(anchor.parent().is("span") && anchor.parent().next().length == 0 && anchorOffset > 0){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("down", -1, "rangeOfSelect");
+//             if(dir == 'up'){
+//                 if(anchor.parent().is("span") && anchor.parent().next().length == 0 && anchorOffset > 0){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("down", -1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.is("#luckysheet-rich-text-editor") && anchor.context.childElementCount == anchorOffset){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("down", -1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.is("#luckysheet-rich-text-editor") && anchor.context.childElementCount == anchorOffset){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("down", -1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchor.context.length == anchorOffset){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("down", -1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchor.context.length == anchorOffset){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("down", -1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-            }
-            else if(dir == 'down'){
-                if(anchor.parent().is("span") && anchor.parent().next().length == 0 && anchorOffset > 0){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//             }
+//             else if(dir == 'down'){
+//                 if(anchor.parent().is("span") && anchor.parent().next().length == 0 && anchorOffset > 0){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.is("#luckysheet-rich-text-editor") && anchor.context.childElementCount == anchorOffset){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.is("#luckysheet-rich-text-editor") && anchor.context.childElementCount == anchorOffset){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchor.context.length == anchorOffset){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchor.context.length == anchorOffset){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("down", 1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-            }
-            else if(dir == 'left'){
-                if(anchor.parent().is("span") && anchor.parent().prev().length == 0 && anchorOffset == 0){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("right", -1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//             }
+//             else if(dir == 'left'){
+//                 if(anchor.parent().is("span") && anchor.parent().prev().length == 0 && anchorOffset == 0){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("right", -1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.is("#luckysheet-rich-text-editor") && anchorOffset == 1){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("right", -1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.is("#luckysheet-rich-text-editor") && anchorOffset == 1){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("right", -1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchorOffset == 0){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("right", -1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchorOffset == 0){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("right", -1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-            }
-            else if(dir == 'right'){
-                if(anchor.parent().is("span") && anchor.parent().next().length == 0 && anchorOffset > 0){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("right", 1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//             }
+//             else if(dir == 'right'){
+//                 if(anchor.parent().is("span") && anchor.parent().next().length == 0 && anchorOffset > 0){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("right", 1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.is("#luckysheet-rich-text-editor") && anchor.context.childElementCount == anchorOffset){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("right", 1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.is("#luckysheet-rich-text-editor") && anchor.context.childElementCount == anchorOffset){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("right", 1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-                else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchor.context.length == anchorOffset){
-                    formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
-                    luckysheetMoveHighlightCell("right", 1, "rangeOfSelect");
+//                     event.preventDefault();
+//                 }
+//                 else if(anchor.parent().is("#luckysheet-rich-text-editor") && anchor.context.length == anchorOffset){
+//                     formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
+//                     luckysheetMoveHighlightCell("right", 1, "rangeOfSelect");
 
-                    event.preventDefault();
-                }
-            }
-        }
-    }
+//                     event.preventDefault();
+//                 }
+//             }
+//         }
+//     }
 }
 
 export function keyboardInitial(){
@@ -829,10 +829,10 @@ export function keyboardInitial(){
 
             event.preventDefault();
         }
-        else if (kcode == keycode.F4 && parseInt($inputbox.css("top")) > 0) {
-            formula.setfreezonFuc(event);
-            event.preventDefault();
-        }
+        // else if (kcode == keycode.F4 && parseInt($inputbox.css("top")) > 0) {
+        //     formula.setfreezonFuc(event);
+        //     event.preventDefault();
+        // }
         else if (kcode == keycode.UP && parseInt($inputbox.css("top")) > 0) {
             formulaMoveEvent("up", ctrlKey, shiftKey);
         }
@@ -859,7 +859,7 @@ export function keyboardInitial(){
 
         //输入框中文输入后 shift 和 空格 处理
         if(parseInt($("#luckysheet-input-box").css("top")) > 0 && (kcode == 13 || kcode == 16 || kcode == 32)){
-            formula.functionInputHanddler($("#luckysheet-functionbox-cell"), $("#luckysheet-rich-text-editor"), kcode);
+            // formula.functionInputHanddler($("#luckysheet-functionbox-cell"), $("#luckysheet-rich-text-editor"), kcode);
         }
 
         e.preventDefault();
@@ -894,4 +894,12 @@ export function keyboardInitial(){
     }).change(function(){
         server.saveParam("na", null, $(this).val());
     });
+}
+
+// 【自改】
+// 解绑事件
+export function keyboardUnbind() {
+    $("#luckysheet-input-box").unbind('click keydown');
+    $("#" + Store.container).unbind('keydown keyup');
+    $("#luckysheet_info_detail_input").unbind('keydown input propertychange change');
 }

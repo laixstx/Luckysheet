@@ -16,10 +16,10 @@ export default {
     pointEditUpdate: null, //编辑器表格更新函数
     pointEditZoom: 1, //编辑器表格编辑时缩放比例
     // menu: "undo|redo|freezenrow|freezencolumn|download|share|chart|pivot",
-    data: [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index":0 }, { "name": "Sheet2", color: "", "status": "0", "order": "1", "data": [], "config": {}, "index":1  }, { "name": "Sheet3", color: "", "status": "0", "order": "2", "data": [], "config": {}, "index":2  }], //客户端sheet数据[shee1, sheet2, sheet3]
+    data: [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index":0 }], //客户端sheet数据[shee1, sheet2, sheet3]
     title: "AFC", //表格的名称
-    userInfo: '<i style="font-size:16px;color:#ff6a00;" class="fa fa-taxi" aria-hidden="true"></i> rabbit', //右上角的用户信息展示样式
-    userMenuItem: [{url:"/", "icon":'<i class="fa fa-folder" aria-hidden="true"></i>', "name":"我的表格"}, {url:"www.baidu.com", "icon":'<i class="fa fa-sign-out" aria-hidden="true"></i>', "name":"退出登陆"}], //点击右上角的用户信息弹出的菜单
+    userInfo: '', //右上角的用户信息展示样式
+    userMenuItem: [], //点击右上角的用户信息弹出的菜单
     myFolderUrl: "", //左上角<返回按钮的链接
     config: {}, //表格行高、列宽、合并单元格、公式等设置
     fullscreenmode: true, //是否全屏模式，非全屏模式下，标记框不会强制选中。

@@ -12,19 +12,23 @@ import formula from '../global/formula';
 import {
     luckysheetMoveHighlightCell,
 } from '../controllers/sheetMove';
+import uniq from "lodash/uniq";
+import without from "lodash/without";
 
 let preSelR, preSelC;
 /**
  * 切换选中的单元格之后，回调 customConfig.onCellSelect
  */
 export function onCellSelect() {
+    console.log('onCellSelect');
     let selSave = getluckysheet_select_save();
 
-    if (selSave.length > 1) { // 有多个选区
-        return;
-    }
+    // if (selSave.length > 1) { // 有多个选区
+    //     return;
+    // }
 
-    let { column_focus, row_focus } = selSave[0];
+    let { column_focus, row_focus } = selSave[selSave.length - 1];
+
     // 此次选中与上次不同时，响应回调
     if (preSelR != row_focus || preSelC != column_focus) {
         const selCellData = getSelectedCellData();
@@ -56,10 +60,10 @@ export function dealCellUpdate(r, c, flowdata) {
  */
 export function onCellUpdate(r, c) {
 
-    setTimeout(() => {
-        // 更新公式输入框的值
+    // setTimeout(() => {
+    //     // 更新公式输入框的值
 
-    }, 10);
+    // }, 10);
 
     let cellData;
     if (r >= 0 && c >= 0) {
@@ -99,7 +103,7 @@ export function onCellPaste() {
     // 更新 $('#luckysheet-rich-text-editor') 的内容，避免公式栏回显内容错误的问题
     let selSave = getluckysheet_select_save();
     if (selSave) {
-        let { column_focus, row_focus } = selSave[0];
+        let { column_focus, row_focus } = selSave[selSave.length - 1];
         let cellV = Store.flowdata[row_focus][column_focus];
         let vHtml = '';
         if (cellV && cellV.f) {
@@ -151,18 +155,130 @@ export function beforeCellEdit(r, c) {
 }
 
 /**
- * 获取当前选中单元格的数据。（多选时，值为 null)
+ * 添加“行/列”之后的回调
+ * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+ * @param {number} ind 行/列索引
+ * @param {number} len 操作的数量
+ * @param {string} direction 方向。'lefttop': 在上方插行/左方插列。'rightbottom'：在下方插行/右方插列
+ */
+export function onRCAdd(type, ind, len, direction) {
+
+    // 触发单元格更新回调
+    onCellUpdate();
+
+    if (customConfig.onRCAdd) customConfig.onRCAdd(type, ind, len, direction);
+}
+
+/**
+ * 删除“行/列”之后的回调
+ * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+ * @param {number} ind 行/列索引
+ * @param {number} len 操作的数量
+ */
+export function onRCDelete(type, ind, len) {
+
+    // 触发单元格更新回调
+    onCellUpdate();
+
+    if (customConfig.onRCDelete) customConfig.onRCDelete(type, ind, len);
+}
+
+/**
+ * 显示/隐藏“行/列”之后的回调
+ * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+ * @param {number} inds 行/列索引数组
+ * @param {string} isShow 是否“显示”操作。true：显示操作。false：隐藏操作
+ */
+export function onRCShowHide(type, inds, isShow) {
+    let fInds = inds;
+
+    if ('r' === type) {
+
+        if (!isShow) { // 隐藏
+            if (null == customStore.rowHidden) {
+                customStore.rowHidden = inds;
+            } else {
+                customStore.rowHidden = uniq(customStore.rowHidden.concat(inds));
+            }
+        } else { // 显示
+            customStore.rowHidden = without(customStore.rowHidden, ...inds);
+        }
+
+        fInds = customStore.rowHidden;
+
+    } else if ('c' === type) {
+
+        if (!isShow) {
+            if (null == customStore.colHidden) {
+                customStore.colHidden = inds;
+            } else {
+                customStore.colHidden = uniq(customStore.colHidden.concat(inds));
+            }
+        } else { // 显示
+            customStore.colHidden = without(customStore.colHidden, ...inds);
+        }
+        fInds = customStore.colHidden;
+    }
+
+    if (customConfig.onRCShowHide) {
+        // 在 controllers/rowColumnOperation 中执行 onRCShowHide 之后，后续会默认刷新表格。
+        // 为了在 customConfig.onRCShowHide 回调中，取得的表格是最新的值，这里需要做一个延迟。
+        setTimeout(() => {
+            customConfig.onRCShowHide(type, fInds, isShow);
+        }, 1);
+    }
+}
+
+/**
+ * 拖拽单元格右下角之后的回调
+ */
+export function onDropFill(applyRange) {
+    // console.log('onDropFill', applyRange);
+    if (customConfig.dealCellUpdate && applyRange) {
+        let { r, c } = getFocusCell();
+        let isIncludeFocus = false;
+        let rs = applyRange.row[0],
+            re = applyRange.row[1],
+            cs = applyRange.column[0],
+            ce = applyRange.column[1];
+
+        for (let rI = rs; rI <= re; rI++) {
+            for (let cI = cs; cI <= ce; cI++) {
+                customConfig.dealCellUpdate(rI, cI, Store.flowdata);
+
+                if (!isIncludeFocus && r === rI && c === cI) {
+                    isIncludeFocus = true;
+                }
+            }
+        }
+
+        // 如果当前聚焦的单元格在“应用范围”内，则触发单元格更新回调
+        if (isIncludeFocus) {
+            onCellUpdate(r, c);
+        }
+    }
+    if (customConfig.onDropFill) customConfig.onDropFill(applyRange);
+}
+
+export function getFocusCell() {
+    let selSave = getluckysheet_select_save();
+    let { column_focus, row_focus } = selSave[selSave.length - 1];
+    return { r: row_focus, c: column_focus };
+}
+
+/**
+ * 获取当前选中单元格的数据
  * @return {null | {r:number, c: number, v: {}}}
  */
 export function getSelectedCellData() {
     let cellData = null;
     let selSave = getluckysheet_select_save();
 
-    if (selSave.length !== 1) { // 有多个选区
-        return cellData;
-    }
+    // if (selSave.length !== 1) { // 有多个选区
+    //     return cellData;
+    // }
 
-    let { column, row, column_focus, row_focus } = selSave[0];
+    let { column, row, column_focus, row_focus } = selSave[selSave.length - 1];
     // let maxC = column[1];
     // let maxR = row[1];
     // let mergeO = getconfig().merge || {};
@@ -211,7 +327,8 @@ export function getCellData(r, c) {
  * 取消单元格的编辑状态
  */
 export function blurCellEdit() {
-    if (Store.luckysheetCellUpdate[0] >= 0 && Store.luckysheetCellUpdate[1] >= 0) {
+    if (parseInt($("#luckysheet-input-box").css("top")) > 0 &&
+        Store.luckysheetCellUpdate[0] >= 0 && Store.luckysheetCellUpdate[1] >= 0) {
         formula.updatecell(Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[1]);
         Store.luckysheet_select_save = [{ "row": [Store.luckysheetCellUpdate[0], Store.luckysheetCellUpdate[0]], "column": [Store.luckysheetCellUpdate[1], Store.luckysheetCellUpdate[1]], "row_focus": Store.luckysheetCellUpdate[0], "column_focus": Store.luckysheetCellUpdate[1] }];
         luckysheetMoveHighlightCell("down", 0, "rangeOfSelect");

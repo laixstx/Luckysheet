@@ -15,14 +15,14 @@ export default function rhchInit(rowheight, colwidth) {
                 rowlen = Store.config["rowlen"][i];
             }
 
-            if (Store.config["rowhidden"] != null && Store.config["rowhidden"][i] != null) {
-                rowlen = Store.config["rowhidden"][i];
-                Store.visibledatarow.push(Store.rh_height);
-                continue;
-            }
-            else {
+            // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][i] != null) {
+            //     rowlen = Store.config["rowhidden"][i];
+            //     Store.visibledatarow.push(Store.rh_height);
+            //     continue;
+            // }
+            // else {
                 Store.rh_height += Math.round((rowlen + 1)*Store.zoomRatio);
-            }
+            // }
 
             Store.visibledatarow.push(Store.rh_height); //行的临时长度分布
         }

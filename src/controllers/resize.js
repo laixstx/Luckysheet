@@ -89,7 +89,8 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
         let $t = $(this);
         toolbarW += $t.outerWidth();
 
-        if(!ismore && toolbarW > gridW - 140){
+        // if(!ismore && toolbarW > gridW - 140){
+        if(!ismore && toolbarW > gridW - 110){
             ismore = true;
         }
 

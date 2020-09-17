@@ -34,9 +34,9 @@ export function getdatabyselection(range, sheetIndex) {
             continue;
         }
 
-        // if (cfg["rowhidden"] != null && cfg["rowhidden"][r] != null) {
-        //     continue;
-        // }
+        if (cfg["rowhidden"] != null && cfg["rowhidden"][r] != null) {
+            continue;
+        }
 
         let row = [];
 
@@ -63,9 +63,9 @@ export function getdatabyselectionD(d, range) {
             continue;
         }
 
-        // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
-        //     continue;
-        // }
+        if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+            continue;
+        }
 
         let row = [];
 
@@ -98,9 +98,9 @@ export function getdatabyselectionNoCopy(range) {
     for (let r = range["row"][0]; r <= range["row"][1]; r++) {
         let row = [];
         
-        // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
-        //     continue;
-        // }
+        if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+            continue;
+        }
 
         for (let c = range["column"][0]; c <= range["column"][1]; c++) {
             let value = "";
@@ -153,16 +153,15 @@ export function getcellvalue(r, c, data, type) {
     if(getObjType(d_value) == "object"){
         retv = d_value[type];
 
-        // if (type == "f" && retv != null) {
-        //     retv = formula.functionHTMLGenerate(retv);
-        // }
-        // else 
-        // if(type == "f") {
-        //     retv = d_value["v"];
-        // }
-        // else if(d_value && d_value.ct && d_value.ct.fa == 'yyyy-MM-dd') {
-        //     retv = d_value.m;
-        // }
+        if (type == "f" && retv != null) {
+            retv = formula.functionHTMLGenerate(retv);
+        }
+        else if(type == "f") {
+            retv = d_value["v"];
+        }
+        else if(d_value && d_value.ct && d_value.ct.fa == 'yyyy-MM-dd') {
+            retv = d_value.m;
+        }
     }
 
     if(retv == undefined){
@@ -213,10 +212,10 @@ export function datagridgrowth(data, addr, addc, iscallback) {
         data.push([].concat(rowadd));
     }
 
-    // if(!!iscallback){
-    //     server.saveParam("all", Store.currentSheetIndex, data.length, { "k": "row" });
-    //     server.saveParam("all", Store.currentSheetIndex, data[0].length, { "k": "column" });
-    // }
+    if(!!iscallback){
+        server.saveParam("all", Store.currentSheetIndex, data.length, { "k": "row" });
+        server.saveParam("all", Store.currentSheetIndex, data[0].length, { "k": "column" });
+    }
 
     return data;
 }

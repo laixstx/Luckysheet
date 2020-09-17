@@ -28,16 +28,20 @@ import { luckysheetlodingHTML } from './controllers/constant';
 import { getcellvalue, getdatabyselection } from './global/getdata';
 import { setcellvalue } from './global/setdata';
 import { selectHightlightShow } from './controllers/select';
-import {zoomInitial} from './controllers/zoom';
+import { zoomInitial } from './controllers/zoom';
 import method from './global/method';
 import customLSheet, { customInitWork } from "./customs";
 import { initCustomConf } from "./customs/config";
+import { initCustomStore } from './customs/store';
+
+import cloneDeep from 'lodash/cloneDeep';
 
 let luckysheet = {};
 
 //创建luckysheet表格
+
 luckysheet.create = function (setting) {
-    let extendsetting = common_extend(defaultSetting, setting);
+    let extendsetting = cloneDeep(common_extend(defaultSetting, setting));
 
     let loadurl = extendsetting.loadUrl,
         menu = extendsetting.menu,
@@ -51,6 +55,7 @@ luckysheet.create = function (setting) {
     Store.fullscreenmode = extendsetting.fullscreenmode;
     Store.lang = extendsetting.lang; //language
     Store.allowEdit = extendsetting.allowEdit;
+
     server.gridKey = extendsetting.gridKey;
     server.loadUrl = extendsetting.loadUrl;
     server.updateUrl = extendsetting.updateUrl;
@@ -94,13 +99,14 @@ luckysheet.create = function (setting) {
     luckysheetConfigsetting.columeHeaderHeight = extendsetting.columeHeaderHeight;
 
     // 【改】初始化自定义的配置项
-    initCustomConf(setting.customConfig || {});
+    initCustomConf(extendsetting.customConfig || {});
+    initCustomStore(extendsetting.customStore || {});
 
     // Register plugins
     initPlugins(extendsetting.plugins, extendsetting.data);
 
     // Store formula information, including internationalization
-    functionlist();
+    // functionlist();
 
     let devicePixelRatio = extendsetting.devicePixelRatio;
     if (devicePixelRatio == null) {
@@ -112,25 +118,25 @@ luckysheet.create = function (setting) {
     $("#" + container).append(luckysheetlodingHTML());
 
     let data = [];
-    if (loadurl == "") {
-        sheetmanage.initialjfFile(menu, title);
-        // luckysheetsizeauto();
-        initialWorkBook();
-    } else {
-        $.post(loadurl, { "gridKey": server.gridKey }, function (d) {
-            let data = eval("(" + d + ")");
-            Store.luckysheetfile = data;
+    // if (loadurl == "") {
+    sheetmanage.initialjfFile(menu, title);
+    // luckysheetsizeauto();
+    initialWorkBook();
+    // } else {
+    //     $.post(loadurl, { "gridKey": server.gridKey }, function (d) {
+    //         let data = eval("(" + d + ")");
+    //         Store.luckysheetfile = data;
 
-            sheetmanage.initialjfFile(menu, title);
-            // luckysheetsizeauto();
-            initialWorkBook();
+    //         sheetmanage.initialjfFile(menu, title);
+    //         // luckysheetsizeauto();
+    //         initialWorkBook();
 
-            //需要更新数据给后台时，建立WebSocket连接
-            if (server.allowUpdate) {
-                server.openWebSocket();
-            }
-        });
-    }
+    //         //需要更新数据给后台时，建立WebSocket连接
+    //         if (server.allowUpdate) {
+    //             server.openWebSocket();
+    //         }
+    //     });
+    // }
 }
 
 function initialWorkBook() {

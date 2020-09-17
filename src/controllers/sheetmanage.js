@@ -809,12 +809,16 @@ const sheetmanage = {
         file["luckysheet_select_save"] = $.extend(true, [], Store.luckysheet_select_save);
         file["luckysheet_selection_range"] = $.extend(true, [], Store.luckysheet_selection_range);
 
-        if($("#luckysheet-scrollbar-x")[0].scrollWidth > $("#luckysheet-scrollbar-x")[0].offsetWidth){
-            file["scrollLeft"] = $("#luckysheet-scrollbar-x").scrollLeft(); //横向滚动条
+        // 【自改】
+        let $sbX = $("#luckysheet-scrollbar-x");
+        let $sbY = $("#luckysheet-scrollbar-y");
+
+        if($sbX && $sbX[0] && $sbX[0].scrollWidth > $sbX[0].offsetWidth){
+            file["scrollLeft"] = $sbX.scrollLeft(); //横向滚动条
         }
 
-        if($("#luckysheet-scrollbar-y")[0].scrollHeight > $("#luckysheet-scrollbar-y")[0].offsetHeight){
-            file["scrollTop"] = $("#luckysheet-scrollbar-y").scrollTop(); //纵向滚动条
+        if($sbY && $sbY[0] && $sbY[0].scrollHeight > $sbY[0].offsetHeight){
+            file["scrollTop"] = $sbY.scrollTop(); //纵向滚动条
         }
 
         file["zoomRatio"] = Store.zoomRatio;
@@ -1196,6 +1200,8 @@ const sheetmanage = {
     },
     sheetBarShowAndHide(index){
         let $c = $("#luckysheet-sheet-container-c");
+
+        if(undefined === $c[0]) return;
 
         if(index!=null){
             let $sheet = $("#luckysheet-sheets-item" + index);

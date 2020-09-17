@@ -120,6 +120,8 @@
                 </ul>
             </ul>
         </ul>
+        <hr />
+        <button id='resetSheetBtn'>重置表格</button>
     </div>
     <div id="luckysheet" style="margin:0;padding:0px;position:absolute;height:100%;left: 0px;right:283px;top: 0px;">
     </div>
@@ -177,8 +179,8 @@
                 var cellV = luckysheet.getcellvalue(r, c, flowdata);
                 console.log('dealCellUpdate cellV', cellV);
                 if (cell && cell.data) {
-                    cell.data.simpleValue = `${cellV}`;
-                    cell.data.expressionValue = `${cellV}`;
+                    cell.data.simpleValue = `${cellV || ''}`;
+                    cell.data.expressionValue = `${cellV || ''}`;
                 }
             }
 
@@ -280,6 +282,14 @@
             }
 
             /**
+             * 拖拽替换单元格之后的回调
+             * @param cellData
+             */
+            function onCellSelectMove() {
+                console.log('onCellSelectMove');
+            }
+
+            /**
              * 单元格更新只有的回调
              */
             function onCellUpdate(cellData) {
@@ -297,12 +307,47 @@
                 }
             }
 
-            luckysheet.create({
+            /**
+             * 添加“行/列”之后的回调
+             * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+             * @param {number} ind 行/列索引
+             * @param {number} len 操作的数量
+             * @param {string} direction 方向。'lefttop': 在上方插行/左方插列。'rightbottom'：在下方插行/右方插列
+             */
+            function onRCAdd(type, ind, len, direction) {
+                console.log('添加“行/列”之后的回调', arguments);
+            }
+
+            /**
+             * 删除“行/列”之后的回调
+             * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+             * @param {number} ind 行/列索引
+             * @param {number} len 操作的数量
+             */
+            function onRCDelete(type, ind, len) {
+                console.log('删除“行/列”之后的回调', arguments);
+
+            }
+
+            /**
+             * 显示/隐藏“行/列”之后的回调
+             * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+             * @param {number} inds 行/列索引数组
+             * @param {string} isShow 是否“显示”操作。true：显示操作。false：隐藏操作
+             */
+            function onRCShowHide(type, inds, isShow) {
+                console.log('显示/隐藏“行/列”之后的回调', arguments);
+            }
+
+            var markContentStyleStr = 'display:inline-block;width: 10px;height: 10px;border: 1px solid #f3bd35;box-sizing:border-box;margin:3px 0 0 1px;';
+
+            window.sheetConf = {
                 container: 'luckysheet',
                 lang: 'zh',
                 allowEdit: true,
                 autoFormatw: true,
                 forceCalculation: false,
+                zoomRatio: 1,
                 menu: "undo|redo|freezenrow|freezencolumn|pivot", //"undo|redo|freezenrow|freezencolumn|download|share|chart|pivot",
                 // plugins: ['chart'],
                 data: [
@@ -321,7 +366,7 @@
                                     "fc": "rgb(51, 51, 51)", "ht": 1, "vt": 1,
                                     "m": '123', v: 123,
                                     data: {
-                                        simpleValue: ''
+                                        simpleValue: '123'
                                     }
                                 },
 
@@ -329,8 +374,8 @@
                         ],
                         "config": {},
                         "index": 0
-                    }
-                    // sheetCell
+                    },
+                    sheetCell
                     // sheetFormula, sheetConditionFormat, sheetTable, sheetSparkline, sheetComment, sheetPivotTableData, sheetPivotTable,
                     // sheetChart
                 ],
@@ -374,23 +419,49 @@
                      */
                     rightMenu: [{
                         id: 'config',
-                        zh: '配置',
+                        zh: '自定义菜单1',
                         children: [
                             {
                                 id: 'set-cross-thead',
                                 zh: '交叉表头',
+                                en: 'English',
+                                iconHtml: `<span title="HEADERREPEAT" style="${markContentStyleStr}border-top-width: 3px;border-color:#0188fb;" />`,
                                 onClick: function () {
-                                    console.log('交叉表头 click')
+                                    console.log('交叉表头 click');
+                                    var selectSave = luckysheet.getluckysheet_select_save();
+                                    if (selectSave && selectSave[0]) {
+                                        var row_focus = selectSave[0].row_focus;
+                                        var col_focus = selectSave[0].column_focus;
+                                        console.log(row_focus, col_focus);
+                                        var markHtml = '<span title="隐藏">x</span>';
+                                        luckysheet.updateRowMark(row_focus, markHtml)
+                                        luckysheet.updateColMark(col_focus, markHtml)
+                                        luckysheet.updateCellMark(row_focus, col_focus, markHtml);
+                                    }
                                 }
                             },
                             {
                                 id: 'clear-cross-thead',
                                 zh: '清除交叉表头',
                                 onClick: function () {
-                                    console.log('清除交叉表头 click')
+                                    console.log('清除交叉表头 click');
+                                    var selectSave = luckysheet.getluckysheet_select_save();
+                                    if (selectSave && selectSave[0]) {
+                                        var row_focus = selectSave[0].row_focus;
+                                        var col_focus = selectSave[0].column_focus;
+                                        console.log(row_focus);
+                                        luckysheet.removeRowMark(row_focus);
+                                        luckysheet.removeColMark(col_focus);
+                                    }
                                 }
                             },
                         ]
+                    },
+                    {
+                        id: 'cus-menu2',
+                        zh: '自定义菜单2',
+                        en: 'English',
+                        iconHtml: `<span title="HEADERREPEAT" style="${markContentStyleStr}border-bottom-width: 3px;border-color:#0188fb;" />`,
                     }],
                     /**
                      * 单元格切换之后的回调
@@ -406,13 +477,51 @@
                     onCellClear: onCellClear,
                     // 粘贴后的回调
                     onCellPaste: onCellPaste,
+                    // 拖拽替换单元格后的回调
+                    onCellSelectMove: onCellSelectMove,
                     // 自定义“更新单元格的值”逻辑
                     dealCellUpdate: dealCellUpdate,
                     // 单元格更新后
                     onCellUpdate: onCellUpdate,
                     beforeCellEdit: beforeCellEdit,
+
+                    /**
+                     * 添加“行/列”之后的回调
+                     * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+                     * @param {number} ind 行/列索引
+                     * @param {number} len 操作的数量
+                     * @param {string} direction 方向。'lefttop': 在上方插行/左方插列。'rightbottom'：在下方插行/右方插列
+                     */
+                    onRCAdd: onRCAdd,
+
+                    /**
+                     * 删除“行/列”之后的回调
+                     * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+                     * @param {number} ind 行/列索引
+                     * @param {number} len 操作的数量
+                     */
+                    onRCDelete: onRCDelete,
+
+                    /**
+                     * 显示/隐藏“行/列”之后的回调
+                     * @param {string} type 操作类型。'r'：行操作。'c'：列操作
+                     * @param {number} inds 行/列索引数组
+                     * @param {string} isShow 是否“显示”操作。true：显示操作。false：隐藏操作
+                     */
+                    onRCShowHide: onRCShowHide,
                 }
-            });
+            };
+
+            function createSheet() {
+                luckysheet.create(sheetConf);
+            }
+
+            function resetSheet() {
+                luckysheet.destroy();
+                createSheet();
+            }
+
+            createSheet();
 
             $('.set-panel').on('mousedown', function (event) {
                 luckysheet.blurCellEdit();
@@ -437,7 +546,7 @@
 
                 } else if ('expand' === field) { // 展开方向
 
-                } else if('order' === field) { // 排序方向
+                } else if ('order' === field) { // 排序方向
 
                 }
             })
@@ -463,6 +572,10 @@
                     name: name
                 });
             });
+
+            $('#resetSheetBtn').on('click', function () {
+                resetSheet();
+            })
         })
     </script>
 </body>

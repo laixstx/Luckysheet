@@ -35,14 +35,18 @@ export function rightMenuHtml() {
                         if (subMenuItem && subMenuItem.id) {
                             let mName = subMenuItem[lang] || '';
                             subMenuHtm += `<div id="right-submenu-${subMenuItem.id}" data-id="${subMenuItem.id}" class="custom-submenuitem luckysheet-cols-menuitem luckysheet-copy-btn luckysheet-mousedown-cancel">
-                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${mName}</div>
+                                <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                                ${mName}<span class="luckysheet-submenu-arrow" style="user-select: none;">${subMenuItem.iconHtml || ''}</span>
+                                </div>
                             </div>`
                         }
                     });
                     subMenuHtm += '</div>'
                 } else {
                     menuHtm += `<div id="${menuId}" data-id="${menuItem.id}" class="custom-menuitem luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${menuName}</div>
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                    ${menuName}<span class="luckysheet-submenu-arrow" style="user-select: none;">${menuItem.iconHtml || ''}</span>
+                    </div>
                 </div>`
                 }
             }

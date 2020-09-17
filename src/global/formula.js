@@ -941,13 +941,13 @@ const luckysheetformula = {
         _this.searchFunctionPosition($("#luckysheet-formula-search-c"), $c, offset.left, offset.top);
     },
     searchFunctionEnter: function($obj) {
-        let _this = this;
+        // let _this = this;
 
-        let functxt = $obj.data("func");
-        _this.searchFunctionCell.text(functxt).after('<span dir="auto" class="luckysheet-formula-text-color">(</span>');
-        _this.setCaretPosition(_this.searchFunctionCell.next().get(0), 0, 1);
-        $("#luckysheet-formula-search-c").hide();
-        _this.helpFunctionExe(_this.searchFunctionCell.closest("div"), _this.searchFunctionCell.next());
+        // let functxt = $obj.data("func");
+        // _this.searchFunctionCell.text(functxt).after('<span dir="auto" class="luckysheet-formula-text-color">(</span>');
+        // _this.setCaretPosition(_this.searchFunctionCell.next().get(0), 0, 1);
+        // $("#luckysheet-formula-search-c").hide();
+        // _this.helpFunctionExe(_this.searchFunctionCell.closest("div"), _this.searchFunctionCell.next());
     },
     searchFunctionHTML: function(list) {
         let _this = this;
@@ -1070,6 +1070,7 @@ const luckysheetformula = {
         _this.searchFunctionPosition($("#luckysheet-formula-help-c"), $c, offset.left, offset.top, true);
     },
     helpFunctionExe: function($editer, currSelection) {
+        return;
         let _this = this;
         let functionlist = Store.functionlist;
         let _locale = locale();
@@ -1241,28 +1242,28 @@ const luckysheetformula = {
         let d = editor.deepCopyFlowData(Store.flowdata);
 
         if (getObjType(curv) == "object") {
-            if(getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1){
-                let v = _this.execfunction(value, r, c, true);
+            // if(getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1){
+            //     let v = _this.execfunction(value, r, c, true);
 
-                curv = _this.execFunctionGroupData[r][c];
-                curv.f = v[2];
+            //     curv = _this.execFunctionGroupData[r][c];
+            //     curv.f = v[2];
 
-                //打进单元格的sparklines的配置串， 报错需要单独处理。
-                if(v.length == 4 && v[3].type == "sparklines"){
-                    delete curv.m;
-                    delete curv.v;
+            //     //打进单元格的sparklines的配置串， 报错需要单独处理。
+            //     if(v.length == 4 && v[3].type == "sparklines"){
+            //         delete curv.m;
+            //         delete curv.v;
 
-                    let curCalv = v[3].data;
+            //         let curCalv = v[3].data;
 
-                    if(getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object"){
-                        curv.v = curCalv[0];
-                    }
-                    else{
-                        curv.spl = v[3].data;
-                    }
-                }
-            }
-            else{
+            //         if(getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object"){
+            //             curv.v = curCalv[0];
+            //         }
+            //         else{
+            //             curv.spl = v[3].data;
+            //         }
+            //     }
+            // }
+            // else{
                 _this.delFunctionGroup(r, c);
                 _this.execFunctionGroup(r, c, value);
                 isRunExecFunction = false;
@@ -1270,36 +1271,36 @@ const luckysheetformula = {
 
                 delete curv.f;
                 delete curv.spl;
-            }
+            // }
 
             value = curv;
         } 
         else {
-            if(getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1){
-                let v = _this.execfunction(value, r, c, true);
+            // if(getObjType(value) == "string" && value.slice(0, 1) == "=" && value.length > 1){
+            //     let v = _this.execfunction(value, r, c, true);
 
-                value = {
-                    "v": v[1],
-                    "f": v[2]
-                };
+            //     value = {
+            //         "v": v[1],
+            //         "f": v[2]
+            //     };
 
-                //打进单元格的sparklines的配置串， 报错需要单独处理。
-                if(v.length == 4 && v[3].type == "sparklines"){
-                    let curCalv = v[3].data;
+            //     //打进单元格的sparklines的配置串， 报错需要单独处理。
+            //     if(v.length == 4 && v[3].type == "sparklines"){
+            //         let curCalv = v[3].data;
 
-                    if(getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object"){
-                        value.v = curCalv[0];
-                    }
-                    else{
-                        value.spl = v[3].data;
-                    }
-                }
-            }
-            else{
+            //         if(getObjType(curCalv) == "array" && getObjType(curCalv[0]) != "object"){
+            //             value.v = curCalv[0];
+            //         }
+            //         else{
+            //             value.spl = v[3].data;
+            //         }
+            //     }
+            // }
+            // else{
                 _this.delFunctionGroup(r, c);
                 _this.execFunctionGroup(r, c, value);
                 isRunExecFunction = false;
-            }
+            // }
         }
 
         setcellvalue(r, c, d, value);
@@ -3049,33 +3050,33 @@ const luckysheetformula = {
             let value = $editer.text(),
                 valuetxt = value;
 
-            if (value.length > 0 && value.substr(0, 1) == "=" && (kcode != 229 || value.length == 1)) {
-                value = _this.functionHTMLGenerate(value);
-                value1 = _this.functionHTMLGenerate(value1txt);
+            // if (value.length > 0 && value.substr(0, 1) == "=" && (kcode != 229 || value.length == 1)) {
+            //     value = _this.functionHTMLGenerate(value);
+            //     value1 = _this.functionHTMLGenerate(value1txt);
 
-                if (window.getSelection) { // all browsers, except IE before version 9
-                    let currSelection = window.getSelection();
-                    if($(currSelection.anchorNode).is("div")){
-                        let editorlen = $("#luckysheet-rich-text-editor span").length;
-                        _this.functionRangeIndex = [editorlen-1, $("#luckysheet-rich-text-editor").find("span").eq(editorlen-1).text().length];
-                    }
-                    else{
-                        _this.functionRangeIndex = [$(currSelection.anchorNode).parent().index(), currSelection.anchorOffset];
-                    }
-                } 
-                else { // Internet Explorer before version 9
-                    let textRange = document.selection.createRange();
-                    _this.functionRangeIndex = textRange;
-                }
+            //     if (window.getSelection) { // all browsers, except IE before version 9
+            //         let currSelection = window.getSelection();
+            //         if($(currSelection.anchorNode).is("div")){
+            //             let editorlen = $("#luckysheet-rich-text-editor span").length;
+            //             _this.functionRangeIndex = [editorlen-1, $("#luckysheet-rich-text-editor").find("span").eq(editorlen-1).text().length];
+            //         }
+            //         else{
+            //             _this.functionRangeIndex = [$(currSelection.anchorNode).parent().index(), currSelection.anchorOffset];
+            //         }
+            //     } 
+            //     else { // Internet Explorer before version 9
+            //         let textRange = document.selection.createRange();
+            //         _this.functionRangeIndex = textRange;
+            //     }
 
-                $editer.html(value);
-                _this.functionRange($editer, value, value1);
-                _this.canceFunctionrangeSelected();
+            //     $editer.html(value);
+            //     _this.functionRange($editer, value, value1);
+            //     _this.canceFunctionrangeSelected();
 
-                if(kcode != 46){//delete不执行此函数
-                    _this.createRangeHightlight();
-                }
-            }
+            //     if(kcode != 46){//delete不执行此函数
+            //         _this.createRangeHightlight();
+            //     }
+            // }
 
             _this.rangestart = false;
             _this.rangedrag_column_start = false;

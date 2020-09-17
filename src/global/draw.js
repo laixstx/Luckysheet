@@ -78,10 +78,10 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
         //     break;
         // }
 
-        if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+        // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
 
-        }
-        else {
+        // }
+        // else {
             luckysheetTableContent.fillStyle = "#ffffff";
             let firstOffset = (dataset_row_st==r)?-2:0;
             let lastOffset = (dataset_row_ed==r)?-2:0;
@@ -104,7 +104,7 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
 
             luckysheetTableContent.fillText(r + 1, horizonAlignPos/Store.zoomRatio, verticalAlignPos/Store.zoomRatio);
             luckysheetTableContent.restore();//restore scale after draw text
-        }
+        // }
 
         //vertical
         luckysheetTableContent.beginPath();
@@ -477,10 +477,10 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
 
             let end_c = Store.visibledatacolumn[c] - scrollWidth;
             
-            if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+            // if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
 
-            }
-            else {
+            // }
+            // else {
                 let firstcolumnlen = Store.defaultcollen;
                 if (Store.config["columnlen"] != null && Store.config["columnlen"][c] != null) {
                     firstcolumnlen = Store.config["columnlen"][c];
@@ -548,7 +548,7 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
                     "end_r": end_r, 
                     "end_c": end_c 
                 };
-            }
+            // }
         }
     }
 

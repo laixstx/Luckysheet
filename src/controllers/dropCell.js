@@ -12,6 +12,7 @@ import { getSheetIndex } from '../methods/get';
 import { getObjType, replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
+import { onDropFill } from '../customs/method';
 
 //选区下拉
 const luckysheetDropCell = {
@@ -387,6 +388,9 @@ const luckysheetDropCell = {
             $("#luckysheet-dropCell-icon").mouseleave(function(){ $(this).css("backgroundColor", "#f1f1f1") }); 
 
             countfunc();
+
+            // 【自改】回调自定义
+            onDropFill(_this.applyRange);
         });
     },
     typeItemHide: function(){
@@ -485,47 +489,47 @@ const luckysheetDropCell = {
                     for(let j = apply_str_r; j <= apply_end_r; j++){
                         let cell = applyData[j - apply_str_r];
 
-                        if(cell.f != null){
-                            let f = "=" + formula.functionCopy(cell.f, "down", j - apply_str_r + 1);
-                            let v = formula.execfunction(f, j, i);
+                        // if(cell.f != null){
+                        //     let f = "=" + formula.functionCopy(cell.f, "down", j - apply_str_r + 1);
+                        //     let v = formula.execfunction(f, j, i);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                        //     formula.execFunctionGroup(j, i, v[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                        //     cell.f = v[2];
+                        //     cell.v = v[1];
 
-                            if(cell.spl != null){
-                                cell.spl = v[3].data;
-                            }
-                            else{
-                                if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
-                                    if(cell.v == Infinity || cell.v == -Infinity){
-                                        cell.m = cell.v.toString();
-                                    }
-                                    else{
-                                        if(cell.v.toString().indexOf("e") > -1){
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if(len > 5){
-                                                len = 5;
-                                            }
+                        //     if(cell.spl != null){
+                        //         cell.spl = v[3].data;
+                        //     }
+                        //     else{
+                        //         if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
+                        //             if(cell.v == Infinity || cell.v == -Infinity){
+                        //                 cell.m = cell.v.toString();
+                        //             }
+                        //             else{
+                        //                 if(cell.v.toString().indexOf("e") > -1){
+                        //                     let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                        //                     if(len > 5){
+                        //                         len = 5;
+                        //                     }
 
-                                            cell.m = cell.v.toExponential(len).toString();
-                                        }
-                                        else{
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
-                                            cell.m = mask[0].toString();
-                                        }
-                                    }
+                        //                     cell.m = cell.v.toExponential(len).toString();
+                        //                 }
+                        //                 else{
+                        //                     let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                        //                     cell.m = mask[0].toString();
+                        //                 }
+                        //             }
 
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                }
-                                else{
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
-                                }
-                            }
-                        }
+                        //             cell.ct = { "fa": "General", "t": "n" };
+                        //         }
+                        //         else{
+                        //             let mask = genarate(cell.v);
+                        //             cell.m = mask[0].toString();
+                        //             cell.ct = mask[1];
+                        //         }
+                        //     }
+                        // }
 
                         d[j][i] = cell;
 
@@ -569,47 +573,47 @@ const luckysheetDropCell = {
                     for(let j = apply_end_r; j >= apply_str_r; j--){
                         let cell = applyData[apply_end_r - j];
 
-                        if(cell.f != null){
-                            let f = "=" + formula.functionCopy(cell.f, "up", apply_end_r - j + 1);
-                            let v = formula.execfunction(f, j, i);
+                        // if(cell.f != null){
+                        //     let f = "=" + formula.functionCopy(cell.f, "up", apply_end_r - j + 1);
+                        //     let v = formula.execfunction(f, j, i);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                        //     formula.execFunctionGroup(j, i, v[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                        //     cell.f = v[2];
+                        //     cell.v = v[1];
 
-                            if(cell.spl != null){
-                                cell.spl = v[3].data;
-                            }
-                            else{
-                                if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
-                                    if(cell.v == Infinity || cell.v == -Infinity){
-                                        cell.m = cell.v.toString();
-                                    }
-                                    else{
-                                        if(cell.v.toString().indexOf("e") > -1){
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if(len > 5){
-                                                len = 5;
-                                            }
+                        //     if(cell.spl != null){
+                        //         cell.spl = v[3].data;
+                        //     }
+                        //     else{
+                        //         if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
+                        //             if(cell.v == Infinity || cell.v == -Infinity){
+                        //                 cell.m = cell.v.toString();
+                        //             }
+                        //             else{
+                        //                 if(cell.v.toString().indexOf("e") > -1){
+                        //                     let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                        //                     if(len > 5){
+                        //                         len = 5;
+                        //                     }
 
-                                            cell.m = cell.v.toExponential(len).toString();
-                                        }
-                                        else{
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
-                                            cell.m = mask[0].toString();
-                                        }
-                                    }
+                        //                     cell.m = cell.v.toExponential(len).toString();
+                        //                 }
+                        //                 else{
+                        //                     let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                        //                     cell.m = mask[0].toString();
+                        //                 }
+                        //             }
 
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                }
-                                else{
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
-                                }
-                            }
-                        }
+                        //             cell.ct = { "fa": "General", "t": "n" };
+                        //         }
+                        //         else{
+                        //             let mask = genarate(cell.v);
+                        //             cell.m = mask[0].toString();
+                        //             cell.ct = mask[1];
+                        //         }
+                        //     }
+                        // }
 
                         d[j][i] = cell;
 
@@ -663,47 +667,47 @@ const luckysheetDropCell = {
                     for(let j = apply_str_c; j <= apply_end_c; j++){
                         let cell = applyData[j - apply_str_c];
 
-                        if(cell.f != null){
-                            let f = "=" + formula.functionCopy(cell.f, "right", j - apply_str_c + 1);
-                            let v = formula.execfunction(f, i, j);
+                        // if(cell.f != null){
+                        //     let f = "=" + formula.functionCopy(cell.f, "right", j - apply_str_c + 1);
+                        //     let v = formula.execfunction(f, i, j);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                        //     formula.execFunctionGroup(j, i, v[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                        //     cell.f = v[2];
+                        //     cell.v = v[1];
 
-                            if(cell.spl != null){
-                                cell.spl = v[3].data;
-                            }
-                            else{
-                                if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
-                                    if(cell.v == Infinity || cell.v == -Infinity){
-                                        cell.m = cell.v.toString();
-                                    }
-                                    else{
-                                        if(cell.v.toString().indexOf("e") > -1){
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if(len > 5){
-                                                len = 5;
-                                            }
+                        //     if(cell.spl != null){
+                        //         cell.spl = v[3].data;
+                        //     }
+                        //     else{
+                        //         if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
+                        //             if(cell.v == Infinity || cell.v == -Infinity){
+                        //                 cell.m = cell.v.toString();
+                        //             }
+                        //             else{
+                        //                 if(cell.v.toString().indexOf("e") > -1){
+                        //                     let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                        //                     if(len > 5){
+                        //                         len = 5;
+                        //                     }
 
-                                            cell.m = cell.v.toExponential(len).toString();
-                                        }
-                                        else{
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
-                                            cell.m = mask[0].toString();
-                                        }
-                                    }
+                        //                     cell.m = cell.v.toExponential(len).toString();
+                        //                 }
+                        //                 else{
+                        //                     let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                        //                     cell.m = mask[0].toString();
+                        //                 }
+                        //             }
 
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                }
-                                else{
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
-                                }
-                            }
-                        }
+                        //             cell.ct = { "fa": "General", "t": "n" };
+                        //         }
+                        //         else{
+                        //             let mask = genarate(cell.v);
+                        //             cell.m = mask[0].toString();
+                        //             cell.ct = mask[1];
+                        //         }
+                        //     }
+                        // }
 
                         d[i][j] = cell;
 
@@ -747,47 +751,47 @@ const luckysheetDropCell = {
                     for(let j = apply_end_c; j >= apply_str_c; j--){
                         let cell = applyData[apply_end_c - j];
 
-                        if(cell.f != null){
-                            let f = "=" + formula.functionCopy(cell.f, "left", apply_end_c - j + 1);
-                            let v = formula.execfunction(f, i, j);
+                        // if(cell.f != null){
+                        //     let f = "=" + formula.functionCopy(cell.f, "left", apply_end_c - j + 1);
+                        //     let v = formula.execfunction(f, i, j);
 
-                            formula.execFunctionGroup(j, i, v[1], undefined, d);
+                        //     formula.execFunctionGroup(j, i, v[1], undefined, d);
 
-                            cell.f = v[2];
-                            cell.v = v[1];
+                        //     cell.f = v[2];
+                        //     cell.v = v[1];
 
-                            if(cell.spl != null){
-                                cell.spl = v[3].data;
-                            }
-                            else{
-                                if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
-                                    if(cell.v == Infinity || cell.v == -Infinity){
-                                        cell.m = cell.v.toString();
-                                    }
-                                    else{
-                                        if(cell.v.toString().indexOf("e") > -1){
-                                            let len = cell.v.toString().split(".")[1].split("e")[0].length;
-                                            if(len > 5){
-                                                len = 5;
-                                            }
+                        //     if(cell.spl != null){
+                        //         cell.spl = v[3].data;
+                        //     }
+                        //     else{
+                        //         if(isRealNum(cell.v) && !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(cell.v)){
+                        //             if(cell.v == Infinity || cell.v == -Infinity){
+                        //                 cell.m = cell.v.toString();
+                        //             }
+                        //             else{
+                        //                 if(cell.v.toString().indexOf("e") > -1){
+                        //                     let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                        //                     if(len > 5){
+                        //                         len = 5;
+                        //                     }
 
-                                            cell.m = cell.v.toExponential(len).toString();
-                                        }
-                                        else{
-                                            let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
-                                            cell.m = mask[0].toString();
-                                        }
-                                    }
+                        //                     cell.m = cell.v.toExponential(len).toString();
+                        //                 }
+                        //                 else{
+                        //                     let mask = genarate(Math.round(cell.v * 1000000000) / 1000000000);
+                        //                     cell.m = mask[0].toString();
+                        //                 }
+                        //             }
 
-                                    cell.ct = { "fa": "General", "t": "n" };
-                                }
-                                else{
-                                    let mask = genarate(cell.v);
-                                    cell.m = mask[0].toString();
-                                    cell.ct = mask[1];
-                                }
-                            }
-                        }
+                        //             cell.ct = { "fa": "General", "t": "n" };
+                        //         }
+                        //         else{
+                        //             let mask = genarate(cell.v);
+                        //             cell.m = mask[0].toString();
+                        //             cell.ct = mask[1];
+                        //         }
+                        //     }
+                        // }
 
                         d[i][j] = cell;
 
@@ -1163,26 +1167,26 @@ const luckysheetDropCell = {
         //日期类型
         let copyD_date = copyD["date"];
         let applyD_date = [];
-        if(!!copyD_date){
-            for(let i = 0; i < copyD_date.length; i++){
-                let s = _this.getLenS(copyD_date[i]["index"], rsd);
-                let len = copyD_date[i]["index"].length * num + s;
+        // if(!!copyD_date){
+        //     for(let i = 0; i < copyD_date.length; i++){
+        //         let s = _this.getLenS(copyD_date[i]["index"], rsd);
+        //         let len = copyD_date[i]["index"].length * num + s;
 
-                let arrData;
-                if(type == "1" || type == "3"){
-                    arrData = _this.getDataByType(copyD_date[i]["data"], len, direction, type, "date");
-                }
-                else if(type == "8"){
-                    arrData = _this.getDataByType(copyD_date[i]["data"], len, direction, "0");
-                }
-                else{
-                    arrData = _this.getDataByType(copyD_date[i]["data"], len, direction, type);
-                }
+        //         let arrData;
+        //         if(type == "1" || type == "3"){
+        //             arrData = _this.getDataByType(copyD_date[i]["data"], len, direction, type, "date");
+        //         }
+        //         else if(type == "8"){
+        //             arrData = _this.getDataByType(copyD_date[i]["data"], len, direction, "0");
+        //         }
+        //         else{
+        //             arrData = _this.getDataByType(copyD_date[i]["data"], len, direction, type);
+        //         }
 
-                let arrIndex = _this.getDataIndex(csLen, asLen, copyD_date[i]["index"]);
-                applyD_date.push({"data": arrData, "index": arrIndex}); 
-            }    
-        }
+        //         let arrIndex = _this.getDataIndex(csLen, asLen, copyD_date[i]["index"]);
+        //         applyD_date.push({"data": arrData, "index": arrIndex}); 
+        //     }    
+        // }
 
         //中文小写数字 或 一~日
         let copyD_chnNumber = copyD["chnNumber"];
@@ -2323,12 +2327,21 @@ const luckysheetDropCell = {
         for(let i = 0; i < dataArr.length; i++){
             let d = $.extend(true, {}, dataArr[i]);
 
-            let obj;
+            // 【自改】修复 d['v'] == null 时的报错
+            let obj, 
+            m = d["v"] ? d["v"].toString():d["v"],
+            v =d["v"];
+
             if(d["f"] == null){
-                obj = {"m": d["v"].toString(), "v": d["v"]};
+                obj = {"m": m, "v": v};
             }
             else{
-                obj = {"f": d["f"], "m": d["v"].toString(), "v": d["v"]};
+                obj = {"f": d["f"], "m": m, "v": v};
+            }
+
+            // 【自改】如果有 data 属性，则保留 data 属性值
+            if(d.hasOwnProperty('data')) {
+                obj.data = d['data'];
             }
 
             applyData.push(obj);

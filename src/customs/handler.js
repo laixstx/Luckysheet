@@ -35,6 +35,8 @@ export default function customHandler() {
      * 点击自定义的右键菜单
      */
     $('.custom-submenuitem').on('click', function () {
+        $('#luckysheet-rightclick-menu').hide();
+        $(this).parent().hide();
         // console.log('subclick')
         /**
          * 自定义右键菜单，支持两级
@@ -73,15 +75,23 @@ export default function customHandler() {
         // 如果是正在拖动替换单元格，则延时之后再回调 onCellSelect
         if (customStore.cellSelectedMove) {
             customStore.cellSelectedMove = false;
+
             setTimeout(() => {
+
+                if (customConfig.onCellSelectMove) {
+                    customConfig.onCellSelectMove();
+                }
                 onCellSelect();
             }, 1);
 
             // 如果是双击单元格，则此次不需要响应 onCellSelect
-        } else if (customStore.cellDbClick) {
-            customStore.cellDbClick = false;
+        // } else if (customStore.cellDbClick) {
+        //     console.log('cellDbClick');
+        //     customStore.cellDbClick = false;
         } else {
-            onCellSelect();
+            setTimeout(() => {
+                onCellSelect();
+            }, 1);
         }
     });
 
@@ -133,28 +143,32 @@ export default function customHandler() {
         selectHightlightShow();
 
     }).on('drop', function (event) { // 松开拖拽动作之后
-        customStore.draggingEle = false;
 
-        if (customConfig.onCellDrop) {
-            customConfig.onCellDrop();
+        if (customStore.draggingEle) {
+
+            if (customConfig.onCellDrop) {
+                customConfig.onCellDrop();
+            }
+
+            var selectSave = getluckysheet_select_save();
+
+            if (selectSave && selectSave[0] && selectSave[0].column) {
+                var colInd = selectSave[0].column[0];
+                var rowInd = selectSave[0].row[0];
+
+                //单元格格式icon对应
+                menuButton.menuButtonFocus(Store.flowdata, rowInd, colInd);
+                //函数公式显示栏
+                formula.fucntionboxshow(rowInd, colInd);
+            }
+            setTimeout(() => {
+                luckysheetContainerFocus();
+            }, 10);
+
+            onCellSelect();
+
+            customStore.draggingEle = false;
         }
-
-        var selectSave = getluckysheet_select_save();
-
-        if (selectSave && selectSave[0] && selectSave[0].column) {
-            var colInd = selectSave[0].column[0];
-            var rowInd = selectSave[0].row[0];
-
-            //单元格格式icon对应
-            menuButton.menuButtonFocus(Store.flowdata, rowInd, colInd);
-            //函数公式显示栏
-            formula.fucntionboxshow(rowInd, colInd);
-        }
-        setTimeout(() => {
-            luckysheetContainerFocus();
-        }, 10);
-
-        onCellSelect();
     });
 
 }

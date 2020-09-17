@@ -4,6 +4,7 @@ import { datagridgrowth } from './getdata';
 import { jfrefreshgrid, jfrefreshgridall, jfrefreshrange } from './refresh';
 import { getSheetIndex } from '../methods/get';
 import Store from '../store';
+import cloneDeep from 'lodash/cloneDeep';
 
 const editor = {
     //worker+blob实现深拷贝替换extend
@@ -12,20 +13,20 @@ const editor = {
     deepCopyFlowDataWorker:null,
     deepCopyFlowData:function(flowData){
         let _this = this;
-
-        if(_this.deepCopyFlowDataState){
-            if(_this.deepCopyFlowDataWorker != null){
-                _this.deepCopyFlowDataWorker.terminate();  
-            }
-            return _this.deepCopyFlowDataCache;
-        }
-        else{
+        // 【自改】
+        // if(_this.deepCopyFlowDataState){
+        //     if(_this.deepCopyFlowDataWorker != null){
+        //         _this.deepCopyFlowDataWorker.terminate();  
+        //     }
+        //     return _this.deepCopyFlowDataCache;
+        // }
+        // else{
             if(flowData == null){
                 flowData = Store.flowdata;
             }
 
-            return $.extend(true, [], flowData);
-        }
+            return cloneDeep(flowData); // $.extend(true, [], flowData);
+        // }
     },
     webWorkerFlowDataCache:function(flowData){
         let _this = this;
