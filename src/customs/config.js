@@ -3,6 +3,8 @@
  * @type {{}}
  */
 const customConfig = {
+    needRowHidden: undefined,
+    needColHidden: undefined,
     /**
      * 自定义操作栏的按钮
      * @type {[{id: string, zh: string, en: string, icon: string, onClick?: function()}]}

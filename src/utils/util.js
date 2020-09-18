@@ -4,6 +4,7 @@ import { isdatatype, isdatatypemulti } from '../global/datecontroll';
 import { hasChinaword } from '../global/validate';
 import Store from '../store';
 import locale from '../locale/locale'; 
+import customConfig from '../customs/config'
 
 /**
  * Common tool methods
@@ -355,6 +356,31 @@ function luckysheetfontformat(format) {
 
 //右键菜单
 function showrightclickmenu($menu, x, y) {
+
+    // 【自改】控制是否需要“隐藏/显示行列”
+    if((Store.luckysheetRightHeadClickIs === 'row' && false === customConfig.needRowHidden) || 
+        (Store.luckysheetRightHeadClickIs === 'column' && false === customConfig.needColHidden)) {
+        $('#luckysheet-hide-selected, #luckysheet-show-selected').hide();
+        
+    } else {
+        $('#luckysheet-hide-selected, #luckysheet-show-selected').show();
+    }
+    if(false === customConfig.needColHidden) {
+        $('#luckysheet-hidCols, #luckysheet-showHidCols').hide();
+    } else {
+        $('#luckysheet-hidCols, #luckysheet-showHidCols').show();
+    }
+    if(false === customConfig.needRowHidden) {
+        $('#luckysheet-hidRows, #luckysheet-showHidRows').hide();
+    } else {
+        $('#luckysheet-hidRows, #luckysheet-showHidRows').show();
+    }
+    if(false !== customConfig.needRowHidden && false !== customConfig.needRowHidden) {
+        $('#luckysheet-showHidRows + div').show();
+    } else {
+        $('#luckysheet-showHidRows + div').hide();
+    }
+
     let winH = $(window).height(), winW = $(window).width();
     let menuW = $menu.width(), menuH = $menu.height();
     let top = y, left = x;
