@@ -156,7 +156,6 @@ export function zoomInitial(){
         zoomNumberDomBind(1);
     });
 
-    zoomChange(1);
     zoomNumberDomBind(Store.zoomRatio);
 }
 

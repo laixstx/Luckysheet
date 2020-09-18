@@ -9,6 +9,7 @@ import luckysheetcreatesheet from './createsheet';
 import Store from '../store';
 import { clearAllMarks } from '../customs/markMethod';
 import { keyboardUnbind } from '../controllers/keyboard';
+import { zoomChange } from '../controllers/zoom';
 
 const method = {
     //翻页
@@ -157,6 +158,7 @@ const method = {
     },
     destroy: function () {
         // 【自改】
+        zoomChange(1);
         keyboardUnbind(); // 解绑键盘事件
         clearAllMarks(); // 清除标记
 
