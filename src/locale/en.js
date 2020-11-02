@@ -119,7 +119,8 @@ export default {
         tipInputNumber:"Please enter the number",
         tipInputNumberLimit:"The increase range is limited to 1-100",
 
-        tipRowHeightLimit:"The value must be between 0 ~ 255",
+        // tipRowHeightLimit:"The value must be between 0 ~ 255",
+        tipRowHeightLimit:"The value must be greater than 0",
         pageInfoFull:'Total ${total}，${totalPage} page，All data displayed',
     },
     currencyDetail:{

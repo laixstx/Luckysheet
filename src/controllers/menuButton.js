@@ -2993,41 +2993,46 @@ const menuButton = {
             mouseclickposition($menuButton, menuleft, $(this).offset().top + 25, "lefttop");
         });
 
-        $("body").on("mouseover mouseleave", ".luckysheet-menuButton .luckysheet-cols-submenu", function (e) {
-            let $t = $(this), attrid = $t.attr("itemvalue"),
-                $attr = $("#luckysheet-icon-" + attrid + "-menuButton");
+        // 【自改】防止重复绑定事件
+        if('undefined' === typeof window.hadInitialSubmenuEvent) {
+            window.hadInitialSubmenuEvent = true;
 
-            if (e.type === "mouseover") {
-                let $con = $t.parent();
-                let winW = $(window).width(), winH = $(window).height();
-                let menuW = $con.width(), attrH = $attr.height() + 25, attrW = $attr.width() + 5;
-                let offset = $t.offset();
-                let top = offset.top, left = offset.left + menuW;
-
-                if (left + attrW > winW) {
-                    left = offset.left - attrW;
+            $("body").on("mouseover mouseleave", ".luckysheet-menuButton .luckysheet-cols-submenu", function (e) {
+                let $t = $(this), attrid = $t.attr("itemvalue"),
+                    $attr = $("#luckysheet-icon-" + attrid + "-menuButton");
+    
+                if (e.type === "mouseover") {
+                    let $con = $t.parent();
+                    let winW = $(window).width(), winH = $(window).height();
+                    let menuW = $con.width(), attrH = $attr.height() + 25, attrW = $attr.width() + 5;
+                    let offset = $t.offset();
+                    let top = offset.top, left = offset.left + menuW;
+    
+                    if (left + attrW > winW) {
+                        left = offset.left - attrW;
+                    }
+    
+                    if (top + attrH > winH) {
+                        top = winH - attrH;
+                    }
+    
+                    $attr.css({ "top": top, "left": left }).show();
+                    _this.rightclickmenu = $t;
+                } else {
+                    _this.submenuhide = setTimeout(function () {
+                        $attr.hide();
+                    }, 200);
                 }
-
-                if (top + attrH > winH) {
-                    top = winH - attrH;
+            }).on("mouseover mouseleave", ".luckysheet-menuButton-sub", function (e) {
+                if (e.type === "mouseover") {
+                    _this.rightclickmenu.addClass("luckysheet-cols-menuitem-hover");
+                    clearTimeout(_this.submenuhide);
+                } else {
+                    _this.rightclickmenu.removeClass("luckysheet-cols-menuitem-hover");
+                    $(this).hide();
                 }
-
-                $attr.css({ "top": top, "left": left }).show();
-                _this.rightclickmenu = $t;
-            } else {
-                _this.submenuhide = setTimeout(function () {
-                    $attr.hide();
-                }, 200);
-            }
-        }).on("mouseover mouseleave", ".luckysheet-menuButton-sub", function (e) {
-            if (e.type === "mouseover") {
-                _this.rightclickmenu.addClass("luckysheet-cols-menuitem-hover");
-                clearTimeout(_this.submenuhide);
-            } else {
-                _this.rightclickmenu.removeClass("luckysheet-cols-menuitem-hover");
-                $(this).hide();
-            }
-        });
+            });
+        }
     },
     getQKBorder: function (width, type, color) {
         let bordertype = "";

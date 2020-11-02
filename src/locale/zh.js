@@ -120,7 +120,8 @@ export default {
         tipInputNumber:"请输入数字",
         tipInputNumberLimit:"增加范围限制在1-100",
 
-        tipRowHeightLimit:"数值必须在0 ~ 255之间",
+        // tipRowHeightLimit:"数值必须在0 ~ 255之间",
+        tipRowHeightLimit:"数值必须大于在0",
         pageInfoFull:'共${total}条，${totalPage}页，已显示全部数据',
 
     },
@@ -367,8 +368,10 @@ export default {
     fontFamily:{
         MicrosoftYaHei:"Microsoft YaHei",
     },
-    fontarray: ["Times New Roman","Arial","Tahoma","Verdana","微软雅黑","宋体","黑体","楷体","仿宋","新宋体","华文新魏","华文行楷","华文隶书"],
-    fontjson: {"times new roman":0,"arial":1,"tahoma":2,"verdana":3,"微软雅黑":4,"microsoft yahei":4,"宋体":5,"simsun":5,"黑体":6,"simhei":6,"楷体":7,"kaiti":7,"仿宋":8,"fangsong":8,"新宋体":9,"nsimsun":9,"华文新魏":10,"stxinwei":10,"华文行楷":11,"stxingkai":11,"华文隶书":12,"stliti":12,},
+    // fontarray: ["微软雅黑","宋体","黑体","楷体","仿宋","新宋体","华文新魏","华文行楷","华文隶书","Times New Roman","Arial","Tahoma","Verdana"],
+    fontarray: ["宋体","黑体","楷体","仿宋","新宋体", "等线", "隶书", "幼圆"],
+    // fontjson: {"times new roman":0,"arial":1,"tahoma":2,"verdana":3,"微软雅黑":4,"microsoft yahei":4,"宋体":5,"simsun":5,"黑体":6,"simhei":6,"楷体":7,"kaiti":7,"仿宋":8,"fangsong":8,"新宋体":9,"nsimsun":9,"华文新魏":10,"stxinwei":10,"华文行楷":11,"stxingkai":11,"华文隶书":12,"stliti":12,},
+    fontjson: {"宋体":0,"simsun":0,"黑体":1,"simhei":1,"楷体":2,"kaiti":2,"仿宋":3,"fangsong":3,"新宋体":4,"nsimsun":4, "等线": 5, "dengxian":5, "隶书": 6, "lishu":6, "幼圆": 7, "youyuan":7},
     border:{
         borderTop:'上框线',
         borderBottom:'下框线',

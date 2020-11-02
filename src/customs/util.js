@@ -15,11 +15,10 @@ export const recursiveFind = (data, func, parentObj, childKeyName = 'children', 
         for (let key = 0, len = data.length; key < len; key++) {
             const obj = data[key];
             const isOk = func(obj, key, parentObj, parentInd);
-            // console.log('isOk',isOk);
+            
             if (!isOk && obj) {
 
                 if (obj[childKeyName]) {
-                    // @ts-ignore
                     reObj = recursiveFind(obj[childKeyName], func, obj, childKeyName, key);
 
                     if (reObj) break;

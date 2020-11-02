@@ -1550,7 +1550,8 @@ export function rowColumnOperationInitial() {
 
         let size = parseInt($(this).siblings("input[type='number']").val().trim());
 
-        if (size < 0 || size > 255) {
+        // if (size < 0 || size > 255) {
+        if (size < 0) {
             const locale_info = locale().info;
 
             if (isEditMode()) {
