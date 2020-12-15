@@ -9,3 +9,4 @@ docs/.vuepress/dist
 dist.*
 
 .idea/.gitignore
+yarn.lock
