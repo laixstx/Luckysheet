@@ -11,6 +11,7 @@ import Store from '../store';
 import menuButton from './menuButton';
 import conditionformat from './conditionformat';
 import alternateformat from './alternateformat';
+import {checkProtectionAuthorityNormal} from './protection';
 import { 
     rgbTohex, 
     showrightclickmenu, 
@@ -120,19 +121,27 @@ function orderbydatafiler(str, stc, edr, edc, index, asc) {
         }
     }
 
+    let allParam = {};
     if(Store.config["rowlen"] != null){
         let cfg = $.extend(true, {}, Store.config);
         cfg = rowlenByRange(d, str, edr, cfg);
 
-        jfrefreshgrid(d, [{ "row": [str, edr], "column": [stc, edc] }], cfg, null, true);
+        allParam = {
+            "cfg": cfg,
+            "RowlChange": true
+        }
     }
-    else{
-        jfrefreshgrid(d, [{ "row": [str, edr], "column": [stc, edc] }]);
-    }
+
+    jfrefreshgrid(d, [{ "row": [str, edr], "column": [stc, edc] }], allParam);
 }
 
 //创建筛选按钮
 function createFilter() {
+
+    if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "filter")){
+        return;
+    }
+
     if(Store.luckysheet_select_save.length > 1){
         $("#luckysheet-rightclick-menu").hide();
         $("#luckysheet-filter-menu, #luckysheet-filter-submenu").hide();
@@ -420,6 +429,9 @@ function initialFilterHandler(){
 
     //筛选按钮点击事件
     $("#luckysheet-cell-main").on("click", ".luckysheet-filter-options", function (e) {
+        if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "filter")){
+            return;
+        }
         let $t = $(e.currentTarget), 
             toffset = $t.offset(), 
             $menu = $("#luckysheet-filter-menu"), 
@@ -745,6 +757,10 @@ function initialFilterHandler(){
     
                 //单元格颜色
                 let bg = menuButton.checkstatus(Store.flowdata, r, cindex , "bg");
+
+                if(bg == null){
+                    bg = "#ffffff";
+                }
     
                 let checksAF = alternateformat.checksAF(r, cindex, af_compute);
                 if(checksAF != null){//若单元格有交替颜色
@@ -958,7 +974,10 @@ function initialFilterHandler(){
             if(checksCF != null && checksCF["cellColor"] != null){//若单元格有条件格式
                 bg = checksCF["cellColor"];
             }
-    
+            
+            // bg maybe null
+            bg = bg == null ? '#ffffff' : bg;
+
             if(bg.indexOf("rgb") > -1){
                 bg = rgbTohex(bg);
             }
@@ -1034,7 +1053,7 @@ function initialFilterHandler(){
                 redo["caljs"] = caljs;
             }
     
-            Store.jfundo = [];
+            Store.jfundo.length  = 0;
             Store.jfredo.push(redo);
         }
     
@@ -1243,11 +1262,12 @@ function initialFilterHandler(){
 
     //清除筛选
     $("#luckysheet-filter-initial").click(function () {
+        if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "filter")){
+            return;
+        }
+
         $("#luckysheet-filter-menu .luckysheet-filter-selected-input").hide().find("input").val();
         $("#luckysheet-filter-selected span").data("type", "0").data("type", null).text(locale_filter.conditionNone);
-
-        $('#luckysheet-filter-selected-sheet' + Store.currentSheetIndex + ', #luckysheet-filter-options-sheet' + Store.currentSheetIndex).remove();
-        $("#luckysheet-filter-menu, #luckysheet-filter-submenu").hide();
 
         let redo = {};
         redo["type"] = "datachangeAll_filter_clear";
@@ -1280,8 +1300,11 @@ function initialFilterHandler(){
         });
         redo["optiongroups"] = optiongroups;
 
-        Store.jfundo = [];
+        Store.jfundo.length  = 0;
         Store.jfredo.push(redo);
+
+        $('#luckysheet-filter-selected-sheet' + Store.currentSheetIndex + ', #luckysheet-filter-options-sheet' + Store.currentSheetIndex).remove();
+        $("#luckysheet-filter-menu, #luckysheet-filter-submenu").hide();
 
         //清除筛选发送给后台
         Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].filter = null;
@@ -1752,7 +1775,7 @@ function initialFilterHandler(){
                 redo["caljs"] = caljs;
             }
 
-            Store.jfundo = [];
+            Store.jfundo.length  = 0;
             Store.jfredo.push(redo);
         }
 

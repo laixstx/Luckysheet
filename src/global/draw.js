@@ -3,18 +3,22 @@ import conditionformat from '../controllers/conditionformat';
 import alternateformat from '../controllers/alternateformat';
 import luckysheetSparkline from '../controllers/sparkline';
 import menuButton from '../controllers/menuButton';
+import dataVerificationCtrl from '../controllers/dataVerificationCtrl';
 import { luckysheetdefaultstyle, luckysheet_CFiconsImg,luckysheetdefaultFont } from '../controllers/constant';
 import { luckysheet_searcharray } from '../controllers/sheetSearch';
 import { dynamicArrayCompute } from './dynamicArray';
 import browser from './browser';
-import { isRealNull } from './validate';
-import { getCellTextSplitArr,getMeasureText } from './getRowlen';
-import { getcellvalue } from './getdata';
-import { getBorderInfoCompute } from './border';
+import { isRealNull, isRealNum } from './validate';
+import { getCellTextSplitArr,getMeasureText,getCellTextInfo } from './getRowlen';
+import { getcellvalue,getRealCellValue } from './getdata';
+import { getBorderInfoComputeRange } from './border';
 import { getSheetIndex } from '../methods/get';
 import { getObjType, chatatABC, luckysheetfontformat } from '../utils/util';
+import { isInlineStringCell } from '../controllers/inlineString';
+import method from './method';
 import Store from '../store';
 import locale from '../locale/locale';
+import sheetmanage from '../controllers/sheetmanage';
 
 function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
     if (scrollHeight == null) {
@@ -26,7 +30,7 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
     }
 
     if (offsetTop == null) {
-        offsetTop = Store.columeHeaderHeight;
+        offsetTop = Store.columnHeaderHeight;
     }
     
     let luckysheetTableContent = $("#luckysheetTableContent").get(0).getContext("2d");
@@ -63,7 +67,7 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
 
     let end_r, start_r;
     let bodrder05 = 0.5;//Default 0.5
-
+    let preEndR;
     for (let r = dataset_row_st; r <= dataset_row_ed; r++) {
         if (r == 0) {
             start_r = -scrollHeight - 1;
@@ -77,14 +81,21 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
         // if(end_r > scrollHeight + drawHeight){
         //     break;
         // }
+        let firstOffset = (dataset_row_st==r)?-2:0;
+        let lastOffset = (dataset_row_ed==r)?-2:0;
+        //列标题单元格渲染前触发，return false 则不渲染该单元格
+        if(!method.createHookFunction("rowTitleCellRenderBefore", r+1, {
+            r:r,
+            top:(start_r + offsetTop + firstOffset),
+            width:Store.rowHeaderWidth -1,
+            height:(end_r - start_r + 1+lastOffset-firstOffset)
+        }, luckysheetTableContent)){ continue; }
 
         if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
 
         }
         else {
             luckysheetTableContent.fillStyle = "#ffffff";
-            let firstOffset = (dataset_row_st==r)?-2:0;
-            let lastOffset = (dataset_row_ed==r)?-2:0;
             luckysheetTableContent.fillRect(
                 0,
                 (start_r + offsetTop + firstOffset) , 
@@ -123,19 +134,63 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
         luckysheetTableContent.closePath();
 
         //行标题栏横线,horizen
-        luckysheetTableContent.beginPath();
-        luckysheetTableContent.moveTo(
-            -1,
-            (end_r + offsetTop - 2 + bodrder05) 
-        );
-        luckysheetTableContent.lineTo(
-            (Store.rowHeaderWidth - 1) ,
-            (end_r + offsetTop - 2 + bodrder05) 
-        );
-        // luckysheetTableContent.lineWidth = 1;
-        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
-        luckysheetTableContent.closePath();
-        luckysheetTableContent.stroke();
+        if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] == null && Store.config["rowhidden"][r+1] != null) {
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.moveTo(
+                -1,
+                (end_r + offsetTop - 4 + bodrder05) 
+            );
+            luckysheetTableContent.lineTo(
+                (Store.rowHeaderWidth - 1) ,
+                (end_r + offsetTop - 4 + bodrder05) 
+            );
+            // luckysheetTableContent.lineWidth = 1;
+            // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            luckysheetTableContent.closePath();
+            luckysheetTableContent.stroke();
+        }
+        else if(Store.config["rowhidden"]==null || Store.config["rowhidden"][r] == null){
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.moveTo(
+                -1,
+                (end_r + offsetTop - 2 + bodrder05) 
+            );
+            luckysheetTableContent.lineTo(
+                (Store.rowHeaderWidth - 1) ,
+                (end_r + offsetTop - 2 + bodrder05) 
+            );
+
+            // luckysheetTableContent.lineWidth = 1;
+            // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            luckysheetTableContent.closePath();
+            luckysheetTableContent.stroke();
+
+        }
+
+        if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r-1] != null && preEndR!=null) {
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.moveTo(
+                -1,
+                (preEndR + offsetTop + bodrder05) 
+            );
+            luckysheetTableContent.lineTo(
+                (Store.rowHeaderWidth - 1) ,
+                (preEndR + offsetTop + bodrder05) 
+            );
+            luckysheetTableContent.closePath();
+            luckysheetTableContent.stroke();
+        }
+
+        preEndR = end_r;
+
+        //列标题单元格渲染前触发，return false 则不渲染该单元格
+        method.createHookFunction("rowTitleCellRenderAfter", r+1, {
+            r:r,
+            top:(start_r + offsetTop + firstOffset),
+            width:Store.rowHeaderWidth -1,
+            height:(end_r - start_r + 1+lastOffset-firstOffset)
+        }, luckysheetTableContent)
+
     }
 
     //行标题栏竖线
@@ -155,7 +210,7 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
 
 
     //清除canvas左上角区域 防止列标题栏序列号溢出显示
-    // luckysheetTableContent.clearRect(0, 0, Store.rowHeaderWidth , Store.columeHeaderHeight );
+    // luckysheetTableContent.clearRect(0, 0, Store.rowHeaderWidth , Store.columnHeaderHeight );
 
     luckysheetTableContent.restore();
 
@@ -182,7 +237,7 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
         offsetLeft ,
         0,
         drawWidth ,
-        (Store.columeHeaderHeight - 1) 
+        (Store.columnHeaderHeight - 1) 
     );
 
 
@@ -203,13 +258,14 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
     
     luckysheetTableContent.save();
     luckysheetTableContent.beginPath();
-    luckysheetTableContent.rect(offsetLeft-1, 0, drawWidth, Store.columeHeaderHeight -1);
+    luckysheetTableContent.rect(offsetLeft-1, 0, drawWidth, Store.columnHeaderHeight -1);
     luckysheetTableContent.clip();
 
-    // console.log(offsetLeft, 0, drawWidth, Store.columeHeaderHeight -1);
+    // console.log(offsetLeft, 0, drawWidth, Store.columnHeaderHeight -1);
 
     let end_c, start_c;
     let bodrder05 = 0.5;//Default 0.5
+    let preEndC;
     for (let c = dataset_col_st; c <= dataset_col_ed; c++) {
         if (c == 0) {
             start_c = -scrollWidth;
@@ -223,70 +279,127 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
         // if(end_c > scrollWidth + drawWidth+1){
         //     break;
         // }
-
-        luckysheetTableContent.fillStyle = "#ffffff";
-        luckysheetTableContent.fillRect(
-            (start_c + offsetLeft - 1) , 
-            0, 
-            (end_c - start_c) ,
-            Store.columeHeaderHeight -1
-        )
-        luckysheetTableContent.fillStyle = "#000000";
-
-        //列标题栏序列号
-        luckysheetTableContent.save();//save scale before draw text
-        luckysheetTableContent.scale(Store.zoomRatio,Store.zoomRatio);
         let abc = chatatABC(c);
-        let textMetrics = getMeasureText(abc, luckysheetTableContent);
-        //luckysheetTableContent.measureText(abc);
-
-        let horizonAlignPos = Math.round((start_c + (end_c - start_c) / 2 + offsetLeft)  - textMetrics.width / 2);
-        let verticalAlignPos = Math.round(Store.columeHeaderHeight / 2 );
+        //列标题单元格渲染前触发，return false 则不渲染该单元格
+        if(!method.createHookFunction("columnTitleCellRenderBefore", abc, {
+            c:c,
+            left:(start_c + offsetLeft - 1),
+            width:(end_c - start_c),
+            height:Store.columnHeaderHeight -1
+        }, luckysheetTableContent)){ continue; }
         
-        luckysheetTableContent.fillText(abc, horizonAlignPos/Store.zoomRatio, verticalAlignPos/Store.zoomRatio);
-        luckysheetTableContent.restore();//restore scale after draw text
+        if (Store.config["colhidden"] != null && Store.config["colhidden"][c] != null) {
+
+        }
+        else {
+            luckysheetTableContent.fillStyle = "#ffffff";
+            luckysheetTableContent.fillRect(
+                (start_c + offsetLeft - 1) , 
+                0, 
+                (end_c - start_c) ,
+                Store.columnHeaderHeight -1
+            )
+            luckysheetTableContent.fillStyle = "#000000";
+
+            //列标题栏序列号
+            luckysheetTableContent.save();//save scale before draw text
+            luckysheetTableContent.scale(Store.zoomRatio,Store.zoomRatio);
+            
+            let textMetrics = getMeasureText(abc, luckysheetTableContent);
+            //luckysheetTableContent.measureText(abc);
+
+            let horizonAlignPos = Math.round((start_c + (end_c - start_c) / 2 + offsetLeft)  - textMetrics.width / 2);
+            let verticalAlignPos = Math.round(Store.columnHeaderHeight / 2 );
+            
+            luckysheetTableContent.fillText(abc, horizonAlignPos/Store.zoomRatio, verticalAlignPos/Store.zoomRatio);
+            luckysheetTableContent.restore();//restore scale after draw text
+        }
 
         //列标题栏竖线 vertical
-        luckysheetTableContent.beginPath();
-        luckysheetTableContent.moveTo(
-            (end_c + offsetLeft - 2 + bodrder05) ,
-            0
-        );
-        luckysheetTableContent.lineTo(
-            (end_c + offsetLeft - 2 + bodrder05) ,
-            (Store.columeHeaderHeight - 2) 
-        );
-        luckysheetTableContent.lineWidth = 1;
-        luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
-        luckysheetTableContent.closePath();
-        luckysheetTableContent.stroke();
+        if (Store.config["colhidden"] != null && Store.config["colhidden"][c] == null && Store.config["colhidden"][c+1] != null) {
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.moveTo(
+                (end_c + offsetLeft - 4 + bodrder05) ,
+                0
+            );
+            luckysheetTableContent.lineTo(
+                (end_c + offsetLeft - 4 + bodrder05) ,
+                (Store.columnHeaderHeight - 2) 
+            );
+            luckysheetTableContent.lineWidth = 1;
+            luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            luckysheetTableContent.closePath();
+            luckysheetTableContent.stroke();
+        }
+        else if(Store.config["colhidden"]==null || Store.config["colhidden"][c] == null) {
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.moveTo(
+                (end_c + offsetLeft - 2 + bodrder05) ,
+                0
+            );
+            luckysheetTableContent.lineTo(
+                (end_c + offsetLeft - 2 + bodrder05) ,
+                (Store.columnHeaderHeight - 2) 
+            );
+
+            luckysheetTableContent.lineWidth = 1;
+            luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            luckysheetTableContent.closePath();
+            luckysheetTableContent.stroke();
+        }
+
+        if (Store.config["colhidden"] != null && Store.config["colhidden"][c-1] != null && preEndC!=null) {
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.moveTo(
+                (preEndC + offsetLeft + bodrder05) ,
+                0
+            );
+            luckysheetTableContent.lineTo(
+                (preEndC + offsetLeft + bodrder05) ,
+                (Store.columnHeaderHeight - 2) 
+            );
+            // luckysheetTableContent.lineWidth = 1;
+            // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            luckysheetTableContent.closePath();
+            luckysheetTableContent.stroke();
+        }
+
 
         //horizen
         luckysheetTableContent.beginPath();
         luckysheetTableContent.moveTo(
              (start_c + offsetLeft - 1), 
-            (Store.columeHeaderHeight - 2 + bodrder05) 
+            (Store.columnHeaderHeight - 2 + bodrder05) 
         );
         luckysheetTableContent.lineTo(
              (end_c + offsetLeft - 1), 
-            (Store.columeHeaderHeight - 2 + bodrder05) 
+            (Store.columnHeaderHeight - 2 + bodrder05) 
         );
         // luckysheetTableContent.lineWidth = 1;
 
         // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;        
         luckysheetTableContent.stroke();
         luckysheetTableContent.closePath();
+
+        preEndC = end_c;
+
+        method.createHookFunction("columnTitleCellRenderAfter", abc, {
+            c:c,
+            left:(start_c + offsetLeft - 1),
+            width:(end_c - start_c),
+            height:Store.columnHeaderHeight -1
+        }, luckysheetTableContent)
     }
 
     //列标题栏横线
     // luckysheetTableContent.beginPath();
     // luckysheetTableContent.moveTo(
     //     (offsetLeft - 1) ,
-    //     (Store.columeHeaderHeight - 2 + 0.5) 
+    //     (Store.columnHeaderHeight - 2 + 0.5) 
     // );
     // luckysheetTableContent.lineTo(
     //     (Store.ch_width + offsetLeft - 2) ,
-    //     (Store.columeHeaderHeight - 2 + 0.5) 
+    //     (Store.columnHeaderHeight - 2 + 0.5) 
     // );
     // luckysheetTableContent.lineWidth = 1;
     // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
@@ -294,7 +407,7 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
     // luckysheetTableContent.stroke();
 
     //清除canvas左上角区域 防止列标题栏序列号溢出显示
-    // luckysheetTableContent.clearRect(0, 0, Store.rowHeaderWidth , Store.columeHeaderHeight );
+    // luckysheetTableContent.clearRect(0, 0, Store.rowHeaderWidth , Store.columnHeaderHeight );
 
     luckysheetTableContent.restore();
     luckysheetTableContent.restore();
@@ -306,6 +419,7 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
         return;
     }
 
+    let sheetFile = sheetmanage.getSheetByIndex();
 
     // console.trace();
     clearTimeout(Store.measureTextCacheTimeOut);
@@ -329,7 +443,7 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
         offsetLeft = Store.rowHeaderWidth;
     }
     if (offsetTop == null) {
-        offsetTop = Store.columeHeaderHeight;
+        offsetTop = Store.columnHeaderHeight;
     }
 
     if (columnOffsetCell == null) {
@@ -454,6 +568,9 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
     let borderOffset = {};
 
     let bodrder05 = 0.5;//Default 0.5
+
+    // 钩子函数
+    method.createHookFunction("cellAllRenderBefore",Store.flowdata,sheetFile,luckysheetTableContent);
     
     for (let r = dataset_row_st; r <= dataset_row_ed; r++) {
         let start_r;
@@ -465,6 +582,10 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
         }
 
         let end_r = Store.visibledatarow[r] - scrollHeight;
+
+        if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
+            continue;
+        }
         
         for (let c = dataset_col_st; c <= dataset_col_ed; c++) {
             let start_c;
@@ -477,78 +598,91 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
 
             let end_c = Store.visibledatacolumn[c] - scrollWidth;
             
-            if (Store.config["rowhidden"] != null && Store.config["rowhidden"][r] != null) {
-
+            if (Store.config["colhidden"] != null && Store.config["colhidden"][c] != null) {
+                continue
             }
-            else {
-                let firstcolumnlen = Store.defaultcollen;
-                if (Store.config["columnlen"] != null && Store.config["columnlen"][c] != null) {
-                    firstcolumnlen = Store.config["columnlen"][c];
-                }
+            
+            let firstcolumnlen = Store.defaultcollen;
+            if (Store.config["columnlen"] != null && Store.config["columnlen"][c] != null) {
+                firstcolumnlen = Store.config["columnlen"][c];
+            }
 
-                if (Store.flowdata[r] != null && Store.flowdata[r][c] != null) {
-                    let value = Store.flowdata[r][c];
 
-                    if(getObjType(value) == "object" && ("mc" in value)){
-                        borderOffset[r + "_" + c] = { 
-                            "start_r": start_r,
-                            "start_c": start_c, 
-                            "end_r": end_r, 
-                            "end_c": end_c 
-                        };
 
-                        if("rs" in value["mc"]){
-                            let key = "r"+ r + "c" + c;
+            if (Store.flowdata[r] != null && Store.flowdata[r][c] != null) {
+                let value = Store.flowdata[r][c];
+
+                if(getObjType(value) == "object" && ("mc" in value)){
+                    borderOffset[r + "_" + c] = { 
+                        "start_r": start_r,
+                        "start_c": start_c, 
+                        "end_r": end_r, 
+                        "end_c": end_c 
+                    };
+
+                    if("rs" in value["mc"]){
+                        let key = "r"+ r + "c" + c;
+                        mergeCache[key] = cellupdate.length;
+                    }
+                    else{
+                        let key = "r"+ value["mc"].r + "c" + value["mc"].c;
+                        let margeMain = cellupdate[mergeCache[key]];
+
+                        if(margeMain == null){
                             mergeCache[key] = cellupdate.length;
+                            cellupdate.push({
+                                "r": r, 
+                                "c": c, 
+                                "start_c": start_c, 
+                                "start_r": start_r, 
+                                "end_r": end_r, 
+                                "end_c": end_c, 
+                                "firstcolumnlen": firstcolumnlen, 
+                            });
                         }
                         else{
-                            let key = "r"+ value["mc"].r + "c" + value["mc"].c;
-                            let margeMain = cellupdate[mergeCache[key]];
-
-                            if(margeMain == null){
-                                mergeCache[key] = cellupdate.length;
-                                cellupdate.push({
-                                    "r": r, 
-                                    "c": c, 
-                                    "start_c": start_c, 
-                                    "start_r": start_r, 
-                                    "end_r": end_r, 
-                                    "end_c": end_c, 
-                                    "firstcolumnlen": firstcolumnlen, 
-                                });
+                            if(margeMain.c == c){
+                                margeMain.end_r += (end_r - start_r - 1);
                             }
-                            else{
-                                if(margeMain.c == c){
-                                    margeMain.end_r += (end_r - start_r - 1);
-                                }
-                                
-                                if(margeMain.r == r){
-                                    margeMain.end_c += (end_c - start_c);
-                                    margeMain.firstcolumnlen += firstcolumnlen;
-                                }
+                            
+                            if(margeMain.r == r){
+                                margeMain.end_c += (end_c - start_c);
+                                margeMain.firstcolumnlen += firstcolumnlen;
                             }
-
-                            continue;
                         }
+
+                        continue;
                     }
                 }
-
-                cellupdate.push({
-                    "r": r, 
-                    "c": c, 
-                    "start_r": start_r, 
-                    "start_c": start_c, 
-                    "end_r": end_r, 
-                    "end_c": end_c, 
-                    "firstcolumnlen": firstcolumnlen, 
-                });
-                borderOffset[r + "_" + c] = { 
-                    "start_r": start_r, 
+            }
+            else{
+                //空单元格渲染前
+                if(!method.createHookFunction("cellRenderBefore", Store.flowdata[r][c], {
+                    r:r,
+                    c:c,
+                    "start_r": start_r,
                     "start_c": start_c, 
                     "end_r": end_r, 
                     "end_c": end_c 
-                };
+                }, sheetFile,luckysheetTableContent)){ continue; }
             }
+
+
+            cellupdate.push({
+                "r": r, 
+                "c": c, 
+                "start_r": start_r, 
+                "start_c": start_c, 
+                "end_r": end_r, 
+                "end_c": end_c, 
+                "firstcolumnlen": firstcolumnlen, 
+            });
+            borderOffset[r + "_" + c] = { 
+                "start_r": start_r, 
+                "start_c": start_c, 
+                "end_r": end_r, 
+                "end_c": end_c 
+            };
         }
     }
 
@@ -579,6 +713,16 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
         if(Store.flowdata[r] == null){
             continue;
         }
+
+        //有值单元格渲染前
+        if(!method.createHookFunction("cellRenderBefore", Store.flowdata[r][c], {
+            r:r,
+            c:c,
+            "start_r": start_r,
+            "start_c": start_c, 
+            "end_r": end_r, 
+            "end_c": end_c 
+        }, sheetFile,luckysheetTableContent)){ continue; }
         
         if(Store.flowdata[r][c] == null){ //空单元格
             nullCellRender(r, c, start_r, start_c, end_r, end_c,luckysheetTableContent,af_compute, cf_compute,offsetLeft,offsetTop,dynamicArray_compute,cellOverflowMap, dataset_col_st, dataset_col_ed,scrollHeight,scrollWidth,bodrder05);
@@ -592,10 +736,7 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
                 // continue;
             }
             else{
-                value = getcellvalue(r, c, null, "m");
-                if(value == null){
-                    value = getcellvalue(r, c);
-                }
+                value = getRealCellValue(r,c);
             }  
 
             if(value == null || value.toString().length == 0){
@@ -615,10 +756,19 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
                 if((r + "_" + c) in dynamicArray_compute){//动态数组公式
                     value = dynamicArray_compute[r + "_" + c].v;
                 }
-
+                
                 cellRender(r, c, start_r, start_c, end_r, end_c, value,luckysheetTableContent,af_compute, cf_compute,offsetLeft,offsetTop,dynamicArray_compute,cellOverflowMap, dataset_col_st, dataset_col_ed,scrollHeight,scrollWidth,bodrder05);
             }
         }
+
+        method.createHookFunction("cellRenderAfter", Store.flowdata[r][c], {
+            r:r,
+            c:c,
+            "start_r": start_r,
+            "start_c": start_c, 
+            "end_r": end_r, 
+            "end_c": end_c 
+        }, sheetFile,luckysheetTableContent)
     }
 
     //合并单元格再处理
@@ -636,14 +786,18 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
         let value = null;
 
         let margeMaindata = cell["mc"];
-        value = getcellvalue(margeMaindata.r, margeMaindata.c, null, "m");
+        // value = getcellvalue(margeMaindata.r, margeMaindata.c, null, "m");
         
-        if(value == null){
-            value = getcellvalue(margeMaindata.r, margeMaindata.c);
-        }
+        // if(value == null){
+        //     value = getcellvalue(margeMaindata.r, margeMaindata.c);
+        // }
+
+        value = getRealCellValue(margeMaindata.r,margeMaindata.c);
 
         r = margeMaindata.r;
         c = margeMaindata.c;
+
+        let mainCell = Store.flowdata[r][c];
 
         if (c == 0) {
             start_c = -scrollWidth;
@@ -659,8 +813,8 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
             start_r = Store.visibledatarow[r - 1] - scrollHeight - 1;
         }
 
-        end_r = Store.visibledatarow[r+margeMaindata.rs-1] - scrollHeight;
-        end_c = Store.visibledatacolumn[c+margeMaindata.cs-1] - scrollWidth;
+        end_r = Store.visibledatarow[r+mainCell["mc"].rs-1] - scrollHeight;
+        end_c = Store.visibledatacolumn[c+mainCell["mc"].cs-1] - scrollWidth;
 
         if(value == null || value.toString().length == 0){
             nullCellRender(r, c, start_r, start_c, end_r, end_c,luckysheetTableContent,af_compute, cf_compute,offsetLeft,offsetTop,dynamicArray_compute,cellOverflowMap, dataset_col_st, dataset_col_ed,scrollHeight,scrollWidth,bodrder05, true);
@@ -679,7 +833,6 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
             if((r + "_" + c) in dynamicArray_compute){//动态数组公式
                 value = dynamicArray_compute[r + "_" + c].v;
             }
-
             cellRender(r, c, start_r, start_c, end_r, end_c, value, luckysheetTableContent,af_compute, cf_compute,offsetLeft,offsetTop,dynamicArray_compute,cellOverflowMap, dataset_col_st, dataset_col_ed,scrollHeight,scrollWidth,bodrder05, true);
         }
     }
@@ -708,7 +861,7 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
             let end_c = Store.visibledatacolumn[c] - scrollWidth;
 
 
-            //数据透视表\
+            //数据透视表
             if (!!Store.luckysheetcurrentisPivotTable && pivotTable.drawPivotTable) {
                 if ((c == 0 || c == 5) && r <= 11) {
                     luckysheetTableContent.beginPath();
@@ -860,7 +1013,7 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
             canvas.restore();
         }
 
-        let borderInfoCompute = getBorderInfoCompute();
+        let borderInfoCompute = getBorderInfoComputeRange(dataset_row_st,dataset_row_ed,dataset_col_st,dataset_col_ed);
         
         for(let x in borderInfoCompute){
             //let bd_r = x.split("_")[0], bd_c = x.split("_")[1];
@@ -868,19 +1021,25 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
             let bd_r = x.substr(0, x.indexOf('_'));
             let bd_c = x.substr(x.indexOf('_') + 1);
 
+            // if(bd_r < dataset_row_st || bd_r > dataset_row_ed || bd_c < dataset_col_st || bd_c > dataset_col_ed){
+            //     continue;
+            // }
+
             if(borderOffset[bd_r + "_" + bd_c]){
                 let start_r = borderOffset[bd_r + "_" + bd_c].start_r;
                 let start_c = borderOffset[bd_r + "_" + bd_c].start_c;
                 let end_r = borderOffset[bd_r + "_" + bd_c].end_r;
                 let end_c = borderOffset[bd_r + "_" + bd_c].end_c;
 
+                let cellOverflow_colInObj = cellOverflow_colIn(cellOverflowMap, bd_r, bd_c, dataset_col_st, dataset_col_ed);
+
                 let borderLeft = borderInfoCompute[x].l;
-                if(borderLeft != null){
+                if(borderLeft != null && (!cellOverflow_colInObj.colIn || cellOverflow_colInObj.stc == bd_c)){
                     borderLeftRender(borderLeft.style, borderLeft.color, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
                 }
 
                 let borderRight = borderInfoCompute[x].r;
-                if(borderRight != null){
+                if(borderRight != null && (!cellOverflow_colInObj.colIn || cellOverflow_colInObj.colLast)){
                     borderRightRender(borderRight.style, borderRight.color, start_r, start_c, end_r, end_c, offsetLeft, offsetTop, luckysheetTableContent);
                 }
 
@@ -911,6 +1070,8 @@ function luckysheetDrawMain(scrollWidth, scrollHeight, drawWidth, drawHeight, of
 
     Store.measureTextCacheTimeOut = setTimeout(() => {
         Store.measureTextCache = {};
+        Store.measureTextCellInfoCache = {};
+        Store.cellOverflowMapCache = {};
     }, 2000);
 }
 
@@ -924,7 +1085,7 @@ let sparklinesRender = function(r, c, offsetX, offsetY, canvasid, ctx){
     let sparklines = Store.flowdata[r][c].spl;
     if(sparklines != null){
         if(typeof sparklines == "string"){
-            sparklines = eval('('+ sparklines +')');
+            sparklines = new Function("return " + sparklines)();
         }
 
         if(getObjType(sparklines) == "object"){
@@ -989,7 +1150,7 @@ let nullCellRender = function(r, c, start_r, start_c, end_r, end_c,luckysheetTab
     }
 
     if(fillStyle==null){
-        luckysheetTableContent.fillStyle = "rgba(255,255,255)";
+        luckysheetTableContent.fillStyle = "#FFFFFF";
     }
     else{
         luckysheetTableContent.fillStyle = fillStyle;
@@ -1025,7 +1186,7 @@ let nullCellRender = function(r, c, start_r, start_c, end_r, end_c,luckysheetTab
 
     //若单元格有批注
     if(Store.flowdata[r][c] != null && Store.flowdata[r][c].ps != null){
-        let ps_w = 5*Store.zoomRatio, ps_h = 5*Store.zoomRatio; 
+        let ps_w = 8*Store.zoomRatio, ps_h = 8*Store.zoomRatio; 
         luckysheetTableContent.beginPath();
         luckysheetTableContent.moveTo( (end_c + offsetLeft - 1- ps_w),  (start_r + offsetTop));
         luckysheetTableContent.lineTo( (end_c + offsetLeft - 1),  (start_r + offsetTop));
@@ -1055,15 +1216,15 @@ let nullCellRender = function(r, c, start_r, start_c, end_r, end_c,luckysheetTab
     //即溢出单元格跨此单元格，此单元格不绘制右边框
     if(!cellOverflow_colInObj.colIn || cellOverflow_colInObj.colLast){
         //右边框
-        if(!Store.luckysheetcurrentisPivotTable && !fillStyle){
+        if(!Store.luckysheetcurrentisPivotTable && !fillStyle && Store.showGridLines){
             luckysheetTableContent.beginPath();
             luckysheetTableContent.moveTo(
                  (end_c + offsetLeft - 2 + bodrder05), 
-                 (start_r + offsetTop - 2)
+                 (start_r + offsetTop)
             );
             luckysheetTableContent.lineTo(
                  (end_c + offsetLeft - 2 + bodrder05), 
-                 (end_r + offsetTop - 2)
+                 (end_r + offsetTop)
             );
             luckysheetTableContent.lineWidth = 1;
 
@@ -1074,14 +1235,14 @@ let nullCellRender = function(r, c, start_r, start_c, end_r, end_c,luckysheetTab
     }
 
     //下边框
-    if(!Store.luckysheetcurrentisPivotTable && !fillStyle){
+    if(!Store.luckysheetcurrentisPivotTable && !fillStyle && Store.showGridLines){
         luckysheetTableContent.beginPath();
         luckysheetTableContent.moveTo(
-             (start_c + offsetLeft - 2), 
+             (start_c + offsetLeft - 1), 
              (end_r + offsetTop - 2 + bodrder05)
         );
         luckysheetTableContent.lineTo(
-             (end_c + offsetLeft - 2), 
+             (end_c + offsetLeft - 1), 
              (end_r + offsetTop - 2 + bodrder05)
         );
         luckysheetTableContent.lineWidth = 1;
@@ -1092,28 +1253,18 @@ let nullCellRender = function(r, c, start_r, start_c, end_r, end_c,luckysheetTab
     }
 }
 
-//非空白单元格渲染
-let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckysheetTableContent,af_compute, cf_compute,offsetLeft,offsetTop,dynamicArray_compute,cellOverflowMap, dataset_col_st, dataset_col_ed,scrollHeight,scrollWidth,bodrder05,isMerge){
 
+let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckysheetTableContent,af_compute, cf_compute,offsetLeft,offsetTop,dynamicArray_compute,cellOverflowMap, dataset_col_st, dataset_col_ed,scrollHeight,scrollWidth,bodrder05,isMerge){
     let cell = Store.flowdata[r][c];
     let cellWidth = end_c - start_c - 2;
     let cellHeight = end_r - start_r - 2;
     let space_width = 2, space_height = 2; //宽高方向 间隙
 
-    let fontset = luckysheetfontformat(cell);
-    luckysheetTableContent.font = fontset;
-    // luckysheetTableContent.textBaseline = 'top';
-    
     //水平对齐
     let horizonAlign = menuButton.checkstatus(Store.flowdata, r, c, "ht");
     //垂直对齐
     let verticalAlign = menuButton.checkstatus(Store.flowdata, r, c, "vt");
 
-    //文本单行 宽度和高度
-    let measureText = getMeasureText(value, luckysheetTableContent); 
-    //luckysheetTableContent.measureText(value);
-    let textMetrics = measureText.width;
-    let oneLineTextHeight = measureText.actualBoundingBoxDescent + measureText.actualBoundingBoxAscent;
     //交替颜色
     let checksAF = alternateformat.checksAF(r, c, af_compute); 
     //条件格式
@@ -1127,49 +1278,88 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
     if(checksCF != null && checksCF["cellColor"] != null){ //若单元格有条件格式 背景颜色
         fillStyle = checksCF["cellColor"];
     }
-
+    // luckysheetTableContent.textBaseline = 'top';
     if(fillStyle==null){
-        luckysheetTableContent.fillStyle = "rgba(255,255,255)";
+        luckysheetTableContent.fillStyle = "#FFFFFF";
     }
     else{
         luckysheetTableContent.fillStyle = fillStyle;
     }
 
     let borderfix = menuButton.borderfix(Store.flowdata, r, c);
-
+    // console.log(value, fillStyle,borderfix);
     let cellsize = [
         (start_c + offsetLeft + borderfix[0]), 
         (start_r + offsetTop  + borderfix[1]), 
         (end_c - start_c + borderfix[2]-(!!isMerge?1:0)), 
         (end_r - start_r + borderfix[3])
-   ];
-   luckysheetTableContent.fillRect(cellsize[0], cellsize[1], cellsize[2], cellsize[3]);
+    ];
+    luckysheetTableContent.fillRect(cellsize[0], cellsize[1], cellsize[2], cellsize[3]);
 
-    // luckysheetTableContent.fillRect(
-    //     (start_c + offsetLeft - 1) , 
-    //     (start_r + offsetTop) , 
-    //     (end_c - start_c) ,
-    //     (end_r - start_r) 
-    // )
+    let dataVerification = dataVerificationCtrl.dataVerification;
 
-    //若单元格有批注（单元格右上角红色小三角标示）
-    if(cell.ps != null){
-        let ps_w = 5*Store.zoomRatio, ps_h = 5*Store.zoomRatio; //红色小三角宽高
+    if(dataVerification != null && dataVerification[r + '_' + c] != null && !dataVerificationCtrl.validateCellData(value, dataVerification[r + '_' + c])){
+        //单元格左上角红色小三角标示
+        let dv_w = 5 * Store.zoomRatio, dv_h = 5 * Store.zoomRatio; //红色小三角宽高
 
         luckysheetTableContent.beginPath();
         luckysheetTableContent.moveTo(
-             (end_c + offsetLeft - ps_w), 
+            (start_c + offsetLeft), 
             (start_r + offsetTop)
         );
         luckysheetTableContent.lineTo(
-             (end_c + offsetLeft), 
+            (start_c + offsetLeft + dv_w), 
             (start_r + offsetTop)
         );
         luckysheetTableContent.lineTo(
-             (end_c + offsetLeft), 
-             (start_r + offsetTop + ps_h)
+            (start_c + offsetLeft), 
+            (start_r + offsetTop + dv_h)
         );
         luckysheetTableContent.fillStyle = "#FC6666";
+        luckysheetTableContent.fill();
+        luckysheetTableContent.closePath();
+    }
+
+    //若单元格有批注（单元格右上角红色小三角标示）
+    if(cell.ps != null){
+        let ps_w = 8*Store.zoomRatio, ps_h = 8*Store.zoomRatio; //红色小三角宽高
+
+        luckysheetTableContent.beginPath();
+        luckysheetTableContent.moveTo(
+            (end_c + offsetLeft - ps_w), 
+            (start_r + offsetTop)
+        );
+        luckysheetTableContent.lineTo(
+            (end_c + offsetLeft), 
+            (start_r + offsetTop)
+        );
+        luckysheetTableContent.lineTo(
+            (end_c + offsetLeft), 
+            (start_r + offsetTop + ps_h)
+        );
+        luckysheetTableContent.fillStyle = "#FC6666";
+        luckysheetTableContent.fill();
+        luckysheetTableContent.closePath();
+    }
+
+    //若单元格强制为字符串，则显示绿色小三角
+    if(cell.qp==1 && isRealNum(cell.v)){
+        let ps_w = 6*Store.zoomRatio, ps_h = 6*Store.zoomRatio; //红色小三角宽高
+
+        luckysheetTableContent.beginPath();
+        luckysheetTableContent.moveTo(
+            (start_c + offsetLeft + ps_w-1), 
+            (start_r + offsetTop)
+        );
+        luckysheetTableContent.lineTo(
+            (start_c + offsetLeft-1), 
+            (start_r + offsetTop)
+        );
+        luckysheetTableContent.lineTo(
+            (start_c + offsetLeft-1), 
+            (start_r + offsetTop + ps_h)
+        );
+        luckysheetTableContent.fillStyle = "#487f1e";
         luckysheetTableContent.fill();
         luckysheetTableContent.closePath();
     }
@@ -1195,7 +1385,79 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
             cellOverflow_bd_r_render = false;
         }
     }
-    //非溢出单元格
+    //数据验证 复选框
+    else if(dataVerification != null && dataVerification[r + '_' + c] != null && dataVerification[r + '_' + c].type == 'checkbox'){
+        let pos_x = start_c + offsetLeft;
+        let pos_y = start_r + offsetTop + 1;
+
+        luckysheetTableContent.save();
+        luckysheetTableContent.beginPath();
+        luckysheetTableContent.rect(pos_x, pos_y, cellWidth, cellHeight);
+        luckysheetTableContent.clip();
+        luckysheetTableContent.scale(Store.zoomRatio,Store.zoomRatio);
+        
+        let measureText = getMeasureText(value, luckysheetTableContent);
+        let textMetrics = measureText.width + 14;
+        let oneLineTextHeight = measureText.actualBoundingBoxDescent + measureText.actualBoundingBoxAscent;
+
+        let horizonAlignPos = (pos_x + space_width) ; //默认为1，左对齐
+        if(horizonAlign == "0"){ //居中对齐
+            horizonAlignPos = (pos_x + cellWidth / 2)  - (textMetrics / 2);
+        }
+        else if(horizonAlign == "2"){ //右对齐
+            horizonAlignPos = (pos_x + cellWidth - space_width)  - textMetrics;
+        }
+        
+        let verticalCellHeight = cellHeight > oneLineTextHeight ? cellHeight : oneLineTextHeight;
+
+        let verticalAlignPos_text = (pos_y + verticalCellHeight - space_height) ; //文本垂直方向基准线
+        luckysheetTableContent.textBaseline = "bottom";
+        let verticalAlignPos_checkbox = verticalAlignPos_text - 13 * Store.zoomRatio;
+
+        if(verticalAlign == "0"){ //居中对齐 
+            verticalAlignPos_text = (pos_y + verticalCellHeight / 2);
+            luckysheetTableContent.textBaseline = "middle";
+            verticalAlignPos_checkbox = verticalAlignPos_text - 6 * Store.zoomRatio;
+        }
+        else if(verticalAlign == "1"){ //上对齐
+            verticalAlignPos_text = (pos_y + space_height);
+            luckysheetTableContent.textBaseline = "top";
+            verticalAlignPos_checkbox = verticalAlignPos_text + 1 * Store.zoomRatio;
+        }
+
+        horizonAlignPos = horizonAlignPos / Store.zoomRatio;
+        verticalAlignPos_text = verticalAlignPos_text / Store.zoomRatio;
+        verticalAlignPos_checkbox = verticalAlignPos_checkbox / Store.zoomRatio;
+
+        //复选框
+        luckysheetTableContent.lineWidth = 1;
+        luckysheetTableContent.strokeStyle = "#000";
+        luckysheetTableContent.strokeRect(horizonAlignPos, verticalAlignPos_checkbox, 10, 10);
+
+        if(dataVerification[r + '_' + c].checked){
+            luckysheetTableContent.beginPath();
+            luckysheetTableContent.lineTo(
+                horizonAlignPos + 1, 
+                verticalAlignPos_checkbox + 6
+            );
+            luckysheetTableContent.lineTo(
+                horizonAlignPos + 4, 
+                verticalAlignPos_checkbox + 9
+            );
+            luckysheetTableContent.lineTo(
+                horizonAlignPos + 9, 
+                verticalAlignPos_checkbox + 2
+            );
+            luckysheetTableContent.stroke();
+            luckysheetTableContent.closePath();
+        }
+
+        //文本
+        luckysheetTableContent.fillStyle = menuButton.checkstatus(Store.flowdata, r, c , "fc");
+        luckysheetTableContent.fillText(value == null ? "" : value, horizonAlignPos + 14, verticalAlignPos_text);
+        
+        luckysheetTableContent.restore();
+    }
     else{
         //若单元格有条件格式数据条
         if(checksCF != null && checksCF["dataBar"] != null){
@@ -1385,43 +1647,60 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
         luckysheetTableContent.clip();
         luckysheetTableContent.scale(Store.zoomRatio,Store.zoomRatio);
 
-        let horizonAlignPos = (pos_x + space_width) ; //默认为1，左对齐
-        if(horizonAlign == "0"){ //居中对齐
-            horizonAlignPos = (pos_x + cellWidth / 2)  - (textMetrics / 2);
-        }
-        else if(horizonAlign == "2"){ //右对齐
-            horizonAlignPos = (pos_x + cellWidth - space_width)  - textMetrics;
-        }
+        // let horizonAlignPos = (pos_x + space_width) ; //默认为1，左对齐
+        // if(horizonAlign == "0"){ //居中对齐
+        //     horizonAlignPos = (pos_x + cellWidth / 2)  - (textMetrics / 2);
+        // }
+        // else if(horizonAlign == "2"){ //右对齐
+        //     horizonAlignPos = (pos_x + cellWidth - space_width)  - textMetrics;
+        // }
         
-        let verticalAlignPos = (pos_y + cellHeight - space_height)  - oneLineTextHeight; //默认为2，下对齐
-        let verticalAlignPos_text = (pos_y + cellHeight - space_height) ; //文本垂直方向基准线
-        luckysheetTableContent.textBaseline = "bottom";
-        if(verticalAlign == "0"){ //居中对齐 
-            verticalAlignPos = (pos_y + cellHeight / 2)  - (oneLineTextHeight / 2);
-            
-            verticalAlignPos_text = (pos_y + cellHeight / 2) ;
-            luckysheetTableContent.textBaseline = "middle";
-        }
-        else if(verticalAlign == "1"){ //上对齐
-            verticalAlignPos = (pos_y + space_height) ;
-            
-            verticalAlignPos_text = (pos_y + space_height) ;
-            luckysheetTableContent.textBaseline = "top";
-        }
 
-        verticalAlignPos = verticalAlignPos/Store.zoomRatio;
-        horizonAlignPos = horizonAlignPos/Store.zoomRatio;
-        verticalAlignPos_text = verticalAlignPos_text/Store.zoomRatio;
-        // pos_x = pos_x/Store.zoomRatio;
-        // pos_y = pos_y/Store.zoomRatio;
-        // space_width = space_width/Store.zoomRatio;
-        // cellHeight = cellHeight/Store.zoomRatio;
-        // oneLineTextHeight = oneLineTextHeight/Store.zoomRatio;
-    
+        // let verticalAlignPos = (pos_y + cellHeight - space_height)  - oneLineTextHeight; //默认为2，下对齐
+        // if(verticalAlign == "0"){ //居中对齐 
+        //     verticalAlignPos = (pos_y + cellHeight / 2)  - (oneLineTextHeight / 2);
+            
+        //     verticalAlignPos_text = (pos_y + cellHeight / 2) ;
+        // }
+        // else if(verticalAlign == "1"){ //上对齐
+        //     verticalAlignPos = (pos_y + space_height) ;
+            
+        //     verticalAlignPos_text = (pos_y + space_height) ;
+        // }
+
+        // verticalAlignPos = verticalAlignPos/Store.zoomRatio;
+        // horizonAlignPos = horizonAlignPos/Store.zoomRatio;
+
+        let textInfo = getCellTextInfo(cell , luckysheetTableContent, {
+            cellWidth:cellWidth,
+            cellHeight:cellHeight,
+            space_width:space_width,
+            space_height:space_height,
+            r:r,
+            c:c
+        });
+
         //若单元格有条件格式图标集
-        if(checksCF != null && checksCF["icons"] != null){
+        if(checksCF != null && checksCF["icons"] != null && textInfo.type=="plain"){
             let l = checksCF["icons"]["left"];
             let t = checksCF["icons"]["top"];
+            
+            let value = textInfo.values[0]
+            let horizonAlignPos = pos_x +  value.left;
+            let verticalAlignPos = pos_y + value.top- textInfo.textHeightAll;
+
+            if(verticalAlign == "0"){ //居中对齐 
+                verticalAlignPos = pos_y + cellHeight/2 - textInfo.textHeightAll/2;
+            }
+            else if(verticalAlign == "1"){ //上对齐
+                verticalAlignPos = pos_y;
+            }
+            else if(verticalAlign == "2"){ //下对齐
+                verticalAlignPos =verticalAlignPos - textInfo.desc;
+            }
+
+            verticalAlignPos = verticalAlignPos/Store.zoomRatio;
+            horizonAlignPos = horizonAlignPos/Store.zoomRatio;
 
             luckysheetTableContent.drawImage(
                 luckysheet_CFiconsImg, 
@@ -1431,12 +1710,12 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
                 32, 
                 pos_x/Store.zoomRatio , 
                 verticalAlignPos,  
-                oneLineTextHeight/Store.zoomRatio, 
-                oneLineTextHeight/Store.zoomRatio
+                textInfo.textHeightAll/Store.zoomRatio, 
+                textInfo.textHeightAll/Store.zoomRatio
             );
             
             if(horizonAlign != "0" && horizonAlign != "2"){ //左对齐时 文本渲染空出一个图标的距离
-                horizonAlignPos = horizonAlignPos + oneLineTextHeight/Store.zoomRatio;
+                horizonAlignPos = horizonAlignPos + textInfo.textHeightAll/Store.zoomRatio;
             }
         }
 
@@ -1452,465 +1731,31 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
             luckysheetTableContent.fillStyle = checksCF["textColor"];
         }
 
-        //单元格是否有删除线
-        let cl = menuButton.checkstatus(Store.flowdata, r, c , "cl");
 
-        if(cell.tb == '2'){
-            //自动换行
-            // luckysheetTableContent.textBaseline = 'top'; //textBaseline以top计算
-            
-            let strArr = [];//文本截断数组
-            strArr = getCellTextSplitArr(value.toString(), strArr, (cellWidth - space_width * 2), luckysheetTableContent);
-            let word_space_height = oneLineTextHeight/3;
-            for(let i = 0; i < strArr.length; i++){
-                let strV = strArr[i];
-
-                let strWidth = getMeasureText(strV, luckysheetTableContent).width;
-                // luckysheetTableContent.measureText(strV).width;
-                let strHeight = oneLineTextHeight;
-
-                //水平对齐计算
-                if(horizonAlign == "0"){
-                    horizonAlignPos = (pos_x + cellWidth / 2)  - (strWidth / 2);
-                }
-                else if(horizonAlign == "2"){
-                    horizonAlignPos = (pos_x + cellWidth - space_width)  - strWidth;
-                }
-                else{
-                    horizonAlignPos = (pos_x + space_width) ;
-                }
-                
-                //垂直对齐计算
-                let clLine = 0;
-                if(verticalAlign == "0"){
-                    verticalAlignPos = (pos_y + cellHeight / 2)  - (strHeight+word_space_height) * (strArr.length-1)/2;
-                }
-                else if(verticalAlign == "1"){
-                    verticalAlignPos = (pos_y + space_height) ;
-                    clLine = strHeight / 2;
-                }
-                else{
-                    verticalAlignPos = (pos_y + cellHeight - space_height)  - (strHeight+word_space_height) * (strArr.length-1);
-                    clLine = -strHeight / 2;
-                }
-
-                verticalAlignPos = (verticalAlignPos + i * (strHeight+word_space_height));
-                verticalAlignPos = verticalAlignPos/Store.zoomRatio;
-                horizonAlignPos = horizonAlignPos/Store.zoomRatio;
-
-                luckysheetTableContent.fillText(strV, horizonAlignPos, verticalAlignPos);
-
-                if(cl == "1" && !isRealNull(strV)){
-                    luckysheetTableContent.beginPath();
-                    luckysheetTableContent.strokeStyle = "#000";
-                    clLine = clLine/Store.zoomRatio;
-                    luckysheetTableContent.moveTo(
-                        horizonAlignPos, 
-                        verticalAlignPos +clLine
-                    );
-                    luckysheetTableContent.lineTo(
-                        horizonAlignPos + strWidth/Store.zoomRatio, 
-                        verticalAlignPos + clLine
-                    );
-                    luckysheetTableContent.stroke();
-                    luckysheetTableContent.closePath();
-                }
+        cellTextRender(
+            textInfo,
+            luckysheetTableContent,
+            {
+                pos_x:pos_x,
+                pos_y:pos_y,
             }
-        }
-        else if(cell.tr != null && cell.tr != '0'){
-            //旋转
-            // luckysheetTableContent.textBaseline = 'top'; //textBaseline以top计算
+        );
 
-            //单元格旋转属性
-            let tr = cell.tr;
-
-            //旋转重新计算水平、垂直方向坐标
-            if(cell.tr == "1" || cell.tr == "2"){
-                let textW = 0.707 * (textMetrics)/Store.zoomRatio;
-                let textH = 0.707 * (textMetrics)/Store.zoomRatio;
-                let oneWord = 0.707*oneLineTextHeight/Store.zoomRatio;
-
-                let hAP = (pos_x + space_width)/Store.zoomRatio ;
-                if(horizonAlign == "0"){
-                    hAP = (pos_x + cellWidth / 2)/Store.zoomRatio  - (textW / 2);
-                }
-                else if(horizonAlign == "2"){
-                    hAP = (pos_x + cellWidth - space_width)/Store.zoomRatio  - textW;
-                }
-
-                let vAP = (pos_y + cellHeight - space_height)/Store.zoomRatio  - textH;
-                if(verticalAlign == "0"){
-                    vAP = (pos_y + cellHeight / 2)/Store.zoomRatio  - (textH / 2);
-                }
-                else if(verticalAlign == "1"){
-                    vAP = (pos_y + space_height)/Store.zoomRatio ;
-                }
-
-                // hAP = hAP / Store.zoomRatio;
-                // vAP = vAP / Store.zoomRatio;
-                
-                //向下倾斜（45 旋转）
-                if(cell.tr == "1"){
-                    luckysheetTableContent.save();
-                    luckysheetTableContent.translate(hAP, vAP);
-                    luckysheetTableContent.rotate(Math.PI / 4);
-                    luckysheetTableContent.translate(-hAP, -vAP);
-
-                    let fillX= hAP+oneWord/2, fillY = vAP-oneWord/2;
-                    if(horizonAlign == "0"){//0 center, 1 left, 2 right
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            fillX = hAP;
-                            fillY = vAP;
-                        }
-                        else if(verticalAlign == "1"){
-                            // fillX= hAP;
-                        }
-                        else if(verticalAlign == "2"){
-                            fillX = hAP;
-                            fillY = vAP+oneWord/2;
-                        } 
-                    }
-                    else if(horizonAlign == "1"){
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            fillX = hAP;
-                            fillY = vAP;
-                        }
-                        else if(verticalAlign == "1"){
-                            // fillX= hAP;
-                        }
-                        else if(verticalAlign == "2"){
-                            fillX = hAP;
-                            fillY = vAP+oneWord/2;
-                        }
-                    }
-                    else if(horizonAlign == "2"){
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            fillX = hAP;
-                            fillY = vAP;
-                        }
-                        else if(verticalAlign == "1"){
-                            fillX= hAP;
-                            fillY = vAP;
-                        }
-                        else if(verticalAlign == "2"){
-                            fillX = hAP;
-                            fillY = vAP+oneWord/2;
-                        } 
-                    }
-
-                    luckysheetTableContent.fillText(
-                        value == null ? "" : value, 
-                        fillX, fillY
-                    );
-                    luckysheetTableContent.restore();
-                    
-                    if(cl == "1" && !isRealNull(value)){
-
-                        let lineToX = 0, lineToY = 0;
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            
-                        }
-                        else if(verticalAlign == "1"){
-                            lineToX = -oneWord/2;
-                            lineToY = oneWord/2;
-                        }
-                        else if(verticalAlign == "2"){
-                            lineToX = oneWord/2;
-                            lineToY = -oneWord/2;
-                        } 
-
-                        luckysheetTableContent.beginPath();
-                        luckysheetTableContent.strokeStyle = "#000";
-                        luckysheetTableContent.moveTo(
-                            fillX+lineToX, 
-                            fillY+lineToY
-                        );
-                        luckysheetTableContent.lineTo(
-                            fillX+ textW+lineToX, 
-                            fillY+ textH+lineToY
-                        );
-                        luckysheetTableContent.closePath();
-                        luckysheetTableContent.stroke();
-                    }
-                }
-                
-                //向上倾斜（-45 旋转）
-                if(cell.tr == "2"){
-                    luckysheetTableContent.save();
-                    luckysheetTableContent.translate(hAP, vAP + textH);
-                    luckysheetTableContent.rotate(-Math.PI/4);
-                    luckysheetTableContent.translate(-hAP, -(vAP + textH));
-
-
-                    let fillX= hAP, fillY = vAP+textH;
-                    if(horizonAlign == "0"){//0 center, 1 left, 2 right
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            fillX = hAP;
-                            fillY = vAP+textH;
-                        }
-                        else if(verticalAlign == "1"){
-                            // fillX= hAP;
-                        }
-                        else if(verticalAlign == "2"){
-                            fillX = hAP;
-                            fillY = vAP+textH+oneWord/2;
-                        } 
-                    }
-                    else if(horizonAlign == "1"){
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            fillX = hAP;
-                            fillY = vAP+textH;
-                        }
-                        else if(verticalAlign == "1"){
-                            // fillX= hAP;
-                        }
-                        else if(verticalAlign == "2"){
-                            fillX = hAP;
-                            fillY = vAP+textH+oneWord/2;
-                        }
-                    }
-                    else if(horizonAlign == "2"){
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            fillX = hAP;
-                            fillY = vAP+textH;
-                        }
-                        else if(verticalAlign == "1"){
-                            fillX= hAP-oneWord/2;
-                            fillY = vAP+textH;
-                        }
-                        else if(verticalAlign == "2"){
-                            fillX = hAP;
-                            fillY = vAP+textH+oneWord/2;
-                        } 
-                    }
-
-                    luckysheetTableContent.fillText(
-                        value == null ? "" : value, 
-                        fillX, 
-                        fillY
-                    );
-                    luckysheetTableContent.restore();
-                    
-                    if(cl == "1" && !isRealNull(value)){
-
-                        let lineToX = 0, lineToY = 0;
-                        if(verticalAlign == "0"){//0 middle, 1 up, 2 down
-                            
-                        }
-                        else if(verticalAlign == "1"){
-                            lineToX = 0;
-                            lineToY = oneWord;
-                        }
-                        else if(verticalAlign == "2"){
-                            lineToX = 0;
-                            lineToY = -oneWord;
-                        } 
-
-                        luckysheetTableContent.beginPath();
-                        luckysheetTableContent.strokeStyle = "#000";
-                        luckysheetTableContent.moveTo(
-                            fillX+lineToX, 
-                            fillY + lineToY
-                        );
-                        luckysheetTableContent.lineTo(
-                            fillX + textW+lineToX, 
-                            fillY - textH+lineToY
-                        );
-                        luckysheetTableContent.closePath();
-                        luckysheetTableContent.stroke();
-                    }
-                }
-            }
-            else if(cell.tr == "3"){
-                if(!isRealNull(value)){
-                    value = value.toString();
-                    
-                    let vArr = [];
-                    if(value.length > 1){
-                        vArr = value.split("");    
-                    }
-                    else{
-                        vArr.push(value);
-                    }
-
-                    let textW_all = 0; //拆分后宽高度合计
-                    let textH_all = 0; 
-
-                    for(let i = 0; i < vArr.length; i++){
-                        let textW = getMeasureText(vArr[i], luckysheetTableContent).width;
-                        //luckysheetTableContent.measureText(vArr[i]).width;
-                        let textH = oneLineTextHeight;
-
-                        // textW /= Store.zoomRatio;
-                        // textH /= Store.zoomRatio;
-                        
-                        textW_all += textW/Store.zoomRatio;
-                        textH_all += textH/Store.zoomRatio;
-
-                        let hAP = (pos_x + space_width) ;
-                        if(horizonAlign == "0"){
-                            hAP = (pos_x + cellWidth / 2)  - (textW / 2);
-                        }
-                        else if(horizonAlign == "2"){
-                            hAP = (pos_x + cellWidth - space_width)  - textW;
-                        }
-
-                        let vAP = (pos_y + cellHeight - space_height)  - textH * vArr.length;
-                        if(verticalAlign == "0"){
-                            vAP = (pos_y + cellHeight / 2)  - (textH / 2) * vArr.length;
-                        }
-                        else if(verticalAlign == "1"){
-                            vAP = (pos_y + space_height) ;
-                        }
-
-                        hAP = hAP / Store.zoomRatio;
-                        vAP = vAP / Store.zoomRatio;
-                        
-                        luckysheetTableContent.fillText(vArr[i], hAP, (vAP + i * textH/Store.zoomRatio));
-                    }
-
-                    if(cl == "1" && !isRealNull(value)){
-                        let textW = textW_all / vArr.length;
-                        let textH = textH_all;
-
-                        let hAP = (pos_x + space_width) ;
-                        if(horizonAlign == "0"){
-                            hAP = (pos_x + cellWidth / 2)  - (textW / 2);
-                        }
-                        else if(horizonAlign == "2"){
-                            hAP = (pos_x + cellWidth - space_width)  - textW;
-                        }
-
-                        let vAP = (pos_y + cellHeight - space_height)  - textH;
-                        if(verticalAlign == "0"){
-                            vAP = (pos_y + cellHeight / 2)  - (textH / 2);
-                        }
-                        else if(verticalAlign == "1"){
-                            vAP = (pos_y + space_height) ;
-                        }
-
-                        hAP = hAP / Store.zoomRatio;
-                        vAP = vAP / Store.zoomRatio;
-
-                        luckysheetTableContent.beginPath();
-                        luckysheetTableContent.strokeStyle = "#000";
-                        luckysheetTableContent.moveTo(
-                            hAP + textW / 2, 
-                            vAP
-                        );
-                        luckysheetTableContent.lineTo(
-                            hAP + textW / 2, 
-                            vAP + textH
-                        );
-                        luckysheetTableContent.closePath();
-                        luckysheetTableContent.stroke();
-                    }
-                }
-            }
-            else if(cell.tr == "4" || cell.tr == "5"){
-                let textW = oneLineTextHeight;
-                let textH = textMetrics;
-
-                let hAP = (pos_x + space_width) ;
-                if(horizonAlign == "0"){
-                    hAP = (pos_x + cellWidth / 2)  - (textW / 2);
-                }
-                else if(horizonAlign == "2"){
-                    hAP = (pos_x + cellWidth - space_width)  - textW;
-                }
-
-                let vAP = (pos_y + cellHeight - space_height)  - textH;
-                if(verticalAlign == "0"){
-                    vAP = (pos_y + cellHeight / 2)  - (textH / 2);
-                }
-                else if(verticalAlign == "1"){
-                    vAP = (pos_y + space_height) ;
-                }
-
-                hAP = hAP / Store.zoomRatio;
-                vAP = vAP / Store.zoomRatio;
-
-                //向下90（90 旋转）
-                if(tr == "4"){
-                    luckysheetTableContent.save();
-                    luckysheetTableContent.translate(hAP, vAP);
-                    luckysheetTableContent.rotate(90 * Math.PI / 180);
-                    luckysheetTableContent.translate(-hAP, -vAP);
-                    luckysheetTableContent.fillText(value == null ? "" : value, hAP, vAP - textW/ Store.zoomRatio);
-                    luckysheetTableContent.restore();
-                }
-                
-                //向上90（-90 旋转）
-                if(tr == "5"){
-                    luckysheetTableContent.save();
-                    luckysheetTableContent.translate(hAP + textH/ Store.zoomRatio, vAP);
-                    luckysheetTableContent.rotate(-90 * Math.PI / 180);
-                    luckysheetTableContent.translate(-(hAP + textH/ Store.zoomRatio), -vAP);
-                    luckysheetTableContent.fillText(value == null ? "" : value, hAP, vAP - textH/ Store.zoomRatio);
-                    luckysheetTableContent.restore();
-                }
-
-                if(cl == "1" && !isRealNull(value)){
-                    luckysheetTableContent.beginPath();
-                    luckysheetTableContent.strokeStyle = "#000";
-                    luckysheetTableContent.moveTo(hAP + textW/ Store.zoomRatio / 2, vAP);
-                    luckysheetTableContent.lineTo(hAP + textW/ Store.zoomRatio / 2, vAP + textH/ Store.zoomRatio);
-                    luckysheetTableContent.closePath();
-                    luckysheetTableContent.stroke();
-                }
-            }
-        }
-        else{
-            //单元格有下钻属性，文本颜色变成超链接的颜色
-            if(cell.dd != null){
-                luckysheetTableContent.fillStyle = "#0000ff";
-
-                luckysheetTableContent.beginPath();
-                luckysheetTableContent.strokeStyle = "#0000ff";
-                luckysheetTableContent.moveTo(
-                    horizonAlignPos, 
-                    verticalAlignPos + oneLineTextHeight
-                );
-                luckysheetTableContent.lineTo(
-                    horizonAlignPos + textMetrics, 
-                    verticalAlignPos + oneLineTextHeight
-                );
-                luckysheetTableContent.stroke();
-                luckysheetTableContent.closePath();
-            }
-
-            luckysheetTableContent.fillText(value == null ? "" : value, horizonAlignPos, verticalAlignPos_text);
-                
-            if(cl == "1" && !isRealNull(value)){
-                luckysheetTableContent.beginPath();
-                luckysheetTableContent.strokeStyle = "#000";
-                luckysheetTableContent.moveTo(
-                    horizonAlignPos, 
-                    verticalAlignPos + oneLineTextHeight / 2 / Store.zoomRatio
-                );
-                luckysheetTableContent.lineTo(
-                    horizonAlignPos + textMetrics/ Store.zoomRatio, 
-                    verticalAlignPos + oneLineTextHeight / 2 / Store.zoomRatio
-                );
-                luckysheetTableContent.stroke();
-                luckysheetTableContent.closePath();
-            }
-        }
 
         luckysheetTableContent.restore();
-    }  
+    }
 
     if(cellOverflow_bd_r_render){
         //右边框
-        if(!Store.luckysheetcurrentisPivotTable && !fillStyle){
+        if(!Store.luckysheetcurrentisPivotTable && !fillStyle && Store.showGridLines){
             luckysheetTableContent.beginPath();
             luckysheetTableContent.moveTo(
                  (end_c + offsetLeft - 2 + bodrder05), 
-                 (start_r + offsetTop - 2)
+                 (start_r + offsetTop)
             );
             luckysheetTableContent.lineTo(
                  (end_c + offsetLeft - 2 + bodrder05), 
-                 (end_r + offsetTop - 2)
+                 (end_r + offsetTop)
             );
             luckysheetTableContent.lineWidth = 1;
             luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
@@ -1920,14 +1765,14 @@ let cellRender = function(r, c, start_r, start_c, end_r, end_c, value, luckyshee
     }
 
     //下边框
-    if(!Store.luckysheetcurrentisPivotTable && !fillStyle){
+    if(!Store.luckysheetcurrentisPivotTable && !fillStyle && Store.showGridLines){
         luckysheetTableContent.beginPath();
         luckysheetTableContent.moveTo(
-             (start_c + offsetLeft - 2), 
+             (start_c + offsetLeft - 1), 
              (end_r + offsetTop - 2 + bodrder05)
         );
         luckysheetTableContent.lineTo(
-             (end_c + offsetLeft - 2), 
+             (end_c + offsetLeft - 1), 
              (end_r + offsetTop - 2 + bodrder05)
         );
         luckysheetTableContent.lineWidth = 1;
@@ -1966,62 +1811,27 @@ let cellOverflowRender = function(r, c, stc, edc,luckysheetTableContent,scrollHe
     let cellHeight = end_r - start_r - 2;
     let space_width = 2, space_height = 2; //宽高方向 间隙
 
-    let fontset = luckysheetfontformat(cell);
-    luckysheetTableContent.font = fontset;
-    // luckysheetTableContent.textBaseline = 'top';
-
-    //溢出单元格 值
-    let value = getcellvalue(r, c, null, "m");
-    if(value == null){
-        value = getcellvalue(r, c);
-    }
-
-    //文本单行 宽度和高度
-    let measureText = getMeasureText(value, luckysheetTableContent);
-    //luckysheetTableContent.measureText(value);
-    let textMetrics = measureText.width;
-    let oneLineTextHeight = measureText.actualBoundingBoxDescent + measureText.actualBoundingBoxAscent;
-    
     let pos_x = start_c + offsetLeft;
     let pos_y = start_r + offsetTop + 1;
 
+    let fontset = luckysheetfontformat(cell);
+    luckysheetTableContent.font = fontset;
+
     luckysheetTableContent.save();
     luckysheetTableContent.beginPath();
-    luckysheetTableContent.rect(pos_x, pos_y, cellWidth, cellHeight);
+    luckysheetTableContent.rect(pos_x , pos_y, cellWidth , cellHeight );
     luckysheetTableContent.clip();
     luckysheetTableContent.scale(Store.zoomRatio,Store.zoomRatio);
     
-    //溢出单元格 水平对齐
-    let horizonAlign = menuButton.checkstatus(Store.flowdata, r, c, "ht");
-    let horizonAlignPos = (pos_x + space_width) ; //默认为1，左对齐
-    if(horizonAlign == "0"){ //居中对齐
-        horizonAlignPos = (pos_x + cellWidth / 2)  - (textMetrics / 2);
-    }
-    else if(horizonAlign == "2"){ //右对齐
-        horizonAlignPos = (pos_x + cellWidth - space_width)  - textMetrics;
-    }
-    
-    //溢出单元格 垂直对齐
-    let verticalAlign = menuButton.checkstatus(Store.flowdata, r, c, "vt"); 
-    let verticalAlignPos = (pos_y + cellHeight - space_height)  - oneLineTextHeight; //默认为2，下对齐
-    let verticalAlignPos_text = (pos_y + cellHeight - space_height) ; //文本垂直方向基准线
-    luckysheetTableContent.textBaseline = "bottom";
-    if(verticalAlign == "0"){ //居中对齐 
-        verticalAlignPos = (pos_y + cellHeight / 2)  - (oneLineTextHeight / 2);
-        
-        verticalAlignPos_text = (pos_y + cellHeight / 2) ;
-        luckysheetTableContent.textBaseline = "middle";
-    }
-    else if(verticalAlign == "1"){ //上对齐
-        verticalAlignPos = (pos_y + space_height) ;
-        
-        verticalAlignPos_text = (pos_y + space_height) ;
-        luckysheetTableContent.textBaseline = "top";
-    }
 
-    verticalAlignPos = verticalAlignPos/Store.zoomRatio;
-    horizonAlignPos = horizonAlignPos/Store.zoomRatio;
-    verticalAlignPos_text = verticalAlignPos_text/Store.zoomRatio;
+    let textInfo = getCellTextInfo(cell , luckysheetTableContent, {
+        cellWidth:cellWidth,
+        cellHeight:cellHeight,
+        space_width:space_width,
+        space_height:space_height,
+        r:r,
+        c:c
+    });
 
     //交替颜色
     let checksAF = alternateformat.checksAF(r, c, af_compute); 
@@ -2040,26 +1850,112 @@ let cellOverflowRender = function(r, c, stc, edc,luckysheetTableContent,scrollHe
         luckysheetTableContent.fillStyle = checksCF["textColor"];
     }
 
-    luckysheetTableContent.fillText(value == null ? "" : value, horizonAlignPos, verticalAlignPos_text);
+    cellTextRender(
+        textInfo,
+        luckysheetTableContent,
+        {
+            pos_x:pos_x,
+            pos_y:pos_y,
+        }
+    );
 
     luckysheetTableContent.restore();
+
+    // let fontset = luckysheetfontformat(cell);
+    // luckysheetTableContent.font = fontset;
+    // // luckysheetTableContent.textBaseline = 'top';
+
+    // //溢出单元格 值
+    // let value = getcellvalue(r, c, null, "m");
+    // if(value == null){
+    //     value = getcellvalue(r, c);
+    // }
+
+    // //文本单行 宽度和高度
+    // let measureText = getMeasureText(value, luckysheetTableContent);
+    // //luckysheetTableContent.measureText(value);
+    // let textMetrics = measureText.width;
+    // let oneLineTextHeight = measureText.actualBoundingBoxDescent + measureText.actualBoundingBoxAscent;
+    
+    // let pos_x = start_c + offsetLeft;
+    // let pos_y = start_r + offsetTop + 1;
+
+    // luckysheetTableContent.save();
+    // luckysheetTableContent.beginPath();
+    // luckysheetTableContent.rect(pos_x, pos_y, cellWidth, cellHeight);
+    // luckysheetTableContent.clip();
+    // luckysheetTableContent.scale(Store.zoomRatio,Store.zoomRatio);
+    
+    // //溢出单元格 水平对齐
+    // let horizonAlign = menuButton.checkstatus(Store.flowdata, r, c, "ht");
+    // let horizonAlignPos = (pos_x + space_width) ; //默认为1，左对齐
+    // if(horizonAlign == "0"){ //居中对齐
+    //     horizonAlignPos = (pos_x + cellWidth / 2)  - (textMetrics / 2);
+    // }
+    // else if(horizonAlign == "2"){ //右对齐
+    //     horizonAlignPos = (pos_x + cellWidth - space_width)  - textMetrics;
+    // }
+    
+    // let verticalCellHeight = cellHeight>oneLineTextHeight?cellHeight:oneLineTextHeight;
+    // //溢出单元格 垂直对齐
+    // let verticalAlign = menuButton.checkstatus(Store.flowdata, r, c, "vt"); 
+    // let verticalAlignPos = (pos_y + verticalCellHeight - space_height)  - oneLineTextHeight; //默认为2，下对齐
+    // let verticalAlignPos_text = (pos_y + verticalCellHeight - space_height) ; //文本垂直方向基准线
+    // luckysheetTableContent.textBaseline = "bottom";
+    // if(verticalAlign == "0"){ //居中对齐 
+    //     verticalAlignPos = (pos_y + verticalCellHeight / 2)  - (oneLineTextHeight / 2);
+        
+    //     verticalAlignPos_text = (pos_y + verticalCellHeight / 2) ;
+    //     luckysheetTableContent.textBaseline = "middle";
+    // }
+    // else if(verticalAlign == "1"){ //上对齐
+    //     verticalAlignPos = (pos_y + space_height) ;
+        
+    //     verticalAlignPos_text = (pos_y + space_height) ;
+    //     luckysheetTableContent.textBaseline = "top";
+    // }
+
+    // verticalAlignPos = verticalAlignPos/Store.zoomRatio;
+    // horizonAlignPos = horizonAlignPos/Store.zoomRatio;
+    // verticalAlignPos_text = verticalAlignPos_text/Store.zoomRatio;
+
+    // //交替颜色
+    // let checksAF = alternateformat.checksAF(r, c, af_compute); 
+    // //条件格式
+    // let checksCF = conditionformat.checksCF(r, c, cf_compute); 
+
+    // //单元格 文本颜色
+    // luckysheetTableContent.fillStyle = menuButton.checkstatus(Store.flowdata, r, c , "fc");
+        
+    // //若单元格有交替颜色 文本颜色
+    // if(checksAF != null && checksAF[0] != null){ 
+    //     luckysheetTableContent.fillStyle = checksAF[0];
+    // }
+    // //若单元格有条件格式 文本颜色
+    // if(checksCF != null && checksCF["textColor"] != null){ 
+    //     luckysheetTableContent.fillStyle = checksCF["textColor"];
+    // }
+
+    // luckysheetTableContent.fillText(value == null ? "" : value, horizonAlignPos, verticalAlignPos_text);
+
+    // luckysheetTableContent.restore();
     
     //单元格是否有删除线
-    let cl = menuButton.checkstatus(Store.flowdata, r, c , "cl");
-    if(cl == "1" && !isRealNull(value)){
-        luckysheetTableContent.beginPath();
-        luckysheetTableContent.strokeStyle = "#000";
-        luckysheetTableContent.moveTo(
-            horizonAlignPos, 
-            verticalAlignPos + oneLineTextHeight / 2/Store.zoomRatio
-        );
-        luckysheetTableContent.lineTo(
-            horizonAlignPos + textMetrics/Store.zoomRatio, 
-            verticalAlignPos + oneLineTextHeight / 2/Store.zoomRatio
-        );
-        luckysheetTableContent.stroke();
-        luckysheetTableContent.closePath();
-    }
+    // let cl = menuButton.checkstatus(Store.flowdata, r, c , "cl");
+    // if(cl == "1" && !isRealNull(value)){
+    //     luckysheetTableContent.beginPath();
+    //     luckysheetTableContent.strokeStyle = "#000";
+    //     luckysheetTableContent.moveTo(
+    //         horizonAlignPos, 
+    //         verticalAlignPos + oneLineTextHeight / 2/Store.zoomRatio
+    //     );
+    //     luckysheetTableContent.lineTo(
+    //         horizonAlignPos + textMetrics/Store.zoomRatio, 
+    //         verticalAlignPos + oneLineTextHeight / 2/Store.zoomRatio
+    //     );
+    //     luckysheetTableContent.stroke();
+    //     luckysheetTableContent.closePath();
+    // }
 }
 
 //获取表格渲染范围 溢出单元格 
@@ -2069,22 +1965,51 @@ function getCellOverflowMap(canvas, col_st, col_ed, row_st, row_end){
     let data = Store.flowdata;
 
     for(let r = row_st; r <= row_end; r++){
+        if(data[r]==null){
+            continue;
+        }
+
+        if(Store.cellOverflowMapCache[r]!=null){
+            map[r] = Store.cellOverflowMapCache[r];
+            continue;
+        }
+
+        let hasCellOver = false;
+
         for(let c = 0; c < data[r].length; c++){
             let cell = data[r][c];
 
-            if(cell != null && !isRealNull(cell.v) && cell.mc == null && cell.tb == '1'){
-                let fontset = luckysheetfontformat(cell);
-                canvas.font = fontset;
+            // if(Store.cellOverflowMapCache[r + '_' + c]!=null){
+            //     map[r + '_' + c] = Store.cellOverflowMapCache[r + '_' + c];
+            //     continue;
+            // }
+
+            if (Store.config["colhidden"] != null && Store.config["colhidden"][c] != null) {
+                continue
+            }
+
+            if(cell != null && (!isRealNull(cell.v) || isInlineStringCell(cell) ) && cell.mc == null && cell.tb == '1'){
+                // let fontset = luckysheetfontformat(cell);
+                // canvas.font = fontset;
 
                 //水平对齐
                 let horizonAlign = menuButton.checkstatus(data, r, c, "ht");
 
                 //文本宽度
-                let value = getcellvalue(r, c, null, "m");
-                if(value == null){
-                    value = getcellvalue(r, c);
-                } 
-                let textMetrics = getMeasureText(value, canvas).width;
+                // let value = getcellvalue(r, c, null, "m");
+                // if(value == null){
+                //     value = getcellvalue(r, c);
+                // } 
+                
+                let textMetricsObj = getCellTextInfo(cell, canvas,{
+                    r:r,
+                    c:c,
+                });
+                let textMetrics = 0;
+                if(textMetricsObj!=null){
+                    textMetrics = textMetricsObj.textWidthAll;
+                }
+
                 //canvas.measureText(value).width;
 
                 let start_c = c - 1 < 0 ? 0 : Store.visibledatacolumn[c - 1];
@@ -2139,15 +2064,31 @@ function getCellOverflowMap(canvas, col_st, col_ed, row_st, row_end){
                     edc = c;
                 }
 
-                if(((stc >= col_st && stc <= col_ed) || (edc >= col_st && edc <= col_ed)) && stc < edc){
-                    map[r + '_' + c] = {
+                // if(((stc >= col_st && stc <= col_ed) || (edc >= col_st && edc <= col_ed)) && stc < edc){
+                if(((stc <= col_ed) || (edc >= col_st)) && stc < edc){
+                    let item = {
                         r: r,
                         stc: stc,
                         edc: edc 
                     }
+
+                    if(map[r]==null){
+                        map[r] = {};
+                    }
+
+                    map[r][c] = item;
+
+                    // Store.cellOverflowMapCache[r + '_' + c] = item;
+
+                    hasCellOver = true;
                 }
             }
         }
+
+        if(hasCellOver){
+            Store.cellOverflowMapCache[r] = map[r];
+        }
+
     }
 
     return map;
@@ -2251,24 +2192,30 @@ function cellOverflow_colIn(map, r, c, col_st, col_ed){
         stc,
         edc;
 
-    for(let key in map){
-        // rowIndex = key.split('_')[0];
-        // colIndex = key.split('_')[1];
-        rowIndex = key.substr(0, key.indexOf('_'));
-        colIndex = key.substr(key.indexOf('_') + 1);
+    for(let rkey in map){
+        for(let ckey in map[rkey]){
+            rowIndex = rkey;
+            colIndex = ckey;
+            // rowIndex = key.substr(0, key.indexOf('_'));
+            // colIndex = key.substr(key.indexOf('_') + 1);
+            let mapItem = map[rkey][ckey];
+            stc = mapItem.stc;
+            edc = mapItem.edc;
 
-        stc = map[key].stc;
-        edc = map[key].edc;
+            if(rowIndex == r){
+                if(c >= stc && c <= edc){
+                    colIn = true;
 
-        if(rowIndex == r){
-            if(c >= stc && c <= edc){
-                colIn = true;
-
-                if(c == edc || c == col_ed){
-                    colLast = true;
-                    break;
+                    if(c == edc || c == col_ed){
+                        colLast = true;
+                        break;
+                    }
                 }
             }
+        }
+
+        if(colLast){
+            break;
         }
     }
 
@@ -2279,6 +2226,92 @@ function cellOverflow_colIn(map, r, c, col_st, col_ed){
         colIndex: colIndex,
         stc: stc,
         edc: edc
+    }
+}
+
+function cellTextRender(textInfo, ctx, option){
+    if(textInfo==null){
+        return
+    }
+    let values = textInfo.values;
+    let pos_x = option.pos_x, pos_y = option.pos_y;
+    if(values==null){
+        return;
+    }
+    // console.log(textInfo, pos_x, pos_y, values[0].width, values[0].left, ctx);
+
+    // for(let i=0;i<values.length;i++){
+    //     let word = values[i];
+    //     ctx.font = word.style;
+    //     ctx.fillText(word.content, (pos_x + word.left)/Store.zoomRatio, (pos_y+word.top)/Store.zoomRatio);
+    // }
+
+    // ctx.fillStyle = "rgba(255,255,0,0.2)";
+    // ctx.fillRect((pos_x + values[0].left)/Store.zoomRatio, (pos_y+values[0].top-values[0].asc)/Store.zoomRatio, textInfo.textWidthAll, textInfo.textHeightAll)
+
+    if(textInfo.rotate!=0 && textInfo.type!="verticalWrap"){
+        ctx.save();
+        ctx.translate((pos_x+textInfo.textLeftAll)/Store.zoomRatio, (pos_y+textInfo.textTopAll)/Store.zoomRatio);
+        ctx.rotate(-textInfo.rotate * Math.PI / 180);
+        ctx.translate(-(textInfo.textLeftAll+pos_x)/Store.zoomRatio, -(pos_y+textInfo.textTopAll)/Store.zoomRatio);
+    }
+
+    // ctx.fillStyle = "rgb(0,0,0)";
+    for(let i=0;i<values.length;i++){
+        let word = values[i];
+        if(word.inline===true && word.style!=null){
+            ctx.font = word.style.fontset;
+            ctx.fillStyle = word.style.fc;
+        }
+        else{
+            ctx.font = word.style;
+        }
+        
+        ctx.fillText(word.content, (pos_x + word.left)/Store.zoomRatio, (pos_y+word.top)/Store.zoomRatio);
+        
+        if(word.cancelLine!=null){
+            let c = word.cancelLine;
+            ctx.beginPath();
+            ctx.moveTo(
+                Math.floor((pos_x +c.startX)/Store.zoomRatio)+0.5 ,
+                Math.floor((pos_y+c.startY)/Store.zoomRatio)+0.5 ,
+            );
+            ctx.lineTo(
+                Math.floor((pos_x +c.endX)/Store.zoomRatio)+0.5 ,
+                Math.floor((pos_y+c.endY)/Store.zoomRatio)+0.5 ,
+            );
+            ctx.lineWidth = Math.floor(c.fs/9);
+            ctx.strokeStyle = ctx.fillStyle;
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+        if(word.underLine!=null){
+            let underLines = word.underLine;
+            for(let a=0;a<underLines.length;a++){
+                let item = underLines[a];
+                ctx.beginPath();
+                ctx.moveTo(
+                    Math.floor((pos_x +item.startX)/Store.zoomRatio)+0.5 ,
+                    Math.floor((pos_y+item.startY)/Store.zoomRatio)
+                );
+                ctx.lineTo(
+                    Math.floor((pos_x +item.endX)/Store.zoomRatio)+0.5,
+                    Math.floor((pos_y+ item.endY)/Store.zoomRatio)+0.5
+                );
+                ctx.lineWidth = Math.floor(item.fs/9);
+                ctx.strokeStyle = ctx.fillStyle;
+                ctx.stroke();
+                ctx.closePath();
+            }
+        }
+    }
+    // ctx.fillStyle = "rgba(0,0,0,0.2)";
+    // ctx.fillRect((pos_x + values[0].left)/Store.zoomRatio, (pos_y+values[0].top-values[0].asc)/Store.zoomRatio, textInfo.textWidthAll, textInfo.textHeightAll)
+    // ctx.fillStyle = "rgba(255,0,0,1)";
+    // ctx.fillRect(pos_x+textInfo.textLeftAll-2, pos_y+textInfo.textTopAll-2, 4,4);
+    if(textInfo.rotate!=0 && textInfo.type!="verticalWrap"){
+        ctx.restore();
     }
 }
 

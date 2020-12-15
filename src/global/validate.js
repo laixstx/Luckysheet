@@ -1,7 +1,7 @@
 import luckysheetConfigsetting from '../controllers/luckysheetConfigsetting';
 import Store from '../store';
 
-const error = {
+export const error = {
     v: "#VALUE!",    //错误的参数或运算符
     n: "#NAME?",     //公式名称错误
     na: "#N/A",      //函数或公式中没有可用数值
@@ -188,6 +188,12 @@ function hasPartMC(cfg, r1, r2, c1, c2) {
     return hasPartMC;
 }
 
+//获取单个字符的字节数
+function checkWordByteLength(value) {
+    return Math.ceil(value.charCodeAt().toString(2).length / 8);
+ }
+ 
+
 export {
     isRealNull,
     isRealNum,
@@ -195,4 +201,5 @@ export {
     hasChinaword,
     isEditMode,
     hasPartMC,
+    checkWordByteLength
 }

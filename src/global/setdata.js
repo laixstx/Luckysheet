@@ -10,20 +10,33 @@ function setcellvalue(r, c, d, v) {
     if(d == null){
         d = Store.flowdata;
     }
+    // 若采用深拷贝，初始化时的单元格属性丢失
+    // let cell = $.extend(true, {}, d[r][c]);
     let cell = d[r][c];
 
     let vupdate;
 
     if(getObjType(v) == "object"){
-        cell = v;
-
-        if(v.f != null){
-            cell.f = v.f;
+        if(cell == null){
+            cell = v;
         }
+        else{
+            if(v.f != null){
+                cell.f = v.f;
+            }
+            // else{
+            //     delete cell.f;
+            // }
+    
+            if(v.spl != null){
+                cell.spl = v.spl;
+            }
 
-        if(v.spl != null){
-            cell.spl = v.spl;
+            if(v.ct != null){
+                cell.ct = v.ct;
+            }
         }
+        
 
         if(getObjType(v.v) == "object"){
             vupdate = v.v.v;
@@ -58,6 +71,12 @@ function setcellvalue(r, c, d, v) {
         cell.m = vupdate.toString().substr(1);
         cell.ct = { "fa": "@", "t": "s" };
         cell.v = vupdate.toString().substr(1);
+        cell.qp = 1;
+    }
+    else if(cell.qp == 1){
+        cell.m = vupdate.toString();
+        cell.ct = { "fa": "@", "t": "s" };
+        cell.v = vupdate.toString();
     }
     else if(vupdate.toString().toUpperCase() === "TRUE"){
         cell.m = "TRUE";
@@ -71,7 +90,13 @@ function setcellvalue(r, c, d, v) {
     }
     else if(valueIsError(vupdate)){
         cell.m = vupdate.toString();
-        cell.ct = { "fa": "General", "t": "e" };
+        // cell.ct = { "fa": "General", "t": "e" };
+        if(cell.ct!=null){
+            cell.ct.t = "e";
+        }
+        else{
+            cell.ct = { "fa": "General", "t": "e" };
+        }
         cell.v = vupdate;
     }
     else{
@@ -86,7 +111,13 @@ function setcellvalue(r, c, d, v) {
             }
             else{
                 if(cell.v.toString().indexOf("e") > -1){
-                    let len = cell.v.toString().split(".")[1].split("e")[0].length;
+                    let len;
+                    if(cell.v.toString().split(".").length==1){
+                        len = 0;
+                    }
+                    else{
+                        len = cell.v.toString().split(".")[1].split("e")[0].length;
+                    }
                     if(len > 5){
                         len = 5;
                     }

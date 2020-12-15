@@ -60,12 +60,19 @@ const editor = {
             _this.deepCopyFlowDataCache = $.extend(true, [], flowData);
         }
     },
-    controlHandler: function (dataChe) {
+
+    /**
+     * @param {Array} dataChe 
+     * @param {Object} range 是否指定选区，默认为当前选区
+     * @since Add range parameter. Update by siwei@2020-09-10. 
+     */
+    controlHandler: function (dataChe, range) {
         let _this = this;
 
         let d = _this.deepCopyFlowData(Store.flowdata);//取数据
 
-        let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+        // let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+        let last = range || Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let curR = last["row"] == null ? 0 : last["row"][0];
         let curC = last["column"] == null ? 0 : last["column"][0];
         let rlen = dataChe.length, clen = dataChe[0].length;
@@ -113,7 +120,7 @@ const editor = {
                 clen = ed_c - st_c + 1;
             
             if (rlen > 5000) {
-                jfrefreshgrid(d, st_r, ed_r, st_c, ed_c);
+                jfrefreshgrid(d, [{ "row": [st_r, ed_r], "column": [st_c, ed_c] }]);
             }
             else {
                 jfrefreshrange(d, { "row": [st_r, ed_r], "column": [st_c, ed_c] });

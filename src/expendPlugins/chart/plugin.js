@@ -25,13 +25,13 @@ const dependScripts = [
     'https://unpkg.com/vuex@3.4.0',
     'https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.2/index.js',
     'https://cdn.bootcdn.net/ajax/libs/echarts/4.8.0/echarts.min.js',
-    'expendPlugins/chart/chartmix.umd.min.js'
+    'expendPlugins/chart/chartmix.umd.min.js',
     // 'http://26.26.26.1:8000/chartmix.umd.js'
 ]
 
 const dependLinks = [
     'https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.2/theme-chalk/index.css',
-    'expendPlugins/chart/chartmix.css'
+    'expendPlugins/chart/chartmix.css',
     // 'http://26.26.26.1:8000/chartmix.css'
 ]
 
@@ -102,6 +102,12 @@ function chart(data, isDemo) {
 
 // rendercharts
 function renderCharts(chartLists, isDemo) {
+
+    // no chart
+    if(chartLists == undefined){
+        return;
+    }
+
     for (let i = 0; i < chartLists.length; i++) {
         let chart = chartLists[i]
 
@@ -425,7 +431,7 @@ function chart_selection() {
                     '<div class="luckysheet-chart-rangeShow-move" data-type="left" style="width: 2px;border-left: 2px solid #fff;border-right: 2px solid #fff;background: ' +
                     color +
                     ';position: absolute;top: 0;bottom: 0;left: -2px;z-index: 18;opacity: 0.9;cursor: move;"></div>' +
-                    '<div style="border: 2px solid #FC6666;background: ' +
+                    '<div style="border: 2px solid #85c0fc;background: ' +
                     color +
                     ';position: absolute;top: 0;right: 0;bottom: 0;left: 0;z-index: 15;opacity: 0.1;"></div>' +
                     '<div class="luckysheet-chart-rangeShow-resize" data-type="lt" style="width: 6px;height: 6px;border: 1px solid #fff;background: ' +
@@ -1387,10 +1393,10 @@ function selectRangeBorderShow(chart_id) {
 
     //luckysheet取cell-main，后续扩展到其他的用户自定义元素
     $('#luckysheet-cell-main')
-        .find('.luckysheet-modal-dialog-resize')
+        .find('.luckysheet-modal-dialog-chart .luckysheet-modal-dialog-resize')
         .hide()
     $('#luckysheet-cell-main')
-        .find('.luckysheet-modal-dialog-controll')
+        .find('.luckysheet-modal-dialog-chart .luckysheet-modal-dialog-controll')
         .hide()
 
     $t.css('z-index', chartInfo.chartparam.luckysheetCurrentChartZIndexRank++)
@@ -1413,7 +1419,7 @@ function selectRangeBorderShow(chart_id) {
 //选择区域高亮隐藏
 function selectRangeBorderHide(settingShow) {
 
-    $('#luckysheet-cell-main .luckysheet-modal-dialog-resize, #luckysheet-cell-main .luckysheet-modal-dialog-controll').hide()
+    $('#luckysheet-cell-main .luckysheet-modal-dialog-chart .luckysheet-modal-dialog-resize, #luckysheet-cell-main .luckysheet-modal-dialog-chart .luckysheet-modal-dialog-controll').hide()
     $('#luckysheet-cell-main').find('.luckysheet-datavisual-selection-set div').remove()
     chartInfo.chartparam.luckysheetCurrentChartActive = false
 
@@ -1447,7 +1453,7 @@ function hideChartSettingComponent(refresh) {
         //隐藏设置界面
         $('.chartSetting').hide();
         //.luckysheet-modal-dialog-resize为图表显示框的缩放框，.luckysheet-modal-dialog-controll为显示框右边的控制按钮
-        $('#luckysheet-cell-main .luckysheet-modal-dialog-resize, #luckysheet-cell-main .luckysheet-modal-dialog-controll').hide()
+        $('#luckysheet-cell-main .luckysheet-modal-dialog-chart .luckysheet-modal-dialog-resize, #luckysheet-cell-main .luckysheet-modal-dialog-chart .luckysheet-modal-dialog-controll').hide()
 
         $('#luckysheet-cell-main').find('.luckysheet-datavisual-selection-set div').remove()
 
